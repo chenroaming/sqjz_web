@@ -179,7 +179,7 @@ export default {
      */
     confirm: function() {
       this.showMapComponent = false;
-      let obj = {
+      const obj = {
         lng: this.center.lng,
         lat: this.center.lat,
         dw: this.dw ? this.dw : "未识别的经纬度信息"

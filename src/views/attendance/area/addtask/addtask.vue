@@ -143,9 +143,6 @@ const dateList2 = [
   { id: "30", value: "30" },
   { id: "31", value: "31" }
 ];
-// import { getWebCamList } from "@/api/webcam";
-import { getFacelibaryList } from "@/api/facelibary";
-// eslint-disable-next-line no-unused-vars
 import { addTask, addclock } from "@/api/attendance";
 export default {
   props: {
@@ -253,17 +250,6 @@ export default {
       if (this.taskInfo.period !== "") {
         this.taskInfo.period = "";
       }
-    },
-    // 获取人脸库列表
-    getFacesetList() {
-      getFacelibaryList("task", "", "", "")
-        .then(res => {
-          this.facesetList = res.data.List;
-        })
-        .catch(() => {
-          this.facesetList = [];
-          this.$message({ type: "error", message: "绑定人脸库集获取失败！" });
-        });
     },
 
     // 获取摄像头列表

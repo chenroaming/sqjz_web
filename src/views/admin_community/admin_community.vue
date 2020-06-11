@@ -1,51 +1,54 @@
 <template>
   <div>
-    <Search
-      v-model="searchData"
-      :placeholder="'请输入操作员'"
-      @handleSearch="__init()"
-      @refreshData="handleRefresh"
-    >
-      <span slot="extraArea" style="margin:0 0 0 20px;">
-        <el-input v-model="searchname" placeholder="请输区域名称" style="width:200px" clearable>
-          <i slot="prefix" class="el-input__icon el-icon-search" />
-        </el-input>
-      </span>
-      <span slot="eventArea">
-        <el-button
-          type="success"
-          style="margin:0 20px 0 20px"
-          @click="addcommuntiyCurd('ADD_community')"
-          v-if="checkPermission(['community:operate'])"
-        >创建新区域</el-button>
-      </span>
-    </Search>
+    <div class="tableBox">
+      <Search
+        v-model="searchData"
+        :placeholder="'请输入操作员'"
+        @handleSearch="__init()"
+        @refreshData="handleRefresh"
+      >
+        <span slot="extraArea" style="margin:0 0 0 20px;">
+          <el-input v-model="searchname" placeholder="请输区域名称" style="width:200px" clearable>
+            <i slot="prefix" class="el-input__icon el-icon-search" />
+          </el-input>
+        </span>
+        <span slot="eventArea">
+          <el-button
+            type="success"
+            style="margin:0 20px 0 20px"
+            @click="addcommuntiyCurd('ADD_community')"
+            v-if="checkPermission(['community:operate'])"
+          >创建新区域</el-button>
+        </span>
+      </Search>
 
-    <el-table v-loading="isLoading" :data="tableData" class="userTable" style="width: 100%">
-      <!-- <el-table-column prop="communityName" label="司法所名称" align="center" /> -->
-      <el-table-column prop="communityName" label="司法所名称" align="center">
-        <template slot-scope="scope">
-          <span v-if="checkPermission(['community:operate'])" style="cursor:pointer" @click="addcommuntiyCurd('CHANGE', scope.row)">
-            {{ scope.row.communityName }}
-            <i class="el-icon-edit-outline" />
-          </span>
-          <span v-else>
-            {{ scope.row.communityName }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="areaName" label="所属区域" align="center" />
-      <!-- <el-table-column prop="parameter" label="操作内容" align="center" />
-      <el-table-column prop="operator" label="操作员" align="center" />-->
-      <el-table-column label="创建时间" align="center">
-        <template slot-scope="scope">{{ scope.row.createDate.time | formatTime }}</template>
-      </el-table-column>
-      <el-table-column label="操作" align="center">
-        <template slot-scope="scope">
-          <el-button type="danger" v-if="checkPermission(['community:operate'])" size="mini" @click="handleDelete(scope.row.communityId)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-table v-loading="isLoading" class="tableShadow" :header-cell-style="rowClass" :data="tableData">
+        <!-- <el-table-column prop="communityName" label="司法所名称" align="center" /> -->
+        <el-table-column prop="communityName" label="司法所名称" align="center">
+          <template slot-scope="scope">
+            <span v-if="checkPermission(['community:operate'])" style="cursor:pointer" @click="addcommuntiyCurd('CHANGE', scope.row)">
+              {{ scope.row.communityName }}
+              <i class="el-icon-edit-outline" />
+            </span>
+            <span v-else>
+              {{ scope.row.communityName }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="areaName" label="所属区域" align="center" />
+        <!-- <el-table-column prop="parameter" label="操作内容" align="center" />
+        <el-table-column prop="operator" label="操作员" align="center" />-->
+        <el-table-column label="创建时间" align="center">
+          <template slot-scope="scope">{{ scope.row.createDate.time | formatTime }}</template>
+        </el-table-column>
+        <el-table-column label="操作" align="center">
+          <template slot-scope="scope">
+            <el-button type="danger" v-if="checkPermission(['community:operate'])" size="mini" @click="handleDelete(scope.row.communityId)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    
     <Addcommunity
       ref="addcommunity"
       :dialog-visible="addcommunity"
@@ -183,10 +186,5 @@ export default {
   bottom: 0;
   width: 100%;
   height: 0px;
-}
-.userTable {
-  max-height: calc(100vh - 180px);
-  min-height: calc(100vh - 180px);
-  overflow-y: auto;
 }
 </style>

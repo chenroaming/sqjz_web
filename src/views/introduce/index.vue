@@ -15,89 +15,23 @@
                 <p>扫描下方二维码即可下载</p>
               </el-col>
             </el-row>
-            <el-row>
-              <el-col :span="12" style="padding:20px">
+            <el-row v-for="(item,index) in appQrArr" :key="index">
+              <el-col v-for="(item2,index2) in item" :key="index2" :span="12" style="padding:20px">
                 <div style="width:100%;">
                   <el-image
                     style="width: 150px; height: 150px;margin:0 auto;display: block;"
-                    :src="zjtPic.qrCodePath"
+                    :src="item2.qrCodePath"
                     :fit="contain"
-                    :preview-src-list="zjtPic.qrCodePath2">
+                    :preview-src-list="item2.qrCodePath2">
                   </el-image>
                 </div>
-                
                 <div style="text-align: center;color:#666;">
-                  <h5>版本：{{zjtPic.version}}</h5>
-                  <h3>福建在矫通(安卓版)</h3>
+                  <h5>版本：{{item2.version}}</h5>
+                  <h3>{{item2.appName}}</h3>
                   <el-button
                     type="primary"
                     size="mini"
-                    @click="copyText(zjtPic)"
-                  >复制下载链接</el-button>
-                </div>
-              </el-col>
-
-              <el-col :span="12" style="padding:20px">
-                <div style="width:100%;">
-                  <el-image
-                    style="width: 150px; height: 150px;margin:0 auto;display: block;"
-                    :src="jwtPic.qrCodePath"
-                    :fit="contain"
-                    :preview-src-list="jwtPic.qrCodePath2">
-                  </el-image>
-                </div>
-
-                <div style="text-align: center;color:#666;">
-                  <h5>版本：{{jwtPic.version}}</h5>
-                  <h3>福建矫务通(安卓版)</h3>
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="copyText(jwtPic)"
-                  >复制下载链接</el-button>
-                </div>
-              </el-col>
-            </el-row>
-
-            <el-row>
-              <el-col :span="12" style="padding:20px">
-                <div style="width:100%;">
-                  <el-image
-                    style="width: 150px; height: 150px;margin:0 auto;display: block;"
-                    :src="zjtPicIos.qrCodePath"
-                    :preview-src-list="zjtPicIos.qrCodePath2"
-                    :fit="contain">
-                  </el-image>
-                </div>
-
-                <div style="text-align: center;color:#666;">
-                  <h5>版本：{{zjtPicIos.version}}</h5>
-                  <h3>福建在矫通(IOS版)</h3>
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="copyText(zjtPicIos)"
-                  >复制下载链接</el-button>
-                </div>
-              </el-col>
-
-              <el-col :span="12" style="padding:20px">
-                <div style="width:100%;">
-                  <el-image
-                    style="width: 150px; height: 150px;margin:0 auto;display: block;"
-                    :src="jwtPicIos.qrCodePath"
-                    :preview-src-list="zjtPicIos.qrCodePath2"
-                    :fit="contain">
-                  </el-image>
-                </div>
-
-                <div style="text-align: center;color:#666;">
-                  <h5>版本：{{jwtPicIos.version}}</h5>
-                  <h3>福建矫务通(IOS版)</h3>
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="copyText(jwtPicIos)"
+                    @click="copyText(item2)"
                   >复制下载链接</el-button>
                 </div>
               </el-col>
@@ -107,10 +41,6 @@
               <i class="el-icon-upload" style="margin-right: 15px;color:#666"></i>下载
             </p>
           </el-popover>
-
-          <!-- <p class="upload" style="width: 125px;">
-            <i class="el-icon-upload" style="margin-right: 15px;color:#666"></i>IOS版下载
-          </p> -->
 
           <p class="upload" @click="gotoLogin">
             <i class="el-icon-success" style="margin-right: 15px;color:#666"></i>登&nbsp;录
@@ -161,6 +91,9 @@ export default {
         { url: "../../../static/index_images/ban2.png" },
         { url: "../../../static/index_images/ban3.png" }
       ],
+      versionType:['（安卓版）','（IOS版）'],
+      appType:['福建在矫通','福建矫务通'],
+      appQrArr:[],
       zjtPic:{},
       jwtPic:{},
       zjtPicIos:{},
@@ -171,23 +104,15 @@ export default {
   mounted(){
     find().then(res => {
       if(res.data.state == 100){
-        for (const item of res.data.list){
-          item.qrCodePath2 = [];
-          item.qrCodePath2.push(location.origin + item.qrCodePath);
-          item.qrCodePath = location.origin + item.qrCodePath;
-          if(item.appType === 1 && item.versionType === 1){
-            this.zjtPic = item;
+        const newArr = res.data.list.map(item => {
+          return {
+            ...item,
+            qrCodePath2:[`${location.origin}${item.qrCodePath}`],
+            appName:`${this.appType[item.appType - 1]}${this.versionType[item.versionType - 1]}`
           }
-          if(item.appType === 2 && item.versionType === 1){
-            this.jwtPic = item;
-          }
-          if(item.appType === 1 && item.versionType === 2){
-            this.zjtPicIos = item;
-          }
-          if(item.appType === 2 && item.versionType === 2){
-            this.jwtPicIos = item;
-          }
-        }
+        })
+        const [androidZjt, androidJwt, IOSZjt, IOSJwt] = newArr
+        this.appQrArr = [[{...androidZjt}, {...androidJwt}],[{...IOSZjt}, {...IOSJwt}]]
       }
     })
   },

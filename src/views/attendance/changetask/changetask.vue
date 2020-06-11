@@ -135,8 +135,6 @@ const dateList = [
   { id: "friday", value: "星期五" },
   { id: "saturday", value: "星期六" }
 ];
-// import { getWebCamList } from '@/api/webcam'
-import { getFacelibaryList } from "@/api/facelibary";
 import { updateTask } from "@/api/attendance";
 export default {
   props: {
@@ -256,21 +254,7 @@ export default {
         // this.bindingWebcams[0].webcamValue=arr2;
         // // console.log(arr2)
       }
-
-      this.getFacesetList();
       this.getWebcamList();
-    },
-
-    // 获取人脸库列表
-    getFacesetList() {
-      getFacelibaryList("task", "", "", "")
-        .then(res => {
-          this.facesetList = res.data.List;
-        })
-        .catch(() => {
-          this.facesetList = [];
-          this.$message({ type: "error", message: "绑定人脸库集获取失败！" });
-        });
     },
 
     // 获取摄像头列表

@@ -28,6 +28,7 @@ export function audit(data) {
     return request({
       url: '/community_correction/webClass/application/audit.jhtml',
       method: 'post',
+      isShowTips:true,
       data: Qs.stringify({
         applyType:data.applyType,
         applyId:data.applyId,

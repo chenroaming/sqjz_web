@@ -2,10 +2,9 @@
   <el-table
     v-loading="isLoading"
     :data="getTableData"
-    class="attendanceTable"
+    class="tableShadow"
+    :header-cell-style="rowClass"
     element-loading-text="数据拼命加载中...."
-    height="250px"
-    style="width: 100%"
   >
     <el-table-column prop="name" :width="columnWidth" label="姓名" align="center"></el-table-column> 
     <el-table-column prop="applyDate" :width="columnWidth" label="申请时间" align="center"></el-table-column>

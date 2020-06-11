@@ -51,42 +51,16 @@
         <el-button type="primary" @click="getUserList">点击选择指派人员</el-button>
         <el-input type="textarea" v-show="getChoiceList" v-model="getChoiceList" disabled></el-input>
       </el-form-item>
-      <el-form-item label="活动起止时间" prop="activeTime">
+      <el-form-item label="活动起止时间" prop="activeTime" width="100%">
         <el-date-picker
           v-model="form.activeTime"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss">
+          value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="活动报名起止时间" prop="applyDate">
-        <el-date-picker
-          v-model="form.applyDate"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss">
-        </el-date-picker>
-      </el-form-item>
-      <!-- <el-form-item label="状态">
-        <el-select v-model="form.state" placeholder="请选择">
-          <el-option
-            v-for="item in options2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="积分">
-        <el-input-number v-model="form.integral" :min="1" placeholder="请输入积分"></el-input-number>
-      </el-form-item>
-      <el-form-item label="限制人数">
-        <el-input-number v-model="form.limitedNumber" :min="1" placeholder="请输入限制人数"></el-input-number>
-      </el-form-item> -->
     </el-form>
     <span slot="footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
@@ -111,7 +85,7 @@
       return {
         dialogVisible:false,
         isLoading:false,
-        options:[{value:1,label:'指派'},{value:2,label:'自助报名'}],
+        options:[{value:0,label:'指派'},{value:1,label:'自助报名'}],
         options2:[{value:0,label:'未开始'},{value:1,label:'已开始'},{value:2,label:'已结束'}],
         form:{
           theme:'',
@@ -122,14 +96,11 @@
           type:'',
           startDate:'',
           endDate:'',
-          applyStartDate:'',
-          applyEndDate:'',
           state:'',
           integral:'',
           limitedNumber:'',
           userIds:'',
           activeTime:[],
-          applyDate:[],
         },
         assignArr:[],
         showMap: false,
@@ -148,10 +119,7 @@
           ],
           activeTime: [
             { type:'array', message: '请选择活动起止时间', required: true, trigger: 'change' }
-          ],
-          applyDate: [
-            { type:'array', message: '请选择活动报名起止时间', required: true, trigger: 'change' }
-          ],
+          ]
         },
       }
     },
@@ -163,7 +131,7 @@
         return this.assignArr.map(item => item.id).join(',');
       },
       isChoice(){
-        return this.form.type === 1 ? true : false;
+        return this.form.type === 0 ? true : false;
       }
     },
     mounted() {
@@ -179,11 +147,8 @@
             return this.$message.warning('请确保选项填写完整！');
           }
           const [startDate,endDate] = this.form.activeTime;
-          const [applyStartDate,applyEndDate] = this.form.applyDate;
           this.form.startDate = startDate;
           this.form.endDate = endDate;
-          this.form.applyStartDate = applyStartDate;
-          this.form.applyEndDate = applyEndDate;
           this.form.userIds = this.getChoiceListId;
           this.isLoading = true;
           add(this.form).then(res => {
@@ -192,6 +157,7 @@
               this.form = {};
               this.dialogVisible = false;
               this.$emit('done');
+			  this.$refs['form'].resetFields();
             }
           })
         });

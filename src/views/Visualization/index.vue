@@ -192,6 +192,7 @@
               <bm-marker
                 v-for="(item, i) in MapPeopleLocationArr"
                 :key="i"
+                @click="showmarkerinfo(item)"
                 :position="item.location"
                 :dragging="false"
                 animation="BMAP_ANIMATION_BOUNCE"
@@ -214,7 +215,7 @@
             <!--  -->
           </div>
 
-          <div class="line_box">
+          <div class="line_box" style="height: 28%;">
             <div style="height:100%;">
               <div class="char_box_title">
                 <h3>近7天违规预警趋势</h3>
@@ -224,7 +225,7 @@
                   :data="warningCountdata"
                   :settings="chartSettings"
                   height="195px"
-                  width="700px"
+                  width="900px"
                   :extend="chartExtend"
                 ></ve-line>
               </div>
@@ -242,7 +243,7 @@
                   :data="clockCountdata"
                   :settings="chartSettings"
                   height="215px"
-                  width="400px"
+                  width="350px"
                   :extend="chartExtend2"
                 ></ve-line>
               </div>
@@ -272,22 +273,76 @@
                 <h4>暂无预警信息</h4>
               </div>
               <marquee
+                onmouseout="this.start()"
+                onmouseover="this.stop()"
                 class="char_box_main2"
                 v-if="warningList.length != 0"
                 behavior="scroll"
                 direction="up"
+                scrolldelay="300"
               >
-                <div v-for="(item, key) in warningList" :key="key" class="char_box_list_box">
-                  <div class="yjicon"></div>
-                  <div class="yjmainbox">【{{ item.name }}】 {{ item.time }}</div>
-                  <div class="yjrightbox">{{ item.type }}</div>
-                </div>
+                <el-popover
+                  v-for="(item, key) in warningList"
+                  :key="key"
+                  placement="top-start"
+                  :title="item.type"
+                  width="200"
+                  trigger="hover"
+                  :content="'【'+item.name+'】'+item.time"
+                >
+                  <div class="char_box_list_box" @click="show_warn_info(item)" slot="reference">
+                    <div class="yjicon"></div>
+                    <div class="yjmainbox">【{{ item.name }}】 {{ item.time }}</div>
+                    <div class="yjrightbox">{{ item.type }}</div>
+                  </div>
+                </el-popover>
               </marquee>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <el-dialog title="人员详情" :visible.sync="dialogVisible" width="30%" v-if="userobj!=''">
+      <div style="width: 100%; height: 100%;overflow: hidden;">
+        <div style="width: 40%; height: 100%;float:left">
+          <img style="width: 200px; height: 200px" :src="userobj.picPath" />
+        </div>
+        <div style="width: 60%; height: 100%;float:right">
+          <div style="margin:10px">
+            <span>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</span>
+            {{userobj.name}}
+          </div>
+
+          <div style="margin:10px">
+            <span>所在经度：</span>
+            {{userobj.location.lng}}
+          </div>
+
+          <div style="margin:10px">
+            <span>所在纬度：</span>
+            {{userobj.location.lat}}
+          </div>
+
+          <div style="margin:10px">
+            <span>所在位置：</span>
+            {{userobj.address}}
+          </div>
+
+          <div style="margin:10px">
+            <span>当前状态：</span>
+            <span style="color:green;" v-if="userobj.iconobj.type==0">正常</span>
+            <span style="color:red;" v-if="userobj.iconobj.type==1">位置偏离</span>
+            <span style="color:red;" v-if="userobj.iconobj.type==2">失联</span>
+          </div>
+        </div>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
+        <el-button type="primary" @click="dialogVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -302,6 +357,7 @@ import {
   BmView,
   BmAutoComplete,
   BmLocalSearch,
+  BmInfoWindow,
   BmMarker
 } from "vue-baidu-map";
 import {
@@ -321,6 +377,7 @@ export default {
     BmControl,
     BmView,
     BmAutoComplete,
+    BmInfoWindow,
     BmLocalSearch,
     BmMarker
   },
@@ -357,6 +414,8 @@ export default {
     };
     this.colors = ["#06b70b"];
     return {
+      dialogVisible: false,
+      userobj: "",
       areaName: "福建",
       mapzoom: 8,
       communityId: "",
@@ -411,7 +470,7 @@ export default {
       MapPeopleLocationArr: [],
       keyword: "",
       mapStyle: {
-        // style: "midnight"
+        style: "midnight"
         // styleJson: [
         //   {
         //     featureType: "all",
@@ -588,6 +647,18 @@ export default {
     }, 500); //1000为1秒钟
   },
   methods: {
+    showmarkerinfo(val) {
+      // console.log(val);
+      if (val) {
+        this.userobj = val;
+        this.dialogVisible = true;
+      } else {
+        this.$message.error("请重新选择人员");
+      }
+    },
+    show_warn_info(val) {
+      console.log(val);
+    },
     gotourl() {
       // window.location.href = "https://www.ecorrect.cn";
       this.$router.push({ path: "/" });
@@ -706,17 +777,20 @@ export default {
               if (!item.deviate && !item.missing) {
                 iconobj = {
                   url: "https://www.ecorrect.cn/correct/uniapp_images/zc.png",
-                  size: { width: 32, height: 32 }
+                  size: { width: 32, height: 32 },
+                  type: 0
                 };
               } else if (item.deviate && !item.missing) {
                 iconobj = {
                   url: "https://www.ecorrect.cn/correct/uniapp_images/yc.png",
-                  size: { width: 32, height: 32 }
+                  size: { width: 32, height: 32 },
+                  type: 1
                 };
               } else {
                 iconobj = {
                   url: "https://www.ecorrect.cn/correct/uniapp_images/sl.png",
-                  size: { width: 32, height: 32 }
+                  size: { width: 32, height: 32 },
+                  type: 2
                 };
               }
               let obj = {
@@ -724,6 +798,8 @@ export default {
                   lng: item.longitude,
                   lat: item.latitude
                 },
+                picPath: item.picPath,
+                address: item.location,
                 name: item.name,
                 iconobj: iconobj
               };
@@ -1054,7 +1130,7 @@ export default {
 .main_box_lr {
   vertical-align: top;
   display: inline-block;
-  width: 25%;
+  width: 20%;
   height: 100%;
   // border: 1px solid blue;
 }
@@ -1063,6 +1139,7 @@ export default {
   background-image: url("../../assets/index_images/center_bg.png");
   width: 97%;
   height: 75%;
+  // height: 100%;
   background-size: 100% 100%;
   // border: 1px solid yellow;
 }
@@ -1083,10 +1160,11 @@ export default {
 }
 
 .main_box_center {
+  // overflow: auto;
   //   margin: 20px auto;
   text-align: center;
   display: inline-block;
-  width: 45%;
+  width: 54%;
   height: 100%;
   // border: 1px solid green;
 }
@@ -1101,24 +1179,18 @@ $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 .login-container {
+  // border: 1px solid;
+  // background: url("../../assets/login_images/bigBg.png") no-repeat;
+  // height: 100%;
+  // width: 100%;
+  // background-size: cover; //全屏展示
+  // background-size: 100% 100%;
   position: absolute;
-  // position: relative;
   height: 100%;
   width: 100%;
   background-image: url("../../assets/login_images/bigBg.png");
   background-repeat: repeat-y;
-  // background-size: cover;
   background-size: 100% 100%;
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 15px;
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
-  }
 }
 
 .container {

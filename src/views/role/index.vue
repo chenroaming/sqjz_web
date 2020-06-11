@@ -1,46 +1,49 @@
 <template>
   <div>
-    <Search :visible="false" :searBtnShow="false" v-model="searchData" @refreshData="handleRefresh">
-      <span slot="extraArea">
-        <el-button
-          icon="el-icon-plus"
-          style="margin: 0 10px 0 10px"
-          @click="handleRole('ADD_ROLE')"
-          v-if="checkPermission(['role:operate'])"
-        >新增角色</el-button>
-      </span>
-    </Search>
-    <el-table :data="tableData" class="roleTable" v-loading="isLoading" style="width: 100%">
-      <el-table-column prop="roleName" label="角色名称" align="center">
-        <template slot-scope="scope">
-          <span v-if="checkPermission(['role:operate'])" style="cursor:pointer" @click="handleRole('CHANGE_ROLE', scope.row)">
-            {{ scope.row.roleName }}
-            <i class="el-icon-edit-outline"></i>
-          </span>
-          <span v-else>
-            {{ scope.row.roleName }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createDate" label="创建日期">
-        <template slot-scope="scope">{{ scope.row.createDate.time | formatTime}}</template>
-      </el-table-column>
-      <el-table-column prop="description" label="角色描述" align="center">
-        <template slot-scope="scope">
-          <span v-if="scope.row.description">{{ scope.row.description }}</span>
-          <el-tag v-if="!scope.row.description" type="info">暂无</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="角色类型" align="center">
-        <template slot-scope="scope">{{ scope.row.roleType | getRoleTypeName}}</template>
-      </el-table-column>
-      <el-table-column label="操作" align="center">
-        <template slot-scope="scope">
-          <el-button type="primary" size="mini" v-if="checkPermission(['role:operate'])" @click="handleRole('UPDATE_AUTH', scope.row)">权限配置</el-button>
-          <el-button type="danger" size="mini" v-if="checkPermission(['role:operate'])" @click="handleRole('DELETE_ROLE', scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="tableBox">
+      <Search :visible="false" :searBtnShow="false" v-model="searchData" @refreshData="handleRefresh">
+        <span slot="extraArea">
+          <el-button
+            icon="el-icon-plus"
+            style="margin: 0 10px 0 10px"
+            @click="handleRole('ADD_ROLE')"
+            v-if="checkPermission(['role:operate'])"
+          >新增角色</el-button>
+        </span>
+      </Search>
+      <el-table :data="tableData" v-loading="isLoading" class="tableShadow" :header-cell-style="rowClass">
+        <el-table-column prop="roleName" label="角色名称" align="center">
+          <template slot-scope="scope">
+            <span v-if="checkPermission(['role:operate'])" style="cursor:pointer" @click="handleRole('CHANGE_ROLE', scope.row)">
+              {{ scope.row.roleName }}
+              <i class="el-icon-edit-outline"></i>
+            </span>
+            <span v-else>
+              {{ scope.row.roleName }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createDate" label="创建日期">
+          <template slot-scope="scope">{{ scope.row.createDate.time | formatTime}}</template>
+        </el-table-column>
+        <el-table-column prop="description" label="角色描述" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.description">{{ scope.row.description }}</span>
+            <el-tag v-if="!scope.row.description" type="info">暂无</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="角色类型" align="center">
+          <template slot-scope="scope">{{ scope.row.roleType | getRoleTypeName}}</template>
+        </el-table-column>
+        <el-table-column label="操作" align="center">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" v-if="checkPermission(['role:operate'])" @click="handleRole('UPDATE_AUTH', scope.row)">权限配置</el-button>
+            <el-button type="danger" size="mini" v-if="checkPermission(['role:operate'])" @click="handleRole('DELETE_ROLE', scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    
     <Sortpage
       :totalPages="total"
       :sortShow="sortShow"
@@ -206,9 +209,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.roleTable {
-  max-height: calc(100vh - 180px);
-  min-height: calc(100vh - 180px);
-  overflow-y: auto;
-}
+
 </style>

@@ -15,10 +15,19 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import '@/styles/table.scss'//引入公共样式文件
 Vue.use(ElementUI)
 Vue.use(VCharts)
 Vue.use(PuzzleVerification)
 Vue.config.productionTip = false
+
+Vue.mixin({//全局混入表格表头样式
+  methods: {
+    rowClass(){
+      return 'border-top: 2px solid rgb(64, 158, 255);'
+    },
+  }
+})
 
 new Vue({
   el: '#app',

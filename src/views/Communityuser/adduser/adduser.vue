@@ -15,41 +15,6 @@
       label-position="left"
       label-width="80px"
     >
-      <!-- <el-form-item label="人脸照片">
-        <div class="uploadImage">
-          <div class="uploadImage-block">
-            <el-upload
-              ref="upload"
-              :file-list="imagelist"
-              :multiple="false"
-              :auto-upload="false"
-              :data="userInfo"
-              :on-change="handleChange"
-              :on-success="handleSuccess"
-              :show-file-list="false"
-              class="avatar-uploader"
-              name="picture"
-              style="float:left;margin-right:20px"
-              action="/community_correction/webClass/user/add.jhtml"
-            >
-              <img v-show="isUpload" :src="baseUrl" class="avatar" style="width:200px;height:200px" />
-              <i
-                v-show="!isUpload"
-                class="el-icon-plus avatar-uploader-icon"
-                style="width:200px;height:200px"
-              />
-            </el-upload>
-            <el-button
-              type="danger"
-              class="deleteBtn"
-              size="mini"
-              icon="el-icon-delete"
-              circle
-              style="left: 50%;margin-left: -25px;"
-            />
-          </div>
-        </div>
-      </el-form-item>-->
 
       <el-form-item label="人脸照片" prop="picPath2">
         <div class="uploadImage">
@@ -146,7 +111,7 @@
           v-if="userInfo.longitude !='' && userInfo.longitude !=''"
           type="primary"
           size="mini"
-          @click="showMap = true"
+          @click="showMap = false"
         >修改区域坐标</el-button>
       </el-form-item>
       
@@ -155,7 +120,7 @@
       <el-button @click="handleClose">关闭</el-button>
       <el-button type="primary" @click="handleSubmit('addusermodalrefs')">提交</el-button>
     </span>
-    <Getmap ref="getmapRefs" :value="showMap" @map-confirm="getPoint" @cancel="cancelPoint()" />
+    <Getmap ref="getmapRefs"  :value="showMap" @map-confirm="getPoint" @cancel="cancelPoint()" />
 
     <!-- <Getmap ref="getmapRefs" :value="showMap" @map-confirm="getPoint" /> -->
   </el-dialog>
@@ -393,8 +358,14 @@ export default {
     handleSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$refs.upload.submit();
-        }
+		  if(this.isUpload == false){
+			  this.$message.error('请上传人脸照片');
+		  }else{
+			  this.$refs.upload.submit();
+			}
+        }else{
+			this.$message.error('请正确输入内容');
+		}
       });
     },
     // 预览文件
@@ -446,7 +417,11 @@ export default {
     handleSuccess(response, imageFile, fileList) {
       console.log(response);
       if (response.state == 100) {
-        this.$message.error(response.message);
+        // this.$message.error(response.message);
+		this.$message({
+		  message: response.message,
+		  type: 'success'
+		});
         this.handleReset();
         this.$emit("submitSuccess");
         return false;

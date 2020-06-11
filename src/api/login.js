@@ -27,6 +27,7 @@ export function login2(username, password, pinCode) {
   return request({
     url: '/community_correction/webAdmin/admin/login.jhtml',
     method: 'post',
+    isShowTips:true,
     data
   })
 }

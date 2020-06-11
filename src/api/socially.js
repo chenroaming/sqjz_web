@@ -29,22 +29,34 @@ export function add(obj) {
   return request({
     url: '/community_correction/webClass/sociallyUsefulActivity/add.jhtml',
     method: 'post',
-    data: Qs.stringify({
-      theme:obj.theme,
-      content:obj.content,
-      location:obj.location,
-      longitude:obj.longitude,
-      latitude:obj.latitude,
-      type:obj.type,
-      startDate:obj.startDate,
-      endDate:obj.endDate,
-      applyStartDate:obj.applyStartDate,
-      applyEndDate:obj.applyEndDate,
-      state:obj.state,
-      integral:obj.integral,
-      limitedNumber:obj.limitedNumber,
-      userIds:obj.userIds
-    })
+    isShowTips:true,
+		data: Qs.stringify({
+		  theme:obj.theme,
+		  content:obj.content,
+		  location:obj.location,
+		  longitude:obj.longitude,
+		  latitude:obj.latitude,
+		  type:obj.type,
+		  startDate:obj.startDate,
+		  endDate:obj.endDate,
+		  userIds:obj.userIds
+		})
+    // data: Qs.stringify({
+    //   theme:obj.theme,
+    //   content:obj.content,
+    //   location:obj.location,
+    //   longitude:obj.longitude,
+    //   latitude:obj.latitude,
+    //   type:obj.type,
+    //   startDate:obj.startDate,
+    //   endDate:obj.endDate,
+    //   applyStartDate:obj.applyStartDate,
+    //   applyEndDate:obj.applyEndDate,
+    //   state:obj.state,
+    //   integral:obj.integral,
+    //   limitedNumber:obj.limitedNumber,
+    //   userIds:obj.userIds
+    // })
   })
 }
 
@@ -73,6 +85,7 @@ export function deletea(activityId = '') {
   return request({
     url: '/community_correction/webClass/sociallyUsefulActivity/delete.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       activityId
     })
@@ -128,6 +141,7 @@ export function findClockInListDetail2(participateId = '',state) {
   return request({
     url: '/community_correction/webClass/userParticipatePicInfo/findClockInListDetail.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       participateId,
       state

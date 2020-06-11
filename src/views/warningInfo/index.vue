@@ -1,42 +1,43 @@
 <template>
   <div>
-    <div class="select-box">
-      <el-button-group>
-        <el-button type="primary" v-for="(item,index) in buttonGroup" :key="index" plain :class="nowIndex === item.index ? 'isSelect' : ''" @click="changeSelect(item.index)">{{item.label}}</el-button>
-      </el-button-group>
+    <div class="tableBox">
+      <div class="select-box">
+        <el-button-group>
+          <el-button type="primary" v-for="(item,index) in buttonGroup" :key="index" plain :class="nowIndex === item.index ? 'isSelect' : ''" @click="changeSelect(item.index)">{{item.label}}</el-button>
+        </el-button-group>
+      </div>
+      <el-table
+        v-loading="isLoading"
+        :data="tableData"
+        class="tableShadow"
+        :header-cell-style="rowClass"
+        element-loading-text="数据拼命加载中...."
+      >
+        <el-table-column prop="userInfos" label="姓名" align="center">
+          <template slot-scope="scope">
+            {{scope.row.userInfos[0].name}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="warningDate" label="预警时间" align="center"></el-table-column>
+        <el-table-column prop="warningType" label="预警类型" align="center">
+          <template slot-scope="scope">
+            <el-tag :type="getColor(scope.row.warningType)">{{scope.row.warningType}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="location" label="位置" align="center"></el-table-column>
+        <el-table-column prop="disposed" label="是否已处置" align="center">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.disposed == '是' ? 'success' : 'warning'">{{scope.row.disposed}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="showDetail(scope.row)">查看</el-button>
+            <el-button type="warning" v-if="checkPermission(['warningInfo:dispose'])" size="mini" @click="dispose(scope.row)">处置</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
-    <el-table
-      v-loading="isLoading"
-      :data="tableData"
-      class="attendanceTable"
-      element-loading-text="数据拼命加载中...."
-      height="250px"
-      style="width: 100%"
-    >
-      <el-table-column prop="userInfos" label="姓名" align="center">
-        <template slot-scope="scope">
-          {{scope.row.userInfos[0].name}}
-        </template>
-      </el-table-column>
-      <el-table-column prop="warningDate" label="预警时间" align="center"></el-table-column>
-      <el-table-column prop="warningType" label="预警类型" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="getColor(scope.row.warningType)">{{scope.row.warningType}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="location" label="位置" align="center"></el-table-column>
-      <el-table-column prop="disposed" label="是否已处置" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.disposed == '是' ? 'success' : 'warning'">{{scope.row.disposed}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center">
-        <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="showDetail(scope.row)">查看</el-button>
-          <el-button type="warning" v-if="checkPermission(['warningInfo:dispose'])" size="mini" @click="dispose(scope.row)">处置</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
     <div style="margin-top: 20px;text-align: right;">
       <el-pagination
         @current-change="handleCurrentChange"
@@ -110,7 +111,7 @@ export default {
               recoveryDate:item.recoveryDate ? this.exChange(item.recoveryDate.time) : '',
               warningType:this.warningType[item.warningType - 1],
               warningDate:this.exChange(item.warningDate.time),
-              disposed:item.dispose ? '是' : '否'
+              disposed:item.disposed ? '是' : '否'
             }
             //以下方法会改变原数组
             // item.missingDate = item.missingDate ? this.exChange(item.missingDate.time) : '';
@@ -164,10 +165,5 @@ export default {
     background: $borderColor;
     border-color: $borderColor;
     color: #FFF;
-  }
-  .attendanceTable {
-    max-height: calc(100vh - 180px);
-    min-height: calc(100vh - 180px);
-    overflow-y: auto;
   }
 </style>

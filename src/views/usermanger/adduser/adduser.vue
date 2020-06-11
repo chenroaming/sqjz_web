@@ -14,34 +14,18 @@
       :rules="rules"
       ref="addusermodalrefs"
     >
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="userInfo.username" placeholder="请输入用户名"></el-input>
+      <el-form-item label="角色类型" prop="roleType" v-if="isTypeFive">
+        <el-select v-model="userInfo.roleType" placeholder="请选择">
+          <el-option
+            v-for="item in roleArr"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-        <el-input
-          v-show="pwdType=== 'password'"
-          type="password"
-          v-model="userInfo.password"
-          name="password"
-          placeholder="密码为6~16位，包含数字与英文字母以及 _ - 符号"
-        />
-        <el-input
-          v-show="pwdType=== ''"
-          type="text"
-          v-model="userInfo.password"
-          name="password"
-          placeholder="密码为6~16位，包含数字与英文字母以及 _ - 符号"
-        />
-      </el-form-item>
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="userInfo.name" placeholder="请输入姓名"></el-input>
-      </el-form-item>
-
-      <!-- <el-form-item label="司法所" prop="communityId" required>
-        <el-select v-model="userInfo.communityId" placeholder="请选择所属司法所">
+      <el-form-item label="区域选择" prop="communityId" v-else>
+        <el-select v-model="userInfo.communityId" filterable placeholder="请选择所属区域">
           <el-option
             v-for="(item, index) in communityId"
             :key="index"
@@ -49,7 +33,16 @@
             :value="item.communityId"
           />
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="userInfo.username" placeholder="请输入用户名"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input placeholder="请输入密码" v-model="userInfo.password" show-password></el-input>
+      </el-form-item>
+      <el-form-item label="姓名" prop="name">
+        <el-input v-model="userInfo.name" placeholder="请输入姓名"></el-input>
+      </el-form-item>
 
       <el-form-item label="手机号码" prop="phone">
         <el-input v-model="userInfo.phone" placeholder="请输入手机号码" />
@@ -73,7 +66,6 @@ export default {
     dialogVisible: false,
     roleType: 0
   },
-
   data() {
     var checkPhone = (rule, value, callback) => {
       if (value === "") {
@@ -97,11 +89,13 @@ export default {
     };
     return {
       isLoding:false,
+      roleArr:[{ value:6,label:'司法人员' },{ value:7,label:'协矫人员' }],
       pwdType: "password",
       userInfo: {
         username: "",
         password: "",
         name: "",
+        roleType:null,
         communityId: "",
         phone: ""
       },
@@ -112,6 +106,13 @@ export default {
           {
             required: true,
             message: "请输入用户名",
+            trigger: ["change", "blur"]
+          }
+        ],
+        roleType: [
+          {
+            required: true,
+            message: "请选择人员类型",
             trigger: ["change", "blur"]
           }
         ],
@@ -135,56 +136,19 @@ export default {
             trigger: ["change", "blur"]
           }
         ],
-        areaId: [
-          {
-            required: true,
-            message: "请选择预设区域",
-            trigger: ["change", "blur"]
-          }
-        ],
-        roleId: [
-          {
-            required: true,
-            message: "请选择预设角色",
-            trigger: ["change", "blur"]
-          }
-        ]
       }
     };
   },
-
-  filters: {
-    // 返回区域类型
-    filAreaType(val) {
-      return (val = val === "school" ? "学校" : "其他");
+  computed:{
+    isTypeFive(){
+      return this.$store.getters.roleType === 5 ? true : false
     },
-
-    // 返回学校类型
-    filroleType(val) {
-      if (val === 0) {
-        return "系统角色";
-      } else if (val === 1) {
-        return "管理员角色";
-      } else {
-        return "其他角色";
-      }
-    }
   },
-
   methods: {
     // 初始化
     __init() {
-      // this.fetchGetAreaList();
+      this.$store.getters.roleType !=5 && this.fetchGetAreaList()
       // this.fetchGetRoleList();
-    },
-
-    // 点击显示明文密码
-    showPwd() {
-      if (this.pwdType === "password") {
-        this.pwdType = "";
-      } else {
-        this.pwdType = "password";
-      }
     },
 
     // 提交
@@ -206,16 +170,15 @@ export default {
       });
     },
 
-    // // 获取区域列表
-    // fetchGetAreaList() {
-    //   console.log("调用");
-    //   getcommunity(100, 1)
-    //     .then(res => {
-    //       console.log(res);
-    //       this.communityId = res.data.list;
-    //     })
-    //     .catch(() => {});
-    // },
+    // 获取区域列表
+    fetchGetAreaList() {
+      console.log("调用");
+      getcommunity(100, 1)
+        .then(res => {
+          this.communityId = res.data.list;
+        })
+        .catch(() => {});
+    },
 
     // 获取角色列表
     fetchGetRoleList() {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div class="tableBox">
       <Search
         :search-data="searchData"
         @refreshData="handleRefresh"
@@ -18,60 +18,60 @@
           >新增报告规则</el-button>
         </span>
       </Search>
-    </div>
-    <el-table
-      v-loading="isLoading"
-      :data="tableData"
-      class="attendanceTable"
-      element-loading-text="数据拼命加载中...."
-      height="250px"
-      style="width: 100%"
-    >
-      <el-table-column prop="taskName" label="规则名称" align="center">
-        <template slot-scope="scope">
-          <span v-if="checkPermission(['clock:operate'])" style="cursor:pointer" @click="changeRules(scope.row)">
-            {{ scope.row.ruleName }}
-            <i class="el-icon-edit-outline" />
-          </span>
-          <span v-else>
-            {{ scope.row.ruleName }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="startTime" label="时间段" align="center">
-        <template slot-scope="scope">
-          <el-tag
-          v-for="(value,index) in scope.row.clockRuleTimes"
-          :key="index"
-          type="success"
-          size="mini"
-          style="margin-right:10px"
-        >{{ value.startTime }} - {{ value.endTime }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="attendanceType" label="任务类型" align="center">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.ruleType == 1" type="info">每日</el-tag>
-          <el-tag v-if="scope.row.ruleType == 2" type="warning">每周</el-tag>
-          <el-tag v-if="scope.row.ruleType == 3" type="warning">每月</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="taskType" label="任务周期" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="getPeriodText(scope.row.period) === '每天' ? 'info' : 'warning'">{{getPeriodText(scope.row.period)}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="任务操作" align="center" width="220px">
-        <template slot-scope="scope">
-          <el-button
-            type="primary"
+      <el-table
+        v-loading="isLoading"
+        :data="tableData"
+        class="tableShadow"
+        :header-cell-style="rowClass"
+        element-loading-text="数据拼命加载中...."
+      >
+        <el-table-column prop="taskName" label="规则名称" align="center">
+          <template slot-scope="scope">
+            <span v-if="checkPermission(['clock:operate'])" style="cursor:pointer" @click="changeRules(scope.row)">
+              {{ scope.row.ruleName }}
+              <i class="el-icon-edit-outline" />
+            </span>
+            <span v-else>
+              {{ scope.row.ruleName }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="startTime" label="时间段" align="center">
+          <template slot-scope="scope">
+            <el-tag
+            v-for="(value,index) in scope.row.clockRuleTimes"
+            :key="index"
+            type="success"
             size="mini"
-            @click="handleTaskCallBack('FACE_CURD', scope.row)"
-          >关联人员</el-button>
-          <el-button type="danger" v-if="checkPermission(['clock:operate'])" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            style="margin-right:10px"
+          >{{ value.startTime }} - {{ value.endTime }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="attendanceType" label="任务类型" align="center">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.ruleType == 1" type="info">每日</el-tag>
+            <el-tag v-if="scope.row.ruleType == 2" type="warning">每周</el-tag>
+            <el-tag v-if="scope.row.ruleType == 3" type="warning">每月</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="taskType" label="任务周期" align="center">
+          <template slot-scope="scope">
+            <el-tag :type="getPeriodText(scope.row.period) === '每天' ? 'info' : 'warning'">{{getPeriodText(scope.row.period)}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="任务操作" align="center" width="220px">
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleTaskCallBack('FACE_CURD', scope.row)"
+            >关联人员</el-button>
+            <el-button type="danger" v-if="checkPermission(['clock:operate'])" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    
     <rules ref="rules" :rulesObj="rulesObj" @getList="getList"></rules>
     <!-- 人脸库操作 -->
     <Facecurd

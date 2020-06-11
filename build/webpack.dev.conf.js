@@ -50,8 +50,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       // ------------------------------------------------
       // 社区矫正平台开发环境代理
       '/community_correction': {
-        // target: 'http://139.9.63.67:8081',
-        target: 'http://139.9.45.194:8091',
+        target: 'http://139.9.63.67:8081',
+        // target: 'http://139.9.45.194:8091',
         changeOrigin: true,
       },
       '/community_test':{

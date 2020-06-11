@@ -45,6 +45,7 @@ export function deleteTask(ruleId = '') {
   return request({
     url: '/community_correction/webClass/clock/delete.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       ruleId
     })
@@ -61,6 +62,7 @@ export function addclock(ruleName, ruleType, period, startTimes, endTimes) {
   return request({
     url: '/community_correction/webClass/clock/add.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       ruleName,
       // 规则名称
@@ -105,6 +107,7 @@ export function update(obj) {
   return request({
     url: '/community_correction/webClass/clock/update.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       // ...obj,
       ruleId:obj.ruleId,

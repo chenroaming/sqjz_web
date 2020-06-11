@@ -30,6 +30,7 @@ export function dispose(warningId = '', reason = '', result = '') {
   return request({
     url: '/community_correction/webClass/warningInfo/dispose.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       warningId,
       reason,

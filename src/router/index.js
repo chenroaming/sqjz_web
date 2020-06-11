@@ -39,16 +39,10 @@ export const constantRouterMap = [{
   hidden: true
 },
 {
-  path: '/api',
-  component: () => import('@/views/api'),
-  hidden: true
-},
-{
   path: '/index',
   component: () => import('@/views/introduce'),
   hidden: true
 },
-
 {
   path: '/',
   component: Layout,
@@ -119,7 +113,16 @@ export const asyncRouterMap = [
         meta: {
           title: '打卡记录'
         }
-      }
+      },
+      {
+        path: 'changeUser',
+        hidden: true,
+        component: () => import('@/views/Communityuser/changeUser/changeUser'), // Parent router-view
+        name: 'change-user',
+        meta: {
+          title: '修改信息'
+        }
+      },
     ]
   },
   {
@@ -238,6 +241,48 @@ export const asyncRouterMap = [
         meta: {
           title: '公益活动管理',
           roles: ['sociallyUsefulActivity:admin']
+        }
+      },
+    ]
+  },
+  {
+    path: '/productInfo',
+    component: Layout,
+    redirect: '/productInfo/index',
+    meta: {
+      title: '商品管理',
+      icon: 'attendance',
+      roles: ['productInfo:admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/productInfo/productInfo'), // Parent router-view
+        name: 'productInfoIndex',
+        meta: {
+          title: '商品管理',
+          roles: ['productInfo:admin']
+        }
+      },
+    ]
+  },
+  {
+    path: '/educationInfo',
+    component: Layout,
+    redirect: '/educationInfo/index',
+    meta: {
+      title: '教育管理',
+      icon: 'attendance',
+      roles: ['educationInfo:admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/educationInfo/educationInfo'), // Parent router-view
+        name: 'educationInfoIndex',
+        meta: {
+          title: '教育管理',
+          roles: ['educationInfo:admin']
         }
       },
     ]
@@ -377,7 +422,7 @@ export const asyncRouterMap = [
     //   name: 'auth-manger',
     //   meta: {
     //     title: '人员权限',
-    //     roles: ['admin:auth']
+    //     // roles: ['admin:auth']
     //   }
     // }
     ]

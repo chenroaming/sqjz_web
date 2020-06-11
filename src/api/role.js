@@ -28,6 +28,7 @@ export function deleteRole2(roleId) {
   return request({
     url: '/community_correction/webClass/role/delete.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       roleId,
     })
@@ -41,6 +42,7 @@ export function addRole2(roleName, description, roleType = '2') {
   return request({
     url: '/community_correction/webClass/role/add.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       roleName,
       description,
@@ -56,6 +58,7 @@ export function updateRole2(roleId, roleName, description) {
   return request({
     url: '/community_correction/webClass/role/update.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       roleId,
       roleName,
@@ -86,6 +89,7 @@ export function updateAuthority(roleId,authorityCodes) {
   return request({
     url: '/community_correction/webClass/role/updateAuthority.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       roleId,
       authorityCodes

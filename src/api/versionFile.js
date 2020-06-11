@@ -12,6 +12,7 @@ export function versionFile(data) {
   return request({
     url: '/community_correction/webClass/versionFile/add.jhtml',
     method: 'post',
+    isShowTips:true,
     data: data
   })
 }

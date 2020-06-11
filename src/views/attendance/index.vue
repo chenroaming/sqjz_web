@@ -1,103 +1,106 @@
 <template>
   <div>
-    <Search
-      :search-data="searchData"
-      @refreshData="handleRefresh"
-      @handleSearch="__init(searchData)"
-    >
-      <div slot="extraArea">
-        <el-input v-model="searchData" placeholder="请输入考勤名称" style="width:200px" />
-      </div>
-      <span slot="eventArea">
-        <el-button
-          icon="el-icon-plus"
-          style="margin:0 10px 0 10px"
-          @click="handleCheckCurd('ADD_TASK')"
-        >新增考勤任务</el-button>
-      </span>
-    </Search>
-    <el-table
-      v-loading="isLoading"
-      :data="tableData"
-      class="attendanceTable"
-      element-loading-text="数据拼命加载中...."
-      height="250px"
-      style="width: 100%"
-    >
-      <el-table-column prop="taskName" label="任务名称" align="center">
-        <template slot-scope="scope">
-          <span style="cursor:pointer" @click="handleCheckCurd('CHANGE_TASK', scope.row)">
-            {{ scope.row.taskName }}
-            <i class="el-icon-edit-outline" />
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="startTime" label="开始时间" align="center" />
-      <el-table-column prop="endTime" label="结束时间" align="center" />
-      <el-table-column prop="attendanceType" label="任务类型" align="center">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.attendanceType == 0" type="info">其它</el-tag>
-          <el-tag v-if="scope.row.attendanceType == 1" type="warning">上班</el-tag>
-          <el-tag v-if="scope.row.attendanceType == 2" type="warning">下班</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="facesetNames" label="考勤人脸库">
-        <template slot-scope="scope">
-          <div v-if="scope.row.webcamFaceset[0].facesetInfos.length>0">
-            <el-tag
-              v-for="(value, key) in scope.row.webcamFaceset[0].facesetInfos.slice(0,2)"
-              :key="value.facesetId"
-              type="success"
-              size="mini"
-              style="margin-right:10px"
-            >{{ value.facesetName }}</el-tag>
-            <el-badge
-              v-if="scope.row.webcamFaceset[0].facesetInfos.length > 2"
-              size="mini"
-              type="success"
-              style="margin-top:10px"
-              value="2+"
-            />
-          </div>
-          <div v-else>
-            <el-tag type="info" size="mini" style="margin-right:10px">暂未选择</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="webcamNames" label="考勤摄像头" align="left">
-        <template slot-scope="scope">
-          <div v-if="scope.row.webcamFaceset[0].webcamInfos.length>0">
-            <el-tag
-              v-for="item in scope.row.webcamFaceset[0].webcamInfos.slice(0,2)"
-              :key="item.webcamId"
-              size="mini"
-              style="margin-right:10px"
-            >{{ item.webcamName }}</el-tag>
-            <el-badge
-              v-if="scope.row.webcamFaceset[0].webcamInfos.length > 2"
-              size="mini"
-              type="primary"
-              style="margin-top:10px"
-              value="2+"
-            />
-          </div>
-          <div v-else>
-            <el-tag type="info" size="mini" style="margin-right:10px">暂未选择</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="任务操作" align="center" width="220px">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleCheckCurd('LOOK_TASK', scope.row)">详情</el-button>
+    <div style="overflow: auto;height: calc( 100vh - 115px )">
+      <Search
+        :search-data="searchData"
+        @refreshData="handleRefresh"
+        @handleSearch="__init(searchData)"
+      >
+        <div slot="extraArea">
+          <el-input v-model="searchData" placeholder="请输入考勤名称" style="width:200px" />
+        </div>
+        <span slot="eventArea">
           <el-button
-            type="primary"
-            size="mini"
-            @click="handleCheckCurd('EXPORT_TASK', scope.row)"
-          >导出</el-button>
-          <el-button type="danger" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            icon="el-icon-plus"
+            style="margin:0 10px 0 10px"
+            @click="handleCheckCurd('ADD_TASK')"
+          >新增考勤任务</el-button>
+        </span>
+      </Search>
+      <el-table
+        v-loading="isLoading"
+        :data="tableData"
+        class="tableShadow"
+        element-loading-text="数据拼命加载中...."
+        height="250px"
+        style="width: 100%"
+      >
+        <el-table-column prop="taskName" label="任务名称" align="center">
+          <template slot-scope="scope">
+            <span style="cursor:pointer" @click="handleCheckCurd('CHANGE_TASK', scope.row)">
+              {{ scope.row.taskName }}
+              <i class="el-icon-edit-outline" />
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="startTime" label="开始时间" align="center" />
+        <el-table-column prop="endTime" label="结束时间" align="center" />
+        <el-table-column prop="attendanceType" label="任务类型" align="center">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.attendanceType == 0" type="info">其它</el-tag>
+            <el-tag v-if="scope.row.attendanceType == 1" type="warning">上班</el-tag>
+            <el-tag v-if="scope.row.attendanceType == 2" type="warning">下班</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="facesetNames" label="考勤人脸库">
+          <template slot-scope="scope">
+            <div v-if="scope.row.webcamFaceset[0].facesetInfos.length>0">
+              <el-tag
+                v-for="(value, key) in scope.row.webcamFaceset[0].facesetInfos.slice(0,2)"
+                :key="value.facesetId"
+                type="success"
+                size="mini"
+                style="margin-right:10px"
+              >{{ value.facesetName }}</el-tag>
+              <el-badge
+                v-if="scope.row.webcamFaceset[0].facesetInfos.length > 2"
+                size="mini"
+                type="success"
+                style="margin-top:10px"
+                value="2+"
+              />
+            </div>
+            <div v-else>
+              <el-tag type="info" size="mini" style="margin-right:10px">暂未选择</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="webcamNames" label="考勤摄像头" align="left">
+          <template slot-scope="scope">
+            <div v-if="scope.row.webcamFaceset[0].webcamInfos.length>0">
+              <el-tag
+                v-for="item in scope.row.webcamFaceset[0].webcamInfos.slice(0,2)"
+                :key="item.webcamId"
+                size="mini"
+                style="margin-right:10px"
+              >{{ item.webcamName }}</el-tag>
+              <el-badge
+                v-if="scope.row.webcamFaceset[0].webcamInfos.length > 2"
+                size="mini"
+                type="primary"
+                style="margin-top:10px"
+                value="2+"
+              />
+            </div>
+            <div v-else>
+              <el-tag type="info" size="mini" style="margin-right:10px">暂未选择</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="任务操作" align="center" width="220px">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleCheckCurd('LOOK_TASK', scope.row)">详情</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleCheckCurd('EXPORT_TASK', scope.row)"
+            >导出</el-button>
+            <el-button type="danger" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    
     <Sortpage
       :total-pages="totalPages"
       :sort-show="sortShow"
@@ -268,11 +271,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.attendanceTable {
-  max-height: calc(100vh - 180px);
-  min-height: calc(100vh - 180px);
-  overflow-y: auto;
-}
+
 </style>
 
 <style>

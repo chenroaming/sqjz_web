@@ -1,54 +1,56 @@
 <template>
   <div>
-    <Searcharea
-      v-model="searchData"
-      @handleSearch="__init(searchData, 1)"
-      @refreshData="handleRefresh"
-    >
-      <div slot="extraArea">
-        <el-input v-model="searchData" placeholder="请输入用户名称" style="width:200px" />
-      </div>
-      <div slot="eventArea">
-        <el-button
-          icon="el-icon-plus"
-          style="margin:0 10px 0 10px"
-          @click="handleUserCurd('ADD_USER')"
-          v-if="checkPermission(['admin:operate'])"
-        >新增用户</el-button>
-      </div>
-    </Searcharea>
-    <el-table v-loading="isLoading" :data="tableData" class="userTable" style="width: 100%">
-      <el-table-column prop="name" label="姓名" align="center" />
-      <el-table-column prop="username" label="账号" align="center">
-        <template slot-scope="scope">
-          <span v-if="checkPermission(['admin:operate'])" style="cursor:pointer" @click="handleUserCurd('CHANGE_USER_INFO', scope.row)">
-            {{ scope.row.username }}
-            <i class="el-icon-edit-outline" />
-          </span>
-          <span v-else>
-            {{ scope.row.username }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="communityName" label="所属区域" align="center"></el-table-column>
-      <el-table-column prop="loginIp" label="登录时间" align="center">
-        <template slot-scope="scope">
-          <span v-if="scope.row.loginDate">{{ scope.row.loginDate | setLastLoginTime }}</span>
-          <el-tag v-if="!scope.row.loginDate" type="info">暂无</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="isEnabled" label="是否可用" align="center">
-        <template slot-scope="scope">
-          <el-tag>是</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="操作" width="300">
-        <template slot-scope="scope">
-          <el-button size="small" v-if="checkPermission(['admin:operate'])" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
-          <el-button size="small" v-if="checkPermission(['admin:operate'])" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="tableBox">
+      <Searcharea
+        v-model="searchData"
+        @handleSearch="__init(searchData, 1)"
+        @refreshData="handleRefresh"
+      >
+        <div slot="extraArea">
+          <el-input v-model="searchData" placeholder="请输入用户名称" style="width:200px" />
+        </div>
+        <div slot="eventArea">
+          <el-button
+            icon="el-icon-plus"
+            style="margin:0 10px 0 10px"
+            @click="handleUserCurd('ADD_USER')"
+            v-if="checkPermission(['admin:operate'])"
+          >新增用户</el-button>
+        </div>
+      </Searcharea>
+      <el-table v-loading="isLoading" :data="tableData" class="tableShadow" :header-cell-style="rowClass">
+        <el-table-column prop="name" label="姓名" align="center" />
+        <el-table-column prop="username" label="账号" align="center">
+          <template slot-scope="scope">
+            <span v-if="checkPermission(['admin:operate'])" style="cursor:pointer" @click="handleUserCurd('CHANGE_USER_INFO', scope.row)">
+              {{ scope.row.username }}
+              <i class="el-icon-edit-outline" />
+            </span>
+            <span v-else>
+              {{ scope.row.username }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="communityName" label="所属区域" align="center"></el-table-column>
+        <el-table-column prop="loginIp" label="登录时间" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.loginDate">{{ scope.row.loginDate | setLastLoginTime }}</span>
+            <el-tag v-if="!scope.row.loginDate" type="info">暂无</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isEnabled" label="是否可用" align="center">
+          <template slot-scope="scope">
+            <el-tag>是</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作" width="300">
+          <template slot-scope="scope">
+            <el-button size="small" v-if="checkPermission(['admin:operate'])" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
+            <el-button size="small" v-if="checkPermission(['admin:operate'])" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <SortPage
       :sort-show="sortShow"
@@ -149,7 +151,6 @@ export default {
           this.tableData = res.data.list;
           this.pageNumber = res.data.pageNumber;
           this.sortpagesTotal = res.data.total;
-          this.$message({ type: "success", message: "获取成功" });
           this.handleResetSort();
         })
         .catch(res => {
@@ -242,9 +243,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.userTable {
-  max-height: calc(100vh - 180px);
-  min-height: calc(100vh - 180px);
-  overflow-y: auto;
-}
+
 </style>

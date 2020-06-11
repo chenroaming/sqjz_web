@@ -24,6 +24,7 @@ export function changeAuth(authorityId, authorityName, authorityCode, authorityU
   return request({
     url: '/face_recognition/webClass/authority/update.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       authorityId,
       authorityName,
@@ -42,6 +43,7 @@ export function deleteAuth(authorityId) {
   return request({
     url: '/face_recognition/webClass/authority/delete.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       authorityId,
     })
@@ -57,6 +59,7 @@ export function addAuth(authorityName, authorityCode, parentId, authorityUrl) {
   return request({
     url: '/face_recognition/webClass/authority/save.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       authorityName,
       authorityCode,

@@ -28,6 +28,7 @@ export function deleteArea2(communityId = '') {
   return request({
     url: '/community_correction/webClass/community/delete.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       communityId
     })
@@ -43,6 +44,7 @@ export function addArea2(communityName = '', longitude, latitude, radius = '2000
   return request({
     url: '/community_correction/webClass/community/add.jhtml',
     method: 'post',
+    isShowTips:true,
     data: Qs.stringify({
       communityName,
       longitude,

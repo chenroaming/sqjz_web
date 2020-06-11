@@ -91,8 +91,6 @@ const dateList = [
   { id: "friday", value: " 星期五" },
   { id: "saturday", value: " 星期六" }
 ];
-
-import { getFacelibaryList } from "@/api/facelibary";
 import { addTask } from "@/api/attendance";
 export default {
   props: {
@@ -149,21 +147,6 @@ export default {
   },
 
   methods: {
-    receiveTaskInfo() {
-      this.getFacesetList();
-    },
-
-    // 获取人脸库列表
-    getFacesetList() {
-      getFacelibaryList("task", "", "", "")
-        .then(res => {
-          this.facesetList = res.data.List;
-        })
-        .catch(() => {
-          this.facesetList = [];
-          this.$message({ type: "error", message: "绑定人脸库集获取失败！" });
-        });
-    },
 
     // 提交表单
     submitForm(formName) {
