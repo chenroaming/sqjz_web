@@ -79,7 +79,7 @@
 
 <template>
   <div>
-    <div class="tableBox">
+    <el-scrollbar class="scrollbar">
       <el-button v-if="checkPermission(['educationInfo:operate'])" type="primary" @click="add" style="margin: 10px;">
         <i class="el-icon-circle-plus"></i>
         新增教育资料
@@ -119,7 +119,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
     <div style="margin-top: 20px;text-align: right;">
       <el-pagination
         @current-change="handleCurrentChange"

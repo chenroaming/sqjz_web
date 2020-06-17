@@ -29,20 +29,19 @@ export default {
 
   methods: {
     getDate() {
-      var myDate = new Date();
+      const myDate = new Date();
       //获取当前年
-      var year = myDate.getFullYear();
+      const year = myDate.getFullYear();
       //获取当前月
-      var month = myDate.getMonth() + 1;
+      const month = myDate.getMonth() + 1;
       //获取当前日
-      var date = myDate.getDate();
-      var h = myDate.getHours(); //获取当前小时数(0-23)
-      var m = myDate.getMinutes(); //获取当前分钟数(0-59)
-      var s = myDate.getSeconds();
+      const date = myDate.getDate();
+      const h = myDate.getHours(); //获取当前小时数(0-23)
+      const m = myDate.getMinutes(); //获取当前分钟数(0-59)
+      const s = myDate.getSeconds();
       //获取当前时间
-      var now =
-        year + "年" + this.conver(month) + "月" + this.conver(date) + "日";
-      // console.log(now + "时间");
+      const now =
+        `${year}年${this.conver(month)}月${this.conver(date)}日`;
       this.nowday = now;
     },
     conver(s) {
@@ -62,7 +61,6 @@ export default {
 .num_box {
   cursor: pointer;
   color: #fff;
-  /* border: 1px solid; */
   height: 95px;
   width: 80%;
   margin: 0 auto;
@@ -81,6 +79,10 @@ export default {
   display: flex;
   justify-content: right;
   align-items: baseline;
+}
+
+.span1 {
+  font-size: 14px;
 }
 </style>
 
@@ -104,8 +106,6 @@ export default {
             </span>
           </div>
         </div>
-        <!-- <span>在矫人数：</span>
-        <span>{{count.totalNumber}}人</span>-->
       </el-col>
       <el-col :span="8">
         <div
@@ -121,9 +121,6 @@ export default {
             </span>
           </div>
         </div>
-
-        <!-- <span>当日入矫：</span>
-        <span>{{count.correctedNumber}}人</span>-->
       </el-col>
       <el-col :span="8">
         <div
@@ -138,9 +135,6 @@ export default {
             </span>
           </div>
         </div>
-
-        <!-- <span>当日解矫：</span>
-        <span>{{count.out}}人</span>-->
       </el-col>
     </el-row>
   </el-card>

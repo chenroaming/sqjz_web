@@ -1,5 +1,5 @@
 <script>
-  import echarts from 'echarts/lib/echarts'
+  import echarts from 'echarts'
   export default {
     name: "histogram",
     props:{
@@ -89,6 +89,7 @@
         const chartBox = this.$refs.chartBox;
         const myChart = echarts.init(chartBox);
         const option = {
+          color: ['#00C1E5', '#68C556', '#9E6D43', '#EBC24C', '#E6557B','#5BDA9A','#7657F8'],
           tooltip: {
           trigger: 'axis',
           axisPointer: {            // 坐标轴指示器，坐标轴触发有效

@@ -59,7 +59,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         changeOrigin: true,
       },
       '/correct': {
-        target: 'http://139.9.63.67:8081',
+        target: 'https://www.ecorrect.cn/correct',
         // target: 'http://139.9.45.194:8091',
         changeOrigin: true,
       },

@@ -84,12 +84,12 @@ export default {
           <!-- <el-button type="primary" disabled>每月评估报告</el-button> -->
         </el-col>
         <el-col :span="8">
-          <div class="c_cz" @click="Visualization">
+          <a class="c_cz" href="https://www.ecorrect.cn/#/Visualization" target="_blank">
             <img src="../../../assets/index_images/ksh.png" style="width:50px;height:50px;" />
             <span style="margin-top:15px;">
               <b>可视化平台</b>
             </span>
-          </div>
+          </a>
         </el-col>
       </el-row>
     </div>

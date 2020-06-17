@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div class="tableBox">
+    <el-scrollbar class="scrollbar">
       <div class="select-box">
         <el-button  v-if="checkPermission(['sociallyUsefulActivity:operate'])" type="primary" @click="add">
           <i class="el-icon-circle-plus"></i>
           发布活动
         </el-button>
       </div>
+      
       <el-table
         v-loading="isLoading"
         :data="tableData"
@@ -17,7 +18,7 @@
         <el-table-column prop="createDate" label="活动创建日期" width="150px" align="center"></el-table-column>
         <el-table-column prop="type" label="类型" align="center">
           <template slot-scope="scope">
-            <el-tag>{{scope.row.type}}</el-tag>
+            <el-tag :type="scope.row.color2">{{scope.row.type}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="content" label="活动内容" width="150px" align="center"></el-table-column>
@@ -26,10 +27,10 @@
         <el-table-column prop="endDate" label="活动结束日期" width="150px" align="center"></el-table-column> 
         <el-table-column prop="state" label="状态" align="center">
           <template slot-scope="scope">
-            <el-tag>{{scope.row.state}}</el-tag>
+            <el-tag :type="scope.row.color">{{scope.row.state}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="communityName" width="150px" label="社区名称" align="center"></el-table-column>
+        <el-table-column prop="communityName" width="150px" label="所属区域" align="center"></el-table-column>
         <el-table-column prop="signUpNum" label="报名人数" align="center"></el-table-column>
         <el-table-column label="操作" width="150px" fixed="right" align="center">
           <template slot-scope="scope">
@@ -44,7 +45,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
     <div style="margin-top: 20px;text-align: right;">
       <el-pagination
         @current-change="handleCurrentChange"
@@ -79,8 +80,8 @@ export default {
       currentPage:1,
       totalPage:1,
       userId:'',
-      typeArr:[{index:0,label:'选派'},{index:1,label:'自助报名'}],
-      stateArr:[{index:0,label:'未开始'},{index:1,label:'已开始'},{index:2,label:'已结束'}],
+      typeArr:[{index:0,type:'success',label:'选派'},{index:1,type:'warning',label:'自助报名'}],
+      stateArr:[{index:0,type:'warning',label:'未开始'},{index:1,type:'success',label:'已开始'},{index:2,type:'info',label:'已结束'}],
     }
   },
   computed: {
@@ -100,7 +101,9 @@ export default {
               endDate:this.exChange(item.endDate.time),
               startDate:this.exChange(item.startDate.time),
               type:this.typeArr[item.type].label,
-              state:this.stateArr[item.state].label
+              state:this.stateArr[item.state].label,
+              color:this.stateArr[item.state].type,
+              color2:this.typeArr[item.type].type,
             }
           })
           this.tableData = newArr;

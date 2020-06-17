@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div class="tableBox">
+      <el-scrollbar class="scrollbar">
         <div class="select-box">
           <el-button-group>
             <el-button type="primary" v-for="(item,index) in buttonGroup" :key="index" plain :class="applyType === item.index ? 'isSelect' : ''" @click="changeSelect(item.index)">{{item.label}}</el-button>
@@ -11,7 +11,7 @@
         <relocation v-if="applyType === 3" :tableData="tableData" :isLoading="isLoading" @getData="getData"></relocation>
         <exemption v-if="applyType === 4 || applyType === 5 " :tableData="tableData" :isLoading="isLoading" :applyType="applyType" @getData="getData"></exemption>
         <job v-if="applyType === 6" :tableData="tableData" :isLoading="isLoading" @getData="getData"></job>
-      </div>
+      </el-scrollbar>
       <div style="margin-top: 20px;text-align: right;">
         <el-pagination
           @current-change="handleCurrentChange"

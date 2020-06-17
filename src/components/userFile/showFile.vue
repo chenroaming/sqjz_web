@@ -4,19 +4,20 @@
             title="查看"
             :visible.sync="centerDialogVisible"
             width="50%"
+            fullscreen
             center 
             append-to-body>
-            <div style="height: 350px;" v-if="showType == 1">
+            <div style="height: 80vh;" v-if="showType == 1">
               <el-image
                 style="width: 100%;height: 100%;"
                 :src="picSrc"
                 fit="fill">
               </el-image>
             </div>
-            <div style="height: 350px;"  v-if="showType == 2">
+            <div style="height: 80vh;"  v-if="showType == 2">
               <iframe :src="picSrc" width="100%" height="100%" frameborder="0" style="object-fit: fill;"></iframe>
             </div>
-            <div style="height: 350px;"  v-if="showType == 3">
+            <div style="height: 80vh;"  v-if="showType == 3">
                 <iframe :src="picSrc" width="100%" height="100%" frameborder="0" style="object-fit: fill;"></iframe>
             </div>
             <span slot="footer" class="dialog-footer">

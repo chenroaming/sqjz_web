@@ -6,7 +6,11 @@ import trackMap from "@/components/trackMap/trackMap.vue";
 import authmix from "@/utils/authmix";
 import sortmix from "@/utils/sortmix";
 
-import { getCommunityUserList, delCorrectionalpersonnel } from "@/api/user";
+import {
+  getCommunityUserList,
+  delCorrectionalpersonnel,
+  getUsercommunity
+} from "@/api/user";
 import { updateInterface } from "@/api/face";
 import { computedFormatTime } from "@/utils/tools";
 import { mapState } from "vuex";
@@ -22,21 +26,23 @@ export default {
   filters: {
     // 格式化登录时间
     setLastLoginTime(timeObj) {
-      if (timeObj === null) return "";
-      return computedFormatTime(timeObj.time);
+      if (timeObj === null) return ""
+      return computedFormatTime(timeObj.time)
     }
   },
   mixins: [authmix, sortmix],
 
   data() {
     return {
+      options: [],
       showMap: false,
       // 控制地图抓取显示
       sortpagesTotal: 0, // 数据总数量
       currentPages: 1, // 当前页数
       searchData: {
         username: "",
-        identityCard: ""
+        identityCard: "",
+        communityId: ""
       }, // 搜索框内容
       tableData: [], // 用户表格数据
       // userModalVisible: false,
@@ -47,12 +53,12 @@ export default {
         adminId: 0,
         username: "",
         name: ""
-      },
+      }
     };
   },
 
   created() {
-    // 获取用户列表
+    this.$store.getters.roleType < 5 && this.getUsercommunity()// 获取司法所列表,当用户rolyType小于5时才去获取
     this.__init();
   },
 
@@ -60,16 +66,31 @@ export default {
   computed: {
     ...mapState({
       roleType: state => state.user.roleType
-    })
+    }),
+    canChoice(){
+      return this.$store.getters.roleType < 5 ? true : false
+    }
   },
 
   methods: {
+    // 获取可查看司法所
+    getUsercommunity() {
+      getUsercommunity()
+        .then(res => {
+          this.options = res.data.list;
+        })
+        .catch(err => {
+          this.options = [];
+          this.searchData.communityId = "";
+        });
+    },
     // 获取用户列表
     __init(pageNumber = this.pageNumber) {
       getCommunityUserList(
         this.searchData.username,
         this.searchData.identityCard,
-        pageNumber
+        pageNumber,
+        this.searchData.communityId
       )
         .then(res => {
           this.tableData = res.data.list;
@@ -93,11 +114,11 @@ export default {
         // eslint-disable-next-line no-case-declarations
         case "CHANGE_USER_INFO":
           const userInfo = { ...payload };
-          this.$router.push({ name: 'change-user', params : userInfo })
+          this.$router.push({ name: "change-user", params: userInfo });
           // this.userModalVisible = true;
           break;
         case "DELETE_USER":
-          this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+          this.$confirm("是否确认删除?", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
@@ -106,9 +127,10 @@ export default {
               // alert("确认");
               // return false;
               delCorrectionalpersonnel(payload.userId)
-                .then(() => {
-                  this.$message({ type: "success", message: "删除成功" });
-                  this.__init();
+                .then(res => {
+                  if (res.data.state == 100){
+                    this.__init();
+                  }
                 })
                 .catch(() => {});
             })
@@ -137,7 +159,7 @@ export default {
 
     // 分页切换
     sizeChange(nums) {
-      this.__init(nums)
+      this.__init(nums);
     },
 
     // 刷新
@@ -145,7 +167,7 @@ export default {
       this.searchData = {
         username: "",
         identityCard: ""
-      } // 搜索框内容;
+      }; // 搜索框内容;
       this.__init("", 1);
     },
 
@@ -168,37 +190,81 @@ export default {
 
 <template>
   <div>
-    <div style="overflow: auto;height: calc( 100vh - 115px )">
-      <Searcharea v-model="searchData" @handleSearch="__init(1)" @refreshData="handleRefresh">
+    <el-scrollbar class="scrollbar">
+      <Searcharea
+        v-model="searchData"
+        @handleSearch="__init(1)"
+        @refreshData="handleRefresh"
+      >
         <div slot="extraArea">
+          <span v-if="canChoice">请选择司法所：</span>
+          <el-select
+            clearable
+            v-model="searchData.communityId"
+            placeholder="请选择司法所"
+            style="width:150px;margin-right:10px"
+            v-if="canChoice"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.communityId"
+              :label="item.communityName"
+              :value="item.communityId"
+            >
+            </el-option>
+          </el-select>
+          <span>人员姓名：</span>
           <el-input
             v-model="searchData.username"
             placeholder="请输入矫正人员姓名"
-            style="width:200px; margin-right:20px;"
+            style="width:150px; margin-right:20px;"
           />
         </div>
-    
+
         <div slot="extraArea">
-          <el-input v-model="searchData.identityCard" placeholder="请输入身份证号码" style="width:200px" />
-        </div>
-        <div slot="eventArea">
+          <span>人员身份证：</span>
+          <el-input
+            v-model="searchData.identityCard"
+            placeholder="请输入身份证号码"
+            style="width:150px"
+          />
           <el-button
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleUserCurd('ADD_USER')"
             v-if="checkPermission(['user:operate'])"
-          >新增矫正人员</el-button>
+            >新增矫正人员</el-button
+          >
         </div>
       </Searcharea>
-      
-      <el-table v-loading="isLoading" :header-cell-style="rowClass" :data="tableData" class="tableShadow">
-        <el-table-column prop="areaName" label="人员照片" width="180" align="center">
+
+      <el-table
+        v-loading="isLoading"
+        :header-cell-style="rowClass"
+        :data="tableData"
+        class="tableShadow"
+      >
+        <el-table-column
+          prop="areaName"
+          label="人员照片"
+          width="180"
+          align="center"
+        >
           <template slot-scope="scope">
-            <img :src="scope.row.picPath" alt style="width:80px;height:100px;cursor:pointer;" />
+            <img
+              :src="scope.row.picPath"
+              alt
+              style="width:80px;height:100px;cursor:pointer;"
+            />
           </template>
         </el-table-column>
-  
-        <el-table-column prop="username" width="100" label="人员姓名" align="center">
+
+        <el-table-column
+          prop="username"
+          width="100"
+          label="人员姓名"
+          align="center"
+        >
           <template slot-scope="scope">
             <!-- <span v-if="checkPermission(['user:operate'])" style="cursor:pointer" @click="handleUserCurd('CHANGE_USER_INFO', scope.row)">
               {{ scope.row.name }}
@@ -209,8 +275,13 @@ export default {
             </span>
           </template>
         </el-table-column>
-  
-        <el-table-column prop="name" label="身份证号码" width="180" align="center">
+
+        <el-table-column
+          prop="name"
+          label="身份证号码"
+          width="180"
+          align="center"
+        >
           <template slot-scope="scope">
             <span style="cursor:pointer">
               {{ scope.row.identityCard }}
@@ -218,7 +289,7 @@ export default {
             </span>
           </template>
         </el-table-column>
-  
+
         <el-table-column prop="name" label="居住地址" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.location != ''" style="cursor:pointer">
@@ -228,16 +299,26 @@ export default {
             <el-tag v-if="scope.row.location == ''" type="info">暂无</el-tag>
           </template>
         </el-table-column>
-  
-        <el-table-column prop="livingArea" label="居住小区" width="180" align="center">
+
+        <el-table-column
+          prop="livingArea"
+          label="居住小区"
+          width="180"
+          align="center"
+        >
           <template slot-scope="scope">
             <span v-if="scope.row.livingArea != ''" style="cursor:pointer">
               {{ scope.row.livingArea }}
             </span>
           </template>
         </el-table-column>
-  
-        <el-table-column prop="communityName" label="所属机构" width="180" align="center">
+
+        <el-table-column
+          prop="communityName"
+          label="所属机构"
+          width="180"
+          align="center"
+        >
           <template slot-scope="scope">
             <span v-if="scope.row.communityName != ''" style="cursor:pointer">
               {{ scope.row.communityName }}
@@ -250,26 +331,34 @@ export default {
               size="small"
               type="primary"
               @click="handleUserCurd('CHANGE_USER_INFO', scope.row)"
-            >查看详情</el-button>          
+              >查看详情</el-button
+            >
+            <el-button
+              size="small"
+              type="warning"
+              @click="handleUserCurd('DELETE_USER', scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
-    </div>
-    
+    </el-scrollbar>
+
     <el-pagination
       @current-change="sizeChange"
       :current-page.sync="currentPage"
       :page-size="10"
       layout="total, prev, pager, next"
       :total="sortpagesTotal"
-      style="float: right;">
+      style="float: right;"
+    >
     </el-pagination>
     <trackMap ref="trackMap"></trackMap>
     <Adduser
       ref="adduserrefs"
       :dialog-visible="addUserVisible"
       :role-type="roleType"
-      @closeModal="addUserVisible=false"
+      @closeModal="addUserVisible = false"
       @submitSuccess="handleUserSuccess('ADD_USER_INFO_SUCCESS')"
     />
   </div>

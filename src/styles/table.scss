@@ -1,11 +1,14 @@
-.tableBox {
-  overflow: auto;
-  height: calc( 100vh - 115px )
-}
-
 .tableShadow {
   width: 98%;
   margin: 0 auto;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
   margin-bottom: 30px;
+}
+
+.scrollbar {
+  height: calc( 100vh - 115px );
+}
+
+.el-scrollbar__wrap {
+  overflow-x: hidden;
 }

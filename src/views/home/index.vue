@@ -81,7 +81,11 @@ export default {
       }
     });
   },
-  methods: {}
+  methods: {
+    listen(e){
+      console.log(e)
+    }
+  }
 };
 </script>
 

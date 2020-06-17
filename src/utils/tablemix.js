@@ -11,6 +11,10 @@ const mixin = {
       const myDate = new Date(time)
       return `${myDate.getFullYear()}-${(myDate.getMonth()+1)}-${myDate.getDate()}   ${myDate.getHours()}:${myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()}`
     },
+    exChange2(time){
+      const myDate = new Date(time)
+      return `${myDate.getFullYear()}-${(myDate.getMonth()+1)}-${myDate.getDate()}`
+    },
     getColor(type){
       const action = new Map([
         [0,'info'],

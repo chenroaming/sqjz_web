@@ -40,18 +40,6 @@ const user = {
   },
 
   actions: {
-    // 登录
-    // Login({ commit }, userInfo) {
-    //   const username = userInfo.username.trim()
-    //   return new Promise((resolve, reject) => {
-    //     login(username, userInfo.password, userInfo.pinCode).then(response => {
-    //       resolve()
-    //       setLogin()
-    //     }).catch(error => {
-    //       reject(error)
-    //     })
-    //   })
-    // },
     // 社区矫正平台接口测试
     Login2({ commit, state }, userInfo) {
       const username = userInfo.username.trim()
@@ -77,49 +65,20 @@ const user = {
         const res2 = {
           data: {
             name: '测试环境权限',
-            // authoritys: ['comprehensive:admin', 'admin:admin', 'device:admin', 'cheliang:admin']
             authoritys:[]
           }
         }
         getInfo().then(response => {
           if (response.data.state == 100){
             response.data.authorityCodes && response.data.authorityCodes.length > 0 && commit('SET_ROLES', response.data.authorityCodes)
-            // res2.data.authoritys = response.data.authorityCodes
             const data = res2.data
-            // console.log(state.roleType)
             console.log('获取当前人员的角色类型')
             const roleType_res = getroleType()
+            commit('SET_ROLE_TYPE', roleType_res)
             const communityName = getCommunityName()
             const adminName = getAdminName()
             commit('SET_NAME', adminName)
             commit('CHANGE_AREANAME',communityName);//司法所名字
-            // console.log(roleType_res)
-            // switch (roleType_res) {
-            //   case '1':
-            //     res2.data.authoritys = ['Communityuser:admin', 'attendance:admin', 'jifen:admin', 'comprehensive: admin', 'comprehensive: admin2', 'xitong:admin', 'xitong:admin1']
-            //     // commit('SET_NAME', '超级管理员')
-            //     break
-            //   case '2':
-            //     res2.data.authoritys = ['Communityuser:admin', 'attendance:admin', 'jifen:admin', 'comprehensive: admin', 'comprehensive: admin2', 'xitong:admin', 'xitong:admin1']
-            //     // commit('SET_NAME', '省级管理员')
-            //     break
-            //   case '3':
-            //     res2.data.authoritys = ['Communityuser:admin', 'attendance:admin', 'jifen:admin', 'comprehensive: admin', 'comprehensive: admin2', 'xitong:admin', 'xitong:admin1']
-            //     // commit('SET_NAME', '市级管理员')
-            //     break
-            //   case '4':
-            //     res2.data.authoritys = ['Communityuser:admin', 'attendance:admin', 'jifen:admin', 'comprehensive: admin', 'comprehensive: admin2', 'xitong:admin', 'xitong:admin1']
-            //     // commit('SET_NAME', '区级管理员')
-            //     break
-            //   case '5':
-            //     res2.data.authoritys = ['Communityuser:admin', 'attendance:admin', 'jifen:admin', 'comprehensive: admin', 'xitong:admin']
-            //     // commit('SET_NAME', '司法所管理员')
-            //     break
-            //   case '6':
-            //     res2.data.authoritys = ['Communityuser:admin', 'attendance:admin', 'jifen:admin', 'comprehensive: admin']
-            //     // commit('SET_NAME', '司法人员')
-            //     break
-            // }
             setAccount(data.name)
             commit('SET_AVATAR', 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png')
           }
@@ -154,7 +113,6 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout().then(res => {
-          console.log(res)
           commit('SET_ROLES', [])
           removeAccount()
           removeFlag()
@@ -170,7 +128,7 @@ const user = {
           removeToken()
           removeSetLogin()
           removeroleType()
-          resolve()
+          reject()
         })
       })
     },

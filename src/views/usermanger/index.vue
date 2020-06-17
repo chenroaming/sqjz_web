@@ -1,21 +1,19 @@
 <template>
   <div>
-    <div class="tableBox">
+    <el-scrollbar class="scrollbar">
       <Searcharea
         v-model="searchData"
         @handleSearch="__init(searchData, 1)"
         @refreshData="handleRefresh"
       >
         <div slot="extraArea">
-          <el-input v-model="searchData" placeholder="请输入用户名称" style="width:200px" />
-        </div>
-        <div slot="eventArea">
           <el-button
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleUserCurd('ADD_USER')"
             v-if="checkPermission(['admin:operate'])"
           >新增用户</el-button>
+          <el-input v-model="searchData" placeholder="请输入用户名称" style="width:200px" />
         </div>
       </Searcharea>
       <el-table v-loading="isLoading" :data="tableData" class="tableShadow" :header-cell-style="rowClass">
@@ -31,6 +29,7 @@
             </span>
           </template>
         </el-table-column>
+        <el-table-column prop="roleName" label="角色名称" align="center"></el-table-column>
         <el-table-column prop="communityName" label="所属区域" align="center"></el-table-column>
         <el-table-column prop="loginIp" label="登录时间" align="center">
           <template slot-scope="scope">
@@ -50,7 +49,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
 
     <SortPage
       :sort-show="sortShow"
@@ -128,6 +127,7 @@ export default {
         name: ""
       },
       roleObj:{},
+      roleNameArr:['','系统管理员','省级管理员','市级管理员','区级管理员','司法所管理员','司法人员','协矫人员',],
     };
   },
 
@@ -147,8 +147,12 @@ export default {
     __init(username = "", pageNumber = this.pageNumber) {
       getUserList2(username, pageNumber)
         .then(res => {
-          console.log(res);
-          this.tableData = res.data.list;
+          this.tableData = res.data.list.map(item => {
+            return {
+              ...item,
+              roleName:this.roleNameArr[item.roleType]
+            }
+          })
           this.pageNumber = res.data.pageNumber;
           this.sortpagesTotal = res.data.total;
           this.handleResetSort();

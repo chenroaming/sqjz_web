@@ -7,16 +7,14 @@
         @handleSearch="__init(searchData)"
       >
         <div slot="extraArea">
-          <el-input v-model="searchData" placeholder="请输入任务名称" style="width:200px" />
-        </div>
-        <span slot="eventArea">
           <el-button
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleCheckCurd('ADD_TASK')"
             v-if="checkPermission(['clock:operate'])"
           >新增报告规则</el-button>
-        </span>
+          <el-input v-model="searchData" placeholder="请输入任务名称" style="width:200px" />
+        </div>
       </Search>
       <el-table
         v-loading="isLoading"

@@ -2,10 +2,12 @@
   <div :class="classObj" class="app-wrapper">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
     <sidebar class="sidebar-container"/>
-    <div class="main-container">
-      <navbar/>
-      <app-main/>
-    </div>
+      <div class="main-container">
+        <el-scrollbar style="height: 100vh;">
+          <navbar/>
+          <app-main/>
+        </el-scrollbar>
+      </div>
   </div>
 </template>
 

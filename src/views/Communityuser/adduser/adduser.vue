@@ -111,7 +111,7 @@
           v-if="userInfo.longitude !='' && userInfo.longitude !=''"
           type="primary"
           size="mini"
-          @click="showMap = false"
+          @click="showMap = true"
         >修改区域坐标</el-button>
       </el-form-item>
       

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="tableBox">
+    <el-scrollbar class="scrollbar">
       <div class="select-box">
         <el-button-group>
           <el-button type="primary" v-for="(item,index) in buttonGroup" :key="index" plain :class="nowIndex === item.index ? 'isSelect' : ''" @click="changeSelect(item.index)">{{item.label}}</el-button>
@@ -37,7 +37,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
     <div style="margin-top: 20px;text-align: right;">
       <el-pagination
         @current-change="handleCurrentChange"

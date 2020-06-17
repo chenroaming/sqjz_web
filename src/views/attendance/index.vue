@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="overflow: auto;height: calc( 100vh - 115px )">
+    <el-scrollbar class="scrollbar">
       <Search
         :search-data="searchData"
         @refreshData="handleRefresh"
@@ -99,7 +99,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
     
     <Sortpage
       :total-pages="totalPages"

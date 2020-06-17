@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="tableBox">
+    <el-scrollbar class="scrollbar">
       <Search
         v-model="searchData"
         :placeholder="'请输入操作员'"
@@ -47,7 +47,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
     
     <Addcommunity
       ref="addcommunity"

@@ -49,7 +49,7 @@ export default {
       name = "",
       auditState = "",
       pageNumber = 1,
-      pageSize = 8
+      pageSize = 6
     ) {
       const data = {
         productName: productName,
@@ -71,7 +71,6 @@ export default {
             }
           })
           this.totalPage = res.data.total
-          console.log(this.tableData)
           return
         }
         this.tableData = []
@@ -113,31 +112,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.attendanceTable {
-  max-height: calc(100vh - 180px);
-  min-height: calc(100vh - 180px);
-  overflow-y: auto;
-}
-.title {
-  font-weight: bold;
-  font-size: 16px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline-block;
-  width: 90%;
-}
-.description {
-  display: inline-block;
-  width: 100%;
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.price {
-  color: brown;
-}
+  .attendanceTable {
+    max-height: calc(100vh - 180px);
+    min-height: calc(100vh - 180px);
+    overflow-y: auto;
+  }
+  .title {
+    font-weight: bold;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    width: 90%;
+  }
+  .description {
+    display: inline-block;
+    width: 100%;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .price {
+    color: brown;
+  }
 </style>
 
 <template>
@@ -151,39 +150,36 @@ export default {
       <h3 style="margin:0">商品管理列表</h3>
       <p v-if="!hasData" style="text-align: center;">暂无数据</p>
       <el-row :gutter="10" style="margin-top: 20px;">
-        <el-col :span="4" v-for="(item2,index2) in tableData" :key="index2">
-          <el-card style="width: 100%;height: 450px;">
-            <div
-              :title="item2.productName"
-              :style="{backgroundImage:'url('+item2.productPicPaths[0] + ')'}"
-              @click="showDetail(item2)"
-              style="height: 250px;width: 230px;cursor: pointer;background-size: 100% 100%;"
-            />
-            <div style="padding: 14px;">
-              <span class="title" :title="item2.productName">{{ item2.productName }}</span>
-              <p class="price">
-                <el-tag type="warning" size="mini">￥{{ item2.price }}</el-tag>
-                <el-tag :type="getColor(item2.auditState)" size="mini">{{ auditArr[item2.auditState] }}</el-tag>
-              </p>
-              <div class="bottom clearfix">
-                <span :title="item2.description" class="description">商品描述：{{ item2.description }}</span>
-                <el-button
-                  type="warning"
-                  size="mini"
-                  v-if="checkPermission(['productInfo:audit']) && item2.auditState == 0"
-                  @click="audit(item2.productId)"
-                >审核</el-button>
+        <transition-group name="el-fade-in-linear">
+          <el-col :span="4" v-for="(item2,index2) in tableData" :key="item2.productId">
+            <el-card style="width: 100%;height: 450px;">
+              <el-image style="cursor: pointer;height: 250px;" :title="item2.productName" :src="item2.productPicPaths[0]" @click="showDetail(item2)"></el-image>
+              <div style="padding: 14px;">
+                <span class="title" :title="item2.productName">{{ item2.productName }}</span>
+                <p class="price">
+                  <el-tag type="warning" size="mini">￥{{ item2.price }}</el-tag>
+                  <el-tag :type="getColor(item2.auditState)" size="mini">{{ auditArr[item2.auditState] }}</el-tag>
+                </p>
+                <div class="bottom clearfix">
+                  <span :title="item2.description" class="description">商品描述：{{ item2.description }}</span>
+                  <el-button
+                    type="warning"
+                    size="mini"
+                    v-if="checkPermission(['productInfo:audit']) && item2.auditState == 0"
+                    @click="audit(item2.productId)"
+                  >审核</el-button>
+                </div>
               </div>
-            </div>
-          </el-card>
-        </el-col>
+            </el-card>
+          </el-col>
+        </transition-group>
       </el-row>
     </div>
     <div v-if="hasData" style="margin-top: 20px;text-align: right;">
       <el-pagination
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage"
-        :page-size="8"
+        :page-size="6"
         layout="total, prev, pager, next"
         :total="totalPage"
       ></el-pagination>

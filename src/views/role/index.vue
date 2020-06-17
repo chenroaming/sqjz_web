@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="tableBox">
+    <el-scrollbar class="scrollbar">
       <Search :visible="false" :searBtnShow="false" v-model="searchData" @refreshData="handleRefresh">
         <span slot="extraArea">
           <el-button
@@ -42,7 +42,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-scrollbar>
     
     <Sortpage
       :totalPages="total"

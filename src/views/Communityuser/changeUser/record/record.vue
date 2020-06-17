@@ -22,7 +22,6 @@
     methods: {
       show(userId){
         this.userId = userId
-        this.drawer = true
         this.getList()
       },
       getList(pageNumber = 1){
@@ -41,6 +40,7 @@
               }
             })
             this.totalPage = res.data.total
+            this.drawer = true
             return
           }
           this.activities = []

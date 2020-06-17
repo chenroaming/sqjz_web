@@ -22,7 +22,7 @@
         <el-table-column prop="theme" label="活动主题" align="center" width="150px"></el-table-column>
         <el-table-column prop="state" label="状态" align="center">
           <template slot-scope="scope">
-            <el-tag>{{scope.row.id ? '已审核' : '未审核'}}</el-tag>
+            <el-tag :type="scope.row.id ? 'info' : 'warning'">{{scope.row.id ? '已打卡' : '未打卡'}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" fixed="right">
@@ -42,7 +42,7 @@
         </el-pagination>
       </div>
     </el-dialog>
-    <clockDetail ref="clockDetail" :detailList="detailList"></clockDetail>
+    <clockDetail ref="clockDetail" :detail="detail"></clockDetail>
     <!-- <el-dialog title="审核" append-to-body width="30%" center :visible.sync="dialogTableVisible">
       <el-radio-group v-model="radio">
         <el-radio :label="0">待审核</el-radio>
@@ -78,7 +78,7 @@
         totalPage:0,
         tableData:[],
         stateArr:[{index:0,label:'待审核'},{index:1,label:'审核通过'},{index:2,label:'审核不通过'}],
-        detailList:[],
+        detail:{},
         radio:'',
         nowId:'',
         dialogTableVisible:false,
@@ -125,7 +125,7 @@
                 endDate:this.exChange(item.endDate.time)
               }
             })
-            this.detailList = newDetailList;
+            this.detail = newDetailList[0];
             this.$refs.clockDetail.show();
           }
         })
