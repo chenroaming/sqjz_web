@@ -7,8 +7,7 @@
             v-for="item in options"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </el-option>
+            :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="版本类型">
@@ -17,27 +16,26 @@
             v-for="item in options2"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </el-option>
+            :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="版本号">
-        <el-input v-model="form.version" style="width: 300px;"></el-input>
+        <el-input v-model="form.version" style="width: 300px;"/>
       </el-form-item>
       <el-form-item label="更新日志">
-        <el-input type="textarea" v-model="form.updateLog" style="width: 300px;"></el-input>
+        <el-input v-model="form.updateLog" type="textarea" style="width: 300px;"/>
       </el-form-item>
       <el-form-item label="更新文件">
         <el-upload
-          class="upload-demo"
-          drag
-          action="/community_correction/webClass/versionFile/add.jhtml"
           :auto-upload="false"
           :on-change="selectFile"
           :on-exceed="exceed"
-          style="width: 300px;"
-          :limit=1>
-          <i class="el-icon-upload"></i>
+          :limit="1"
+          class="upload-demo"
+          drag
+          action="/community_correction/webClass/versionFile/add.jhtml"
+          style="width: 300px;">
+          <i class="el-icon-upload"/>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         </el-upload>
       </el-form-item>
@@ -49,22 +47,22 @@
 </template>
 
 <script>
-import { versionFile } from "@/api/versionFile";
+import { versionFile } from '@/api/versionFile'
 export default {
-  name: "versionFile",
-  components:{
-    
+  name: 'VersionFile',
+  components: {
+
   },
   data() {
     return {
-      options:[{value:1,label:'在矫通'},{value:2,label:'矫务通'}],
-      options2:[{value:1,label:'安卓'},{value:2,label:'苹果'}],
-      form:{
-        appType:'',
-        versionType:'',
-        version:'',
-        updateLog:'',
-        file:null
+      options: [{ value: 1, label: '在矫通' }, { value: 2, label: '矫务通' }],
+      options2: [{ value: 1, label: '安卓' }, { value: 2, label: '苹果' }],
+      form: {
+        appType: '',
+        versionType: '',
+        version: '',
+        updateLog: '',
+        file: null
       }
     }
   },
@@ -72,31 +70,31 @@ export default {
 
   },
   mounted() {
-    
+
   },
   methods: {
-    submit(){
-      const pack = new FormData();
-      pack.append('appType',this.form.appType);
-      pack.append('versionType',this.form.versionType);
-      pack.append('version',this.form.version);
-      pack.append('updateLog',this.form.updateLog);
-      pack.append('file',this.form.file);
+    submit() {
+      const pack = new FormData()
+      pack.append('appType', this.form.appType)
+      pack.append('versionType', this.form.versionType)
+      pack.append('version', this.form.version)
+      pack.append('updateLog', this.form.updateLog)
+      pack.append('file', this.form.file)
       versionFile(pack).then(res => {
-        console.log(res.data);
+        console.log(res.data)
       })
-      .catch(err => {
-        console.log(err)
-      })
+        .catch(err => {
+          console.log(err)
+        })
     },
-    selectFile(file){
-      this.form.file = file.raw;
+    selectFile(file) {
+      this.form.file = file.raw
     },
-    exceed(){
-      this.$message.warning('最多只能选择一个文件！，请删除后重新选择！');
-    },
+    exceed() {
+      this.$message.warning('最多只能选择一个文件！，请删除后重新选择！')
+    }
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

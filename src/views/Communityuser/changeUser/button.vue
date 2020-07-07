@@ -1,80 +1,81 @@
 <script>
-import trackMap from "@/components/trackMap/trackMap.vue"
-import record from "./record/record.vue"
-import wrinfo from "./record/wrinfo.vue"
-import ramdomTask from "./record/ramdomTask.vue"
-import warninginfo from "./record/warninginfo.vue"
-import faceInfo from "./record/faceInfo.vue"
+import trackMap from '@/components/trackMap/trackMap'
+import record from './record/record'
+import wrinfo from './record/wrinfo'
+import ramdomTask from './record/ramdomTask'
+import warninginfo from './record/warninginfo'
+import faceInfo from './record/faceInfo'
+import resetPhone from './record/resetPhone'
+import evaluationInfo from './record/evaluationInfo'
+import monthReport from './record/monthReport'
+import authmix from '@/utils/authmix'
+// import test from './record/test'
 export default {
-  name: "buttonBox",
-  props: {
-    userInfo: {
-      type: Object,
-      default: () => {}
-    }
-  },
+  name: 'ButtonBox',
   components: {
     trackMap,
     record,
     wrinfo,
     ramdomTask,
     warninginfo,
-    faceInfo
+    faceInfo,
+    resetPhone,
+    evaluationInfo,
+    monthReport
+    // test
+  },
+  mixins: [authmix],
+  props: {
+    userInfo: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data() {
     return {
-      userId: "",
-      bodyStyle:{
+      isLoading: '',
+      bodyStyle: {
         padding: '10px'
-      }
-    };
+      },
+      buttonArr: [
+        // { span: 8, item: 'trackMap', picSrc: require('../../../assets/index_images/dz.png'), auth: 'user:findTrackRecord', text: '查看轨迹' },
+        { span: 8, item: 'record', picSrc: require('../../../assets/index_images/pj.png'), auth: 'user:admin', text: '日常报告' },
+        { span: 8, item: 'wrinfo', picSrc: require('../../../assets/index_images/sm.png'), auth: 'user:admin', text: '书面报告' },
+        { span: 8, item: 'ramdomTask', picSrc: require('../../../assets/index_images/sj.png'), auth: 'user:admin', text: '随机抽查' },
+        { span: 8, item: 'warninginfo', picSrc: require('../../../assets/index_images/wg.png'), auth: 'user:admin', text: '违规预警' },
+        { span: 8, item: 'faceInfo', picSrc: require('../../../assets/index_images/rl.png'), auth: 'user:admin', text: '人脸识别' },
+        { span: 8, item: 'evaluationInfo', picSrc: require('../../../assets/index_images/xl.png'), auth: 'user:admin', text: '心理测评' },
+        { span: 8, item: 'monthReport', picSrc: require('../../../assets/index_images/yd.svg'), auth: 'user:admin', text: '月度报告' }
+      ]
+    }
+  },
+  computed: {
+    filterList() {
+      return this.buttonArr
+        .filter(item => this.checkPermission([item.auth])) // 按钮根据权限过滤显示
+    }
   },
   methods: {
     handleUserCurd(modalType) {
-      const { userId } = this.userInfo
-      const action = new Map([
-        ["LOOK_TRACK",() => {//轨迹记录
-          const authInfo = {
-            userId: userId,
-            name: this.userInfo.name
-          };
-          this.$refs.trackMap.show(authInfo)
-        }],
-        ["LOOK_COUNT",() => {//日常报告记录
-          this.$refs.record.show(userId)
-        }],
-        ["LOOK_WRINFO",() => {//书面报告记录
-          this.$refs.wrinfo.show(userId)
-        }],
-        ["LOOK_RAMDOMTask",() => {//随机抽查记录
-          this.$refs.ramdomTask.show(userId)
-        }],
-        ["LOOK_WRANINGINFO",() => {//违规预警记录
-          this.$refs.warninginfo.show(userId)
-        }],
-        ["LOOK_FACEINFO",() => {//人脸识别记录
-          this.$refs.faceInfo.show(userId)
-        }],
-      ])
-      return action.get(modalType)()
+      this.isLoading = modalType
+      const { userId, name } = this.userInfo
+      if (modalType === 'trackMap') { // 轨迹记录比较特殊，单独处理
+        const authInfo = {
+          userId: userId,
+          name: name
+        }
+        this.$refs[modalType].show(authInfo)
+        return true
+      }
+      this.$refs[modalType].show()
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
   .box-card {
     width: 100%;
-  }
-  .r_c {
-    display: flex;
-    justify-content: right;
-    align-items: baseline;
-  }
-  .c_c {
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
   .c_cz {
     border-radius: 10px;
@@ -89,91 +90,38 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  .el-row {
+  .el-col {
     margin-bottom: 10px;
   }
 </style>
 
 <template>
-  <el-card class="box-card" :body-style="bodyStyle" shadow="never">
+  <el-card :body-style="bodyStyle" class="box-card" shadow="never">
     <div slot="header">
       <span>操作</span>
     </div>
     <el-row :gutter="5">
-      <el-col :span="8">
-        <div class="c_cz" @click="handleUserCurd('LOOK_TRACK')">
+      <el-col v-for="item in filterList" :span="item.span" :key="item.item">
+        <div v-loading="isLoading === item.item" class="c_cz" @click="handleUserCurd(item.item)">
           <img
-            src="../../../assets/index_images/dz.png"
+            :src="item.picSrc"
             style="width:20px;height:20px;"
-          />
+          >
           <span style="margin-left:5px">
-            <b>查看轨迹</b>
+            <b>{{ item.text }}</b>
           </span>
         </div>
       </el-col>
-      <el-col :span="8">
-        <div class="c_cz" @click="handleUserCurd('LOOK_COUNT')">
-          <img
-            src="../../../assets/index_images/pj.png"
-            style="width:20px;height:20px;"
-          />
-          <span style="margin-left:5px">
-            <b>日常报告</b>
-          </span>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="c_cz" @click="handleUserCurd('LOOK_WRINFO')">
-          <img
-            src="../../../assets/index_images/sm.png"
-            style="width:20px;height:20px;"
-          />
-          <span style="margin-left:5px">
-            <b>书面报告</b>
-          </span>
-        </div>
-      </el-col>
+      <!-- <resetPhone :user-id="userInfo.userId"/> -->
+      <!-- <test/> -->
     </el-row>
-    <el-row :gutter="5">
-      <el-col :span="8">
-        <div class="c_cz" @click="handleUserCurd('LOOK_RAMDOMTask')">
-          <img
-            src="../../../assets/index_images/sj.png"
-            style="width:20px;height:20px;"
-          />
-          <span style="margin-left:5px">
-            <b>随机抽查</b>
-          </span>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="c_cz" @click="handleUserCurd('LOOK_WRANINGINFO')">
-          <img
-            src="../../../assets/index_images/wg.png"
-            style="width:20px;height:20px;"
-          />
-          <span style="margin-left:5px">
-            <b>违规预警</b>
-          </span>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="c_cz" @click="handleUserCurd('LOOK_FACEINFO')">
-          <img
-            src="../../../assets/index_images/rl.png"
-            style="width:20px;height:20px;"
-          />
-          <span style="margin-left:5px">
-            <b>人脸识别</b>
-          </span>
-        </div>
-      </el-col>
-    </el-row>
-    <trackMap ref="trackMap"></trackMap>
-    <record ref="record" :userId="userId"></record>
-    <wrinfo ref="wrinfo" :userId="userId"></wrinfo>
-    <ramdomTask ref="ramdomTask" :userId="userId"></ramdomTask>
-    <warninginfo ref="warninginfo" :userId="userId"></warninginfo>
-    <faceInfo ref="faceInfo" :userId="userId"></faceInfo>
+    <trackMap ref="trackMap" :done.sync="isLoading"/>
+    <record ref="record" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <wrinfo ref="wrinfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <ramdomTask ref="ramdomTask" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <warninginfo ref="warninginfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <faceInfo ref="faceInfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <evaluationInfo ref="evaluationInfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <monthReport ref="monthReport" :user-id="userInfo.userId" :done.sync="isLoading"/>
   </el-card>
 </template>

@@ -1,64 +1,64 @@
 <script>
-  import { audit } from '@/api/product.js'
-  export default {
-    name:'audit',
-    props: {
-      productId:{
-        type:String,
-        default:''
-      }
-    },
-    data() {
-      return {
-        centerDialogVisible:false,
-        auditState:null,
-        audit:{
-          productId:'',
-          auditState:null,
-          auditReason:''
-        },
-        rules: {
-          auditState: [
-            { required: true, message: '请选择审核状态', trigger: 'blur' },
-          ],
-          auditReason: [
-            { required: true, message: '请输入审核理由', trigger: 'blur' },
-          ]
-        }
-      }
-    },
-    watch:{
-      centerDialogVisible(cur,old){
-        if (!cur){
-          this.$refs['form'].resetFields()
-        }
-      }
-    },
-    methods: {
-      show(){
-        this.centerDialogVisible = true
+import { audit } from '@/api/product.js'
+export default {
+  name: 'Audit',
+  props: {
+    productId: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      centerDialogVisible: false,
+      auditState: null,
+      audit: {
+        productId: '',
+        auditState: null,
+        auditReason: ''
       },
-      submit(){
-        this.audit.productId = this.productId
-        audit({...this.audit}).then(res => {
-          if(res.data.state == 100){
-            this.$emit('handleSuccess')
-            this.centerDialogVisible = false
-          }
-        })
+      rules: {
+        auditState: [
+          { required: true, message: '请选择审核状态', trigger: 'blur' }
+        ],
+        auditReason: [
+          { required: true, message: '请输入审核理由', trigger: 'blur' }
+        ]
       }
     }
-  };
+  },
+  watch: {
+    centerDialogVisible(cur, old) {
+      if (!cur) {
+        this.$refs['form'].resetFields()
+      }
+    }
+  },
+  methods: {
+    show() {
+      this.centerDialogVisible = true
+    },
+    submit() {
+      this.audit.productId = this.productId
+      audit({ ...this.audit }).then(res => {
+        if (res.data.state == 100) {
+          this.$emit('handleSuccess')
+          this.centerDialogVisible = false
+        }
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
-  
+
 </style>
 
 <template>
   <el-dialog
-    title="提示"
     :visible.sync="centerDialogVisible"
+    title="提示"
     width="30%"
     center>
     <el-form ref="form" :model="audit" :rules="rules" label-width="100px">
@@ -69,7 +69,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="审核理由" prop="auditReason">
-        <el-input v-model="audit.auditReason" placeholder="请输入审核理由"></el-input>
+        <el-input v-model="audit.auditReason" placeholder="请输入审核理由"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

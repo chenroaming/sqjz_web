@@ -1,116 +1,94 @@
 <script>
-  import { find,dispose } from '@/api/warningInfo'
-  import tablemix from '@/utils/tablemix'
-  export default {
-    name:'warninginfo',
-    data() {
-      return {
-        isLoading:false,
-        nowPage:1,
-        userId:'',
-        drawer:false,
-        reverse: false,
-        activities: [],
-        currentPage:1,
-        totalPage:0,
-        centerDialogVisible:false,
-        warningType:['失联','越界','未归','聚集','未报告','未移动','入侵预警'],
-        report:{
-          reason:'',
-          result:'',
-          warningId:''
-        },
-        rules:{
-          reason: [
-            { required: true, message: '请输入处置理由', trigger: ['blur','change'] },
-          ],
-          result: [
-            { required: true, message: '请输入处置结果', trigger: ['blur','change'] },
-          ],
-        },
-      };
-    },
-    mixins:[tablemix],
-    mounted(){
+import { find, dispose } from '@/api/warningInfo'
+import tablemix from '@/utils/tablemix'
+import disposevue from '@/components/warningInfo/dispose'
+export default {
+  name: 'Warninginfo',
+  components: { disposevue },
+  mixins: [tablemix],
+  props: {
+    userId: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      isLoading: false,
+      nowPage: 1,
+      drawer: false,
+      reverse: false,
+      activities: [],
+      currentPage: 1,
+      totalPage: 0,
+      warningType: ['失联', '越界', '未归', '聚集', '未报告', '未移动', '入侵预警'],
+      report: {
+        reason: '',
+        result: '',
+        warningId: ''
+      }
+    }
+  },
+  computed: {
+    isAudio() {
+      return this.report.reportType === 2
+    }
+  },
+  mounted() {
 
+  },
+  methods: {
+    show() {
+      this.currentPage = 1
+      this.getList()
     },
-    watch:{
-      centerDialogVisible(cur,old){
-        !cur && this.$refs['form'].resetFields()
-      }
+    getColor(type) {
+      const color = new Map([
+        [1, 'warning'],
+        [2, 'warning'],
+        [3, 'info'],
+        [4, 'danger'],
+        [5, 'info'],
+        [6, 'success'],
+        [7, 'danger']
+      ])
+      return color.get(type)
     },
-    computed:{
-      isAudio(){
-        return this.report.reportType === 2 ? true : false
-      }
-    },
-    methods: {
-      show(userId){
-        this.userId = userId
-        this.currentPage = 1
-        this.getList()
-      },
-      getColor(type){
-        const color = new Map([
-          [1,'warning'],
-          [2,'warning'],
-          [3,'info'],
-          [4,'danger'],
-          [5,'info'],
-          [6,'success'],
-          [7,'danger']
-        ])
-        return color.get(type)
-      },
-      getList(pageNumber = 1){
-        find('','',this.userId,pageNumber).then(res => {
-          if (res.data.state == 100){
-            this.activities = res.data.list.map(item => {
-              return {
-                ...item,
-                warningText: this.warningType[item.warningType - 1],
-                warningTime: item.warningDate ? this.exChange(item.warningDate.time) : '',
-                missingTime: item.missingDate ? this.exChange(item.missingDate.time) : '',
-                recoveryTime: item.recoveryDate ? this.exChange(item.recoveryDate.time) : '',
-                color: '#409EFF',
-              }
-            })
-            this.totalPage = res.data.total
-            this.drawer = true
-            return
-          }
-          this.activities = []
-          this.totalPage = 0
-        })
-      },
-      showDetail(activity){
-        this.report = activity
-        this.centerDialogVisible = true
-      },
-      handleCurrentChange(e){
-        this.nowPage = e
-        this.getList(e)
-      },
-      submit(){
-        this.$refs['form'].validate((valid) => {
-          if (!valid){
-            return this.$message.warning('请确保选项填写完整！')
-          }
-          this.isLoading = true
-          dispose(this.report.warningId,this.report.reason,this.report.result).then(res => {
-            this.isLoading = false
-            if(res.data.state == 100){
-              this.getList(this.nowPage)
-              this.centerDialogVisible = false
+    getList(pageNumber = 1) {
+      find('', '', this.userId, pageNumber).then(({ data: { state, list, total }}) => {
+        this.$emit('update:done', '')
+        if (state == 100) {
+          this.activities = list.map(item => {
+            return {
+              ...item,
+              warningText: this.warningType[item.warningType - 1],
+              warningTime: item.warningDate ? this.exChange(item.warningDate.time) : '',
+              missingTime: item.missingDate ? this.exChange(item.missingDate.time) : '',
+              recoveryTime: item.recoveryDate ? this.exChange(item.recoveryDate.time) : '',
+              color: '#409EFF'
             }
           })
-          .catch(error => {
-            console.log(error)
-          })
-        })
-      },
+          this.totalPage = total
+          this.drawer = true
+          return
+        }
+        this.activities = []
+        this.totalPage = 0
+      })
+    },
+    showDetail(activity) {
+      this.report = activity
+      this.$refs.disposevue.show()
+    },
+    handleCurrentChange(e) {
+      this.nowPage = e
+      this.getList(e)
+    },
+    done() {
+      this.getList(this.nowPage)
     }
-  };
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -126,8 +104,8 @@
 
 <template>
   <el-drawer
-    title="违规预警记录"
-    :visible.sync="drawer">
+    :visible.sync="drawer"
+    title="违规预警记录">
     <div style="height: calc(100vh - 115px);overflow: auto;">
       <el-timeline :reverse="reverse">
         <transition-group name="el-fade-in">
@@ -152,10 +130,10 @@
               </p>
               <p v-if="activity.warningType == 4">
                 聚集人员：
-                <el-tag type="warning" style="margin-right: 5px;" v-for="item in activity.userInfos" :key="item.picPath">{{ item.name }}</el-tag>
+                <el-tag v-for="item in activity.userInfos" :key="item.picPath" type="warning" style="margin-right: 5px;">{{ item.name }}</el-tag>
               </p>
               <p>
-                <el-button type="text" v-if="!activity.disposed" @click="showDetail(activity)">点击处置</el-button>
+                <el-button v-if="!activity.disposed" type="text" @click="showDetail(activity)">点击处置</el-button>
               </p>
             </el-card>
           </el-timeline-item>
@@ -164,32 +142,12 @@
     </div>
     <div style="text-align: center;">
       <el-pagination
-        @current-change="handleCurrentChange"
         :current-page.sync="currentPage"
         :page-size="10"
+        :total="totalPage"
         layout="total, prev, pager, next"
-        :total="totalPage">
-      </el-pagination>
+        @current-change="handleCurrentChange"/>
     </div>
-    <el-dialog
-      title="预警处置"
-      :visible.sync="centerDialogVisible"
-      width="30%"
-      append-to-body
-      :close-on-click-modal="false"
-      center>
-      <el-form ref="form" :rules="rules" :model="report" label-width="80px">
-        <el-form-item label="发生原因" prop="reason">
-          <el-input type="textarea" v-model="report.reason" placeholder="请输入发生原因"></el-input>
-        </el-form-item>
-        <el-form-item label="处置结果" prop="result">
-          <el-input v-model="report.result" placeholder="请输入处置结果"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submit" :loading="isLoading">确 定</el-button>
-      </span>
-    </el-dialog>
+    <disposevue ref="disposevue" :warning-id="report.warningId" @done="done"/>
   </el-drawer>
 </template>

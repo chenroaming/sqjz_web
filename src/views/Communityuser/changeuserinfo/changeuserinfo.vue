@@ -30,7 +30,7 @@
               style="float:left;margin-right:20px"
               action="/community_correction/webClass/user/update.jhtml"
             >
-              <img v-show="isUpload" :src="baseUrl" class="avatar" style="width:200px;height:200px" />
+              <img v-show="isUpload" :src="baseUrl" class="avatar" style="width:200px;height:200px" >
               <i
                 v-show="!isUpload"
                 class="el-icon-plus avatar-uploader-icon"
@@ -44,7 +44,7 @@
         <el-input v-model="userInfo.name" placeholder="请输入姓名" />
       </el-form-item>
       <el-form-item label="备注" prop="remark" >
-        <el-input v-model="userInfo.remark" placeholder="备注"></el-input>
+        <el-input v-model="userInfo.remark" placeholder="备注"/>
       </el-form-item>
       <el-form-item label="身份证号" prop="identityCard" required>
         <el-input v-model="userInfo.identityCard" placeholder="请输入身份证号" />
@@ -81,9 +81,9 @@
       </el-form-item>
       <el-form-item label="区域位置" required>
         <el-input
-          style="margin-top:10px"
           v-if="userInfo.dw !=''"
           :value="userInfo.dw"
+          style="margin-top:10px"
           placeholder="位置信息"
           disabled
         />
@@ -94,7 +94,7 @@
         >修改区域坐标</el-button>
       </el-form-item>
       <el-form-item label="居住小区" prop="livingArea" required>
-        <el-input v-model="userInfo.livingArea" placeholder="居住小区"></el-input>
+        <el-input v-model="userInfo.livingArea" placeholder="居住小区"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -106,25 +106,28 @@
 </template>
 
 <script>
-import { changeCorrectionalpersonne } from "@/api/user";
-import Getmap from "@/components/getmap/getmap";
+import { changeCorrectionalpersonne } from '@/api/user'
+import Getmap from '@/components/getmap/getmap'
 import {
   // eslint-disable-next-line no-unused-vars
   validatePassword,
   validateForbiChar,
   validatePhoneNumber,
   validateIdCard
-} from "@/utils/validate";
+} from '@/utils/validate'
 // 身份证手机号校验
 
 const taskTypeList = [
-  { id: "1", value: "宽管" },
-  { id: "2", value: "普管" },
-  { id: "3", value: "严管" }
-];
+  { id: '1', value: '宽管' },
+  { id: '2', value: '普管' },
+  { id: '3', value: '严管' }
+]
 
 export default {
   filters: {},
+  components: {
+    Getmap
+  },
   props: {
     dialogVisible: {
       default: false,
@@ -132,66 +135,63 @@ export default {
       required: false
     }
   },
-  components: {
-    Getmap
-  },
   data() {
     // 名字检验正则
     var checkName = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入姓名"));
+      if (value === '') {
+        callback(new Error('请输入姓名'))
       } else {
         if (validateForbiChar(value)) {
-          callback(new Error("姓名不能含有^@,&=*'.\"等关键字符"));
+          callback(new Error("姓名不能含有^@,&=*'.\"等关键字符"))
         }
-        callback();
+        callback()
       }
-    };
+    }
     var checkPhone = (rule, value, callback) => {
-      if (value !== "" && validatePhoneNumber(value) === false) {
-        callback(new Error("请输入正确格式的手机号"));
+      if (value !== '' && validatePhoneNumber(value) === false) {
+        callback(new Error('请输入正确格式的手机号'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     var checkIdentityCard = (rule, value, callback) => {
-      if (value !== "" && validateIdCard(value) === false) {
-        callback(new Error("请输入正确格式的身份证号"));
+      if (value !== '' && validateIdCard(value) === false) {
+        callback(new Error('请输入正确格式的身份证号'))
       } else {
         // this.faceInfo.gender = parseInt(value.substr(16, 1)) % 2 === 1? 0 : 1;
-        callback();
+        callback()
       }
-    };
+    }
     return {
       userType: taskTypeList,
-      activityRange: [{ id: 1, value: "区/县" },{ id: 2, value: "市" }],
-      // 矫正人员活动范围
+      activityRange: [{ id: 1, value: '区/县' }, { id: 2, value: '市' }],
+      // 矫正对象活动范围
       showMap: false,
       userInfo: {
-        activityRange: "",
-        dw:'',
-        name: "",
-        phone: "",
-        identityCard: "",
-        userType: "",
-        livingArea:'',
-        remark:'',
+        activityRange: '',
+        dw: '',
+        name: '',
+        phone: '',
+        identityCard: '',
+        userType: '',
+        livingArea: '',
+        remark: ''
       },
       rules: {
-        name: [{ required: true,validator: checkName, trigger: ["blur", "change"] }],
-        phone: [{ required: true,message:'请输入手机号', trigger: ["blur", "change"] }],
+        name: [{ required: true, validator: checkName, trigger: ['blur', 'change'] }],
+        phone: [{ required: true, message: '请输入手机号', trigger: ['blur', 'change'] }],
         identityCard: [
-          { message:'请输入身份证号',trigger: ["blur", "change"] }
+          { message: '请输入身份证号', trigger: ['blur', 'change'] }
         ],
         livingArea: [
-          { required: true,message:'请输入居住小区',trigger: ["blur", "change"] }
-        ],
+          { required: true, message: '请输入居住小区', trigger: ['blur', 'change'] }
+        ]
       },
-      imagelist:[],
+      imagelist: [],
       isUpload: false,
-      baseUrl: "",
-      newFile:null,
-    };
+      baseUrl: '',
+      newFile: null
+    }
   },
 
   methods: {
@@ -200,63 +200,63 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           switch (this.userInfo.userType) {
-            case "宽管":
-              this.userInfo.userType = 1;
-              break;
-            case "普管":
-              this.userInfo.userType = 2;
-              break;
-            case "严管":
-              this.userInfo.userType = 3;
-              break;
-            case "暂予监外执行":
-              this.userInfo.userType = 4;
-              break;
+            case '宽管':
+              this.userInfo.userType = 1
+              break
+            case '普管':
+              this.userInfo.userType = 2
+              break
+            case '严管':
+              this.userInfo.userType = 3
+              break
+            case '暂予监外执行':
+              this.userInfo.userType = 4
+              break
           }
           // console.log(this.userInfo.activityRange);
           // console.log(this.regactivityRange(this.userInfo.activityRange));
 
           // return false;
-          const formData = new FormData();
+          const formData = new FormData()
           // const formData2 = new FormData();
           // for (let i in this.userInfo){
           //   formData2.append(i,this.userInfo[i])
           // }
-          formData.append('userId',this.userInfo.userId)
-          formData.append('name',this.userInfo.name)
-          formData.append('identityCard',this.userInfo.identityCard)
-          formData.append('phone',this.userInfo.phone)
-          formData.append('cause',this.userInfo.cause)
-          formData.append('userType',this.userInfo.userType)
-          formData.append('correct',true)
-          formData.append('activityRange',this.userInfo.activityRange)
-          formData.append('longitude',this.userInfo.longitude)
-          formData.append('latitude',this.userInfo.latitude)
-          formData.append('livingArea',this.userInfo.livingArea)
-          formData.append('remark',this.userInfo.remark)
-          formData.append('picture',this.newFile)
+          formData.append('userId', this.userInfo.userId)
+          formData.append('name', this.userInfo.name)
+          formData.append('identityCard', this.userInfo.identityCard)
+          formData.append('phone', this.userInfo.phone)
+          formData.append('cause', this.userInfo.cause)
+          formData.append('userType', this.userInfo.userType)
+          formData.append('correct', true)
+          formData.append('activityRange', this.userInfo.activityRange)
+          formData.append('longitude', this.userInfo.longitude)
+          formData.append('latitude', this.userInfo.latitude)
+          formData.append('livingArea', this.userInfo.livingArea)
+          formData.append('remark', this.userInfo.remark)
+          formData.append('picture', this.newFile)
           changeCorrectionalpersonne(formData)
             .then(res => {
-              res.data.state == 100 && this.$emit("submitSuccess");
+              res.data.state == 100 && this.$emit('submitSuccess')
             })
-            .catch(() => {});
+            .catch(() => {})
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
     // 获取到经纬度地图使用
     getPoint(val) {
-      this.showMap = false;
+      this.showMap = false
       if (val) {
-        this.userInfo.dw = val.dw;
-        this.userInfo.longitude = val.lng;
-        this.userInfo.latitude = val.lat;
+        this.userInfo.dw = val.dw
+        this.userInfo.longitude = val.lng
+        this.userInfo.latitude = val.lat
       }
     },
     // 地图使用
     cancelPoint() {
-      this.showMap = false;
+      this.showMap = false
     },
     // regactivityRange(val) {
     //   console.log(val)
@@ -273,72 +273,72 @@ export default {
     // },
 
     receiveUserInfo(userInfo) {
-      console.log(userInfo);
-      this.imagelist = [];
+      console.log(userInfo)
+      this.imagelist = []
       if (userInfo.cause == null) {
-        userInfo.cause = "暂无";
+        userInfo.cause = '暂无'
       }
       switch (userInfo.userType) {
         case 1:
-          userInfo.userType = "宽管";
-          break;
+          userInfo.userType = '宽管'
+          break
         case 2:
-          userInfo.userType = "普管";
-          break;
+          userInfo.userType = '普管'
+          break
         case 3:
-          userInfo.userType = "严管";
-          break;
+          userInfo.userType = '严管'
+          break
         case 4:
-          userInfo.userType = "暂予监外执行";
-          break;
+          userInfo.userType = '暂予监外执行'
+          break
       }
-      this.userInfo = { ...userInfo };
+      this.userInfo = { ...userInfo }
     },
     // 预览文件
     handleChange(fileSrc, fileList) {
-      this.newFile = fileSrc.raw;
-      var _this = this;
-      _this.mutiZip = fileSrc.raw;
-      const ary = [];
-      ary.push(fileSrc);
-      _this.imagelist = ary;
-      _this.userInfo.picPath2 = ary;
-      var event = event || window.event;
-      console.log("event出现");
-      if (_this.show_Photo == "1") {
+      this.newFile = fileSrc.raw
+      var _this = this
+      _this.mutiZip = fileSrc.raw
+      const ary = []
+      ary.push(fileSrc)
+      _this.imagelist = ary
+      _this.userInfo.picPath2 = ary
+      var event = event || window.event
+      console.log('event出现')
+      if (_this.show_Photo == '1') {
         if (event.target.files[0]) {
-          var file = event.target.files[0];
-          var reader = new FileReader();
+          var file = event.target.files[0]
+          var reader = new FileReader()
           // 转base64
           reader.onload = function(e) {
-            _this.baseUrl = e.target.result; // 将图片路径赋值给src
-            _this.isUpload = true; // 将图片路径赋值给src
-            _this.isSelectFile = true;
-          };
-          reader.readAsDataURL(file);
+            _this.baseUrl = e.target.result // 将图片路径赋值给src
+            _this.isUpload = true // 将图片路径赋值给src
+            _this.isSelectFile = true
+          }
+          reader.readAsDataURL(file)
         }
       }
     },
     handleSuccess(response, imageFile, fileList) {
-      console.log(response);
+      console.log(response)
       if (response.state == 100) {
-        this.$message.error(response.message);
-        this.handleReset();
-        this.$emit("submitSuccess");
-        return false;
+        this.$message.error(response.message)
+        this.handleReset()
+        this.$emit('submitSuccess')
+        return false
       } else {
-        this.show_Photo = "0";
-        this.isUpload = false;
-        this.$message.error(response.message);
-        this.handleReset();
-        return false;
+        this.show_Photo = '0'
+        this.isUpload = false
+        this.$message.error(response.message)
+        this.handleReset()
+        return false
       }
     },
     is_yl() {
-      this.show_Photo = "1";
-    },
+      this.show_Photo = '1'
+    }
   }
-};
+}
 </script>
 
 <style>

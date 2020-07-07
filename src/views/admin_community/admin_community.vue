@@ -14,15 +14,15 @@
         </span>
         <span slot="eventArea">
           <el-button
+            v-if="checkPermission(['community:operate'])"
             type="success"
             style="margin:0 20px 0 20px"
             @click="addcommuntiyCurd('ADD_community')"
-            v-if="checkPermission(['community:operate'])"
           >创建新区域</el-button>
         </span>
       </Search>
 
-      <el-table v-loading="isLoading" class="tableShadow" :header-cell-style="rowClass" :data="tableData">
+      <el-table v-loading="isLoading" :header-cell-style="rowClass" :data="tableData" class="tableShadow">
         <!-- <el-table-column prop="communityName" label="司法所名称" align="center" /> -->
         <el-table-column prop="communityName" label="司法所名称" align="center">
           <template slot-scope="scope">
@@ -43,12 +43,12 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button type="danger" v-if="checkPermission(['community:operate'])" size="mini" @click="handleDelete(scope.row.communityId)">删除</el-button>
+            <el-button v-if="checkPermission(['community:operate'])" type="danger" size="mini" @click="handleDelete(scope.row.communityId)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-scrollbar>
-    
+
     <Addcommunity
       ref="addcommunity"
       :dialog-visible="addcommunity"
@@ -66,20 +66,20 @@
 </template>
 
 <script>
-import { getcommunity, delcommunity } from "@/api/community";
+import { getcommunity, delcommunity } from '@/api/community'
 // 引入使用的api
-import { computedFormatTime } from "@/utils/tools";
+import { computedFormatTime } from '@/utils/tools'
 // 引入转时间戳工具
-import Search from "@/components/searcharea/searcharea";
+import Search from '@/components/searcharea/searcharea'
 // 搜索组件
-import Sortpage from "@/components/sortpage/sortpage";
+import Sortpage from '@/components/sortpage/sortpage'
 // 分页组件
-import Addcommunity from "./add_community/add_community";
+import Addcommunity from './add_community/add_community'
 // 添加区域组件(组件)
-import changecommunity from "./change_community/change_community";
+import changecommunity from './change_community/change_community'
 // 修改区域组件(组件)
-import authmix from "@/utils/authmix";
-//引入权限校验
+import authmix from '@/utils/authmix'
+// 引入权限校验
 export default {
   // 使用的组件
   components: {
@@ -87,13 +87,13 @@ export default {
     Sortpage,
     Addcommunity,
     changecommunity
-  },
-  mixins: [authmix],//混入文件
+  }, // 混入文件
   filters: {
     formatTime(val) {
-      return computedFormatTime(val);
+      return computedFormatTime(val)
     }
   },
+  mixins: [authmix],
   data() {
     return {
       pageSize: 20,
@@ -101,83 +101,83 @@ export default {
       pageNumber: 1,
       // 第几页
       tableData: [],
-      searchData: "",
-      searchname: "",
+      searchData: '',
+      searchname: '',
       // 搜索名称
       addcommunity: false,
       // 控制添加组件
       changecommunity: false
       // 控制修改组件
-    };
+    }
   },
   created() {
-    this.__init();
+    this.__init()
   },
   methods: {
     // 初始化方法
     __init() {
-      this.isLoading = false;
+      this.isLoading = false
       getcommunity(this.pageSize, this.pageNumber, this.searchname).then(
         res => {
-          console.log(res.data);
-          if (res.data.state == "100" || res.data.state == 100) {
-            this.tableData = res.data.list;
+          console.log(res.data)
+          if (res.data.state == '100' || res.data.state == 100) {
+            this.tableData = res.data.list
           }
         }
-      );
+      )
     },
     addcommuntiyCurd(modalType, payload = {}) {
       //   alert(modalType);
       switch (modalType) {
-        case "ADD_community":
-          this.$refs.addcommunity.__init();
-          this.addcommunity = true;
-          break;
-        case "CHANGE":
-          this.changecommunity = true;
+        case 'ADD_community':
+          this.$refs.addcommunity.__init()
+          this.addcommunity = true
+          break
+        case 'CHANGE':
+          this.changecommunity = true
           this.$refs.changecommunity.show(payload)
-          break;
+          break
       }
     },
     // 模态框成功回调
     handleUserSuccess(modalType) {
       switch (modalType) {
-        case "ADD_community":
-          this.addcommunity = false;
-          this.__init();
-          break;
-        case "CHANGE_USER_INFO_SUCCESS":
-          this.changecommunity = false;
-          this.__init();
-          break;
+        case 'ADD_community':
+          this.addcommunity = false
+          this.__init()
+          break
+        case 'CHANGE_USER_INFO_SUCCESS':
+          this.changecommunity = false
+          this.__init()
+          break
       }
     },
     // 重置按钮
     handleRefresh() {
-      this.__init();
+      this.__init()
     },
     // 删除区域
     handleDelete(id) {
       // alert('删除')
-      console.log(id);
+      console.log(id)
 
-      this.$confirm("此操作将永久删除该区域, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该区域, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
           delcommunity(id)
             .then(() => {
-              this.$message({ type: "success", message: "删除成功" });
-              this.__init();
+              this.$message({ type: 'success', message: '删除成功' })
+              this.__init()
             })
-            .catch(() => {});
+            .catch(() => {})
         })
-        .catch(() => {});
+        .catch(() => {})
     }
   }
-};
+}
 </script>
 
 <style scoped>

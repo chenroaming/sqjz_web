@@ -1,5 +1,5 @@
 <template>
-  <el-dialog      
+  <el-dialog
     :visible.sync="dialogVisible"
     :show-close="false"
     :close-on-click-modal="false"
@@ -8,7 +8,7 @@
   >
     <el-form ref="form" :model="community" label-width="120px">
       <el-form-item label="司法所名称">
-        <el-input v-model="community.communityName"></el-input>
+        <el-input v-model="community.communityName"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -19,32 +19,33 @@
 </template>
 
 <script>
-  import { update } from '@/api/community.js'
-  export default {
-    props: {
-      dialogVisible: false,
-    },
-    data(){
-      return {
-        community:{
-          communityName:'',
-          communityId:''
-        }
-      }
-    },
-    methods: {
-      show({ communityName,communityId }){
-        this.community.communityName = communityName
-        this.community.communityId = communityId
-      },
-      submitForm() {
-        const { communityId,communityName } = this.community 
-        update(communityId,communityName).then(res => {
-          res.data.state == 100 && this.$emit('submitSuccess')
-        })
+import { update } from '@/api/community.js'
+export default {
+  props: {
+    dialogVisible: false
+  },
+  data() {
+    return {
+      community: {
+        communityName: '',
+        communityId: ''
       }
     }
-  };
+  },
+  methods: {
+    show({ communityName, communityId }) {
+      this.community.communityName = communityName
+      this.community.communityId = communityId
+    },
+    submitForm() {
+      const { communityId, communityName } = this.community
+      update(communityId, communityName).then(res => {
+        // eslint-disable-next-line eqeqeq
+        res.data.state == 100 && this.$emit('submitSuccess')
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>

@@ -10,15 +10,15 @@ export default {
   data() {
     return {
       dialogTableVisible: false
-    };
+    }
   },
   mounted() {},
   methods: {
     show() {
-      this.dialogTableVisible = true;
+      this.dialogTableVisible = true
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -34,7 +34,7 @@ export default {
 
 <template>
   <div>
-    <el-dialog title="查看详情" :visible.sync="dialogTableVisible">
+    <el-dialog :visible.sync="dialogTableVisible" title="查看详情">
       <!-- <el-carousel>
         <el-carousel-item
           v-for="(item) in productObj.productPicPaths"

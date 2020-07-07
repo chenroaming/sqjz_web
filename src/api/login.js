@@ -27,7 +27,7 @@ export function login2(username, password, pinCode) {
   return request({
     url: '/community_correction/webAdmin/admin/login.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data
   })
 }
@@ -60,19 +60,6 @@ export function changePassword(old, newPwd) {
   })
 }
 
-/**
- * @description 获取验证码信息
- * @return [List]
- */
-export function blockValidateCode(left = '') {
-  return request({
-    url: '/face_recognition/webAdmin/blockValidateCode.jhtml',
-    method: 'post',
-    data: Qs.stringify({
-      left
-    })
-  })
-}
 /**
  * @description 判断验证码
  * @return [List]

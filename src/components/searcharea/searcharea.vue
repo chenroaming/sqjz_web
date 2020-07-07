@@ -1,20 +1,20 @@
 <template>
   <div class="main">
     <div class="searchArea">
-      <slot name="extraArea"></slot>
+      <slot name="extraArea"/>
       <el-button
+        v-if="searBtnShow"
         type="primary"
         style="margin-left:20px;margin:20px;"
         @click="$emit('handleSearch')"
-        v-if="searBtnShow"
-        >搜索</el-button
+      >搜索</el-button
       >
       <el-button
         type="danger"
         icon="el-icon-refresh"
         circle
         @click="$emit('refreshData')"
-      ></el-button>
+      />
     </div>
   </div>
 </template>
@@ -24,11 +24,11 @@ export default {
   props: {
     searchData: {
       type: String,
-      default: ""
+      default: ''
     },
     placeholder: {
       type: String,
-      default: "请输入内容"
+      default: '请输入内容'
     },
     visible: {
       type: Boolean,
@@ -42,23 +42,23 @@ export default {
 
   data() {
     return {
-      test: "hello",
+      test: 'hello',
       searchText: this.searchData
-    };
+    }
   },
 
   watch: {
     searchData: function(newVal, oldVal) {
-      this.searchText = newVal;
+      this.searchText = newVal
     }
   },
 
   methods: {
     changeInputContent(val) {
-      this.$emit("input", val);
+      this.$emit('input', val)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

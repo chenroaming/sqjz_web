@@ -1,23 +1,22 @@
 import request from '@/utils/request'
 import Qs from 'qs'
 
-
 /**
  * @description 获取用户列表(社区矫正使用)
  * @return [List]
  */
-export function getUserList2(username = '', pageNumber = 1) {
+export function getUserList2(username = '', pageNumber = 1, adminId) {
   return request({
     url: '/community_correction/webClass/admin/find.jhtml',
     method: 'post',
     data: Qs.stringify({
       username,
       pageSize: 10,
-      pageNumber
+      pageNumber,
+      adminId
     })
   })
 }
-
 
 /**
  * @description 获取可查看区域(社区矫正使用)
@@ -33,9 +32,8 @@ export function getUsercommunity(pageSize = 500) {
   })
 }
 
-
 /**
- * @description 获取矫正人员列表(社区矫正使用)
+ * @description 获取矫正对象列表(社区矫正使用)
  * @return [List]
  */
 export function getCommunityUserList(name = '', identityCard = '', pageNumber = 1, communityId = '') {
@@ -51,6 +49,21 @@ export function getCommunityUserList(name = '', identityCard = '', pageNumber = 
     })
   })
 }
+
+/**
+ * @description 获取矫正对象单个详情(社区矫正使用)
+ * @return [List]
+ */
+export function getUserDetail(userId) {
+  return request({
+    url: '/community_correction/webClass/user/find.jhtml',
+    method: 'post',
+    data: Qs.stringify({
+      userId
+    })
+  })
+}
+
 /**
  * @description 删除用户(社区矫正使用)
  * @return [Object]
@@ -67,7 +80,7 @@ export function deleteUser2(adminId) {
 }
 
 /**
- * @description 删除矫正人员(社区矫正使用)
+ * @description 删除矫正对象(社区矫正使用)
  * @return [Object]
  */
 export function delCorrectionalpersonnel(userId) {
@@ -82,7 +95,7 @@ export function delCorrectionalpersonnel(userId) {
 }
 
 /**
- * @description 修改矫正人员信息(社区矫正)
+ * @description 修改矫正对象信息(社区矫正)
  * @return [Object]
  */
 export function changeCorrectionalpersonne(data) {
@@ -93,48 +106,22 @@ export function changeCorrectionalpersonne(data) {
     data: data
   })
 }
-// export function changeCorrectionalpersonne(userId, name, identityCard, phone, cause, userType, correct = true, activityRange, longitude, latitude,livingArea,remark,picture) {
 
-//   return request({
-//     url: '/community_correction/webClass/user/update.jhtml',
-//     method: 'post',
-//     data: Qs.stringify({
-//       userId,
-//       name,
-//       identityCard,
-//       phone,
-//       cause,
-//       userType,
-//       correct,
-//       activityRange,
-//       longitude,
-//       latitude,
-//       livingArea,
-//       remark,
-//       picture,
-//     })
-//   })
-// }
 /**
  * @description 修改用户信息(社区矫正使用)
  * @return [Object]
  */
-export function changeUser2(adminId, username, name, phone) {
+export function changeUser2(data) {
   return request({
     url: '/community_correction/webClass/admin/update.jhtml',
     method: 'post',
     isShowTips: true,
-    data: Qs.stringify({
-      adminId,
-      username,
-      name,
-      phone
-    })
+    data: data
   })
 }
 
 /**
- * @description 修改用户信息(社区矫正使用)
+ * @description 查看轨迹记录信息(社区矫正使用)
  * @return [Object]
  */
 export function getTrackRecord(userId, date, pageSize = '100', pageNumber = '1') {
@@ -151,17 +138,16 @@ export function getTrackRecord(userId, date, pageSize = '100', pageNumber = '1')
   })
 }
 
-
 /**
  * @description 新增角色(社区矫正使用)
  * @return [Object]
  */
-export function addUser2(payload) {
+export function addUser2(data) {
   return request({
     url: '/community_correction/webClass/admin/add.jhtml',
     method: 'post',
     isShowTips: true,
-    data: Qs.stringify(payload)
+    data: data
   })
 }
 
@@ -173,7 +159,6 @@ export function findAuthority(adminId) {
   return request({
     url: '/community_correction/webClass/admin/findAuthority.jhtml',
     method: 'post',
-    isShowTips: true,
     data: Qs.stringify({ adminId })
   })
 }
@@ -192,7 +177,7 @@ export function updateAuthority(adminId, authorityCodes) {
 }
 
 /**
- * @description 添加矫正人员文件(社区矫正使用)
+ * @description 添加矫正对象文件(社区矫正使用)
  * @return [state]
  */
 export function addFile(data) {
@@ -205,7 +190,7 @@ export function addFile(data) {
 }
 
 /**
- * @description 查看矫正人员报告记录(社区矫正使用)
+ * @description 查看矫正对象报告记录(社区矫正使用)
  * @return [list]
  */
 export function findRecord(data) {
@@ -217,7 +202,7 @@ export function findRecord(data) {
 }
 
 /**
- * @description 查看矫正人员报告记录详情(社区矫正使用)
+ * @description 查看矫正对象报告记录详情(社区矫正使用)
  * @return [list]
  */
 export function findRecordDetail(data) {
@@ -253,7 +238,7 @@ export function reportTask(data) {
 }
 
 /**
- * @description 矫正人员人脸识别记录(社区矫正使用)
+ * @description 矫正对象人脸识别记录(社区矫正使用)
  * @return [list]
  */
 export function findRecognitionRecord(data) {
@@ -261,5 +246,80 @@ export function findRecognitionRecord(data) {
     url: '/community_correction/webClass/user/findRecognitionRecord.jhtml',
     method: 'post',
     data: Qs.stringify({ ...data })
+  })
+}
+
+/**
+ * @description 重置矫正对象手机信息(社区矫正使用)
+ * @return [state]
+ */
+export function resetPhoneInfo(userId) {
+  return request({
+    url: '/community_correction/webClass/user/resetPhoneInfo.jhtml',
+    method: 'post',
+    data: Qs.stringify({ userId })
+  })
+}
+
+/**
+ * @description 获取用户未关联的矫正对象列表(社区矫正使用)
+ * @return [list]
+ */
+export function findUnassociatedList(adminId) {
+  return request({
+    url: '/community_correction/webClass/user/findUnassociatedList.jhtml',
+    method: 'post',
+    data: Qs.stringify({ adminId })
+  })
+}
+
+/**
+ * @description 关联矫正对象(社区矫正使用)
+ * @return [state]
+ */
+export function addRelation(data) {
+  return request({
+    url: '/community_correction/webClass/user/addRelation.jhtml',
+    method: 'post',
+    isShowTips: true,
+    data: Qs.stringify({ ...data })
+  })
+}
+
+/**
+ * @description 删除用户与矫正对象的关联关系(社区矫正使用)
+ * @return [state]
+ */
+export function deleteRelation(data) {
+  return request({
+    url: '/community_correction/webClass/user/deleteRelation.jhtml',
+    method: 'post',
+    isShowTips: true,
+    data: Qs.stringify({ ...data })
+  })
+}
+
+/**
+ * @description 矫正对象月度报告(社区矫正使用)
+ * @return [list]
+ */
+export function findMonthlyReport(data) {
+  return request({
+    url: '/community_correction/webClass/user/findMonthlyReport.jhtml',
+    method: 'post',
+    data: Qs.stringify({ ...data })
+  })
+}
+
+/**
+ * @description 新增矫正对象(社区矫正使用)
+ * @return [list]
+ */
+export function addUser(data) {
+  return request({
+    url: '/community_correction/webClass/user/add.jhtml',
+    method: 'post',
+    isShowTips: true,
+    data: data
   })
 }

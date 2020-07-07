@@ -1,60 +1,50 @@
 <template>
-  <div class="dashboard-container" ref="main">
+  <div ref="main" class="dashboard-container">
     <el-row :gutter="20" style="margin-bottom: 10px;">
       <el-col :span="12">
-        <shortcut></shortcut>
+        <shortcut/>
       </el-col>
       <el-col :span="12">
-        <count :count="chart1.userNumberCount"></count>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20" style="margin-bottom: 10px;">
-      <el-col :span="8">
-        <pieChart :countArr="chart1.userTypeCount" chartTitle="矫正人员类型统计"></pieChart>
-      </el-col>
-      <el-col :span="8">
-        <pieChart :countArr="chart1.ageCount" chartTitle="矫正人员年龄统计"></pieChart>
-      </el-col>
-      <el-col :span="8">
-        <pieChart :countArr="chart1.sexCount" chartTitle="矫正人员性别统计"></pieChart>
+        <count :count="chart1.userNumberCount"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-bottom: 10px;">
-      <el-col :span="8">
-        <pieChart :countArr="chart1.areaCount" chartTitle="矫正人员区域分布统计"></pieChart>
+      <el-col v-for="item in chartArr" :span="item.span" :key="item.chartTitle">
+        <pieChart :chart-data="item.chartData" :chart-title="item.chartTitle">
+          <!-- 此项目vue版本为2.5，无法使用2.6才有的v-slot -->
+          <template v-if="item.isOperating" slot="button">
+            <el-button style="float: right; padding: 3px 0" type="text" @click="showDetail">查看详情</el-button>
+          </template>
+        </pieChart>
       </el-col>
-      <el-col :span="16">
-        <histogram :countArr="chart2.applyTypeCount" chartTitle="事务申请统计"></histogram>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <histogram :countArr="chart2.clockCount" chartTitle="近7天每日报告统计"></histogram>
-      </el-col>
-      <el-col :span="12">
-        <histogram :countArr="chart2.warningTypeCount" chartTitle="预警数量统计"></histogram>
+      <el-col v-for="item in chartArr2" :span="item.span" :key="item.chartTitle">
+        <histogram :chart-data="item.chartData" :chart-title="item.chartTitle"/>
       </el-col>
     </el-row>
+    <record ref="record"/>
   </div>
 </template>
 
 <script>
-import { userBasicInfoCount, userActivityInfoCount } from "@/api/chart.js";
-import shortcut from "./shortcut/shortcut.vue";
-import count from "./count/count.vue";
-import pieChart from "./pieChart/pieChart.vue";
-import histogram from "./histogram/histogram.vue";
+import { userBasicInfoCount, userActivityInfoCount } from '@/api/chart.js'
+import shortcut from './shortcut/shortcut.vue'
+import count from './count/count.vue'
+import pieChart from '@/components/charts/pieChart'
+import histogram from '@/components/charts/histogram'
+import record from './record'
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   components: {
     shortcut,
     count,
     pieChart,
-    histogram
+    histogram,
+    record
   },
   data() {
     return {
       chart1: {
+        todayCount: [],
         userTypeCount: [],
         ageCount: [],
         sexCount: [],
@@ -65,28 +55,47 @@ export default {
         applyTypeCount: [],
         clockCount: [],
         warningTypeCount: []
-      }
-    };
+      },
+      chartArr: [],
+      chartArr2: []
+    }
   },
   computed: {},
+  watch: {
+    chart1({ todayCount, userTypeCount, ageCount, sexCount, areaCount }, old) { // 饼状图
+      this.chartArr = [
+        { span: 8, chartData: todayCount, chartTitle: '今日报告统计', isOperating: true },
+        { span: 8, chartData: userTypeCount, chartTitle: '矫正对象类型统计' },
+        { span: 8, chartData: ageCount, chartTitle: '矫正对象年龄统计' },
+        { span: 8, chartData: sexCount, chartTitle: '矫正对象性别统计' },
+        { span: 16, chartData: areaCount, chartTitle: '矫正对象区域分布统计' }
+      ]
+    },
+    chart2({ applyTypeCount, clockCount, warningTypeCount }, old) { // 柱状图
+      this.chartArr2 = [
+        { span: 24, chartData: applyTypeCount, chartTitle: '事务申请统计' },
+        { span: 12, chartData: clockCount, chartTitle: '近7天每日报告统计' },
+        { span: 12, chartData: warningTypeCount, chartTitle: '预警数量统计' }
+      ]
+    }
+  },
   mounted() {
-    userBasicInfoCount().then(res => {
-      if (res.data.state == 100) {
-        this.chart1 = res.data;
-      }
-    });
-    userActivityInfoCount().then(res => {
-      if (res.data.state == 100) {
-        this.chart2 = res.data;
-      }
-    });
+    userBasicInfoCount().then(({ data }) => {
+      const { complete, uncompleted } = data.clockCount // 当日报告单独处理
+      const pieData = { ...data }
+      pieData.todayCount = [{ type: `已报告-${complete}`, number: complete }, { type: `未报告-${uncompleted}`, number: uncompleted }]
+      data.state === '100' && (this.chart1 = pieData)
+    })
+    userActivityInfoCount().then(({ data }) => {
+      data.state === '100' && (this.chart2 = data)
+    })
   },
   methods: {
-    listen(e){
-      console.log(e)
+    showDetail() {
+      this.$refs.record.show()
     }
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

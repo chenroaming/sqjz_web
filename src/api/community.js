@@ -42,7 +42,7 @@ export function addcommunity(communityId, communityName) {
   return request({
     url: '/community_correction/webClass/community/add.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       communityId,
       communityName
@@ -58,7 +58,7 @@ export function delcommunity(communityId) {
   return request({
     url: '/community_correction/webClass/community/delete.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       communityId
     })
@@ -69,13 +69,13 @@ export function delcommunity(communityId) {
  * @description 删除区域（社区矫正）
  * @return [List]
  */
-export function update(communityId,communityName) {
+export function update(communityId, communityName) {
   return request({
     url: '/community_correction/webClass/community/update.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
-      communityId,communityName
+      communityId, communityName
     })
   })
 }

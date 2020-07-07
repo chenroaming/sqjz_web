@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="8" :offset="5">
           <!-- 头部导航栏 -->
-          <p class="sj_title">福建智慧司法-矫正一体化平台</p>
+          <p class="sj_title">福建智慧矫正可视化监管平台</p>
         </el-col>
         <el-col :span="10" style="margin-top: 15px;">
           <!-- <el-button type="primary" round size="mini" @click="gotoLogin">登&nbsp;&nbsp;录</el-button> -->
@@ -24,35 +24,35 @@
               >
                 <div style="width:100%;">
                   <el-image
-                    style="width: 150px; height: 150px;margin:0 auto;display: block;"
                     :src="item2.qrCodePath"
                     :fit="contain"
                     :preview-src-list="item2.qrCodePath2"
-                  >
-                  </el-image>
+                    style="width: 150px; height: 150px;margin:0 auto;display: block;"
+                  />
                 </div>
                 <div style="text-align: center;color:#666;">
                   <h5>版本：{{ item2.version }}</h5>
                   <h3>{{ item2.appName }}</h3>
-                  <el-button type="primary" size="mini" @click="copyText(item2)"
-                    >复制下载链接</el-button
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    @click="copyText(item2)"
+                  >复制下载链接</el-button
                   >
                 </div>
               </el-col>
             </el-row>
 
-            <p class="upload" slot="reference" style="width: 125px;">
+            <p slot="reference" class="upload" style="width: 125px;">
               <i
                 class="el-icon-upload"
                 style="margin-right: 15px;color:#666"
-              ></i
-              >APP下载
+              />APP下载
             </p>
           </el-popover>
 
           <p class="upload" @click="gotoLogin">
-            <i class="el-icon-success" style="margin-right: 15px;color:#666"></i
-            >登&nbsp;录
+            <i class="el-icon-success" style="margin-right: 15px;color:#666"/>登&nbsp;录
           </p>
         </el-col>
       </el-row>
@@ -65,9 +65,9 @@
             <el-carousel-item
               v-for="(item, index) in bannerlist"
               :key="index"
-              class="banner"
               :style="{ backgroundImage: 'url(' + item.url + ')' }"
-            ></el-carousel-item>
+              class="banner"
+            />
           </el-carousel>
         </div>
 
@@ -80,7 +80,7 @@
               <p class="sj_f1">Copyright © 2020 厦门纵横集团 版权所有</p>
             </el-col>
             <!-- <el-col :span="6">
-              
+
             </el-col> -->
           </el-row>
         </el-footer>
@@ -92,24 +92,24 @@
 <script>
 // import item1 from '~/item1.png'
 // console.log(item1)
-import { find } from "@/api/versionFile.js";
+import { find } from '@/api/versionFile.js'
 export default {
   data() {
     return {
       bannerlist: [
-        { url: "../../../static/index_images/ban1.png" },
-        { url: "../../../static/index_images/ban2.png" },
-        { url: "../../../static/index_images/ban3.png" }
+        { url: '../../../static/index_images/ban1.png' },
+        { url: '../../../static/index_images/ban2.png' },
+        { url: '../../../static/index_images/ban3.png' }
       ],
-      versionType: ["（安卓版）", "（IOS版）"],
-      appType: ["福建在矫通", "福建矫务通"],
+      versionType: ['（安卓版）', '（IOS版）'],
+      appType: ['福建在矫通', '福建矫务通'],
       appQrArr: [],
       zjtPic: {},
       jwtPic: {},
       zjtPicIos: {},
       jwtPicIos: {},
-      contain: "contain"
-    };
+      contain: 'contain'
+    }
   },
   mounted() {
     find().then(res => {
@@ -121,37 +121,37 @@ export default {
             appName: `${this.appType[item.appType - 1]}${
               this.versionType[item.versionType - 1]
             }`
-          };
-        });
-        const [androidZjt, androidJwt, IOSZjt, IOSJwt] = newArr;
+          }
+        })
+        const [androidZjt, androidJwt, IOSZjt, IOSJwt] = newArr
         this.appQrArr = [
           [{ ...androidZjt }, { ...androidJwt }],
           [{ ...IOSZjt }, { ...IOSJwt }]
-        ];
+        ]
       }
-    });
+    })
   },
   methods: {
     copyText({ versionType, filePath }) {
-      if (filePath == "") {
+      if (filePath == '') {
         this.$message({
-          message: "链接复制错误",
-          type: "error"
-        });
+          message: '链接复制错误',
+          type: 'error'
+        })
       } else {
         var oInputValue =
-          versionType === 1 ? `${location.origin}${filePath}` : `${filePath}`;
-        let oInput = document.createElement("input");
-        oInput.value = oInputValue;
-        document.body.appendChild(oInput);
-        oInput.select(); // 选择对象;
-        document.execCommand("Copy"); // 执行浏览器复制命令
+          versionType === 1 ? `${location.origin}${filePath}` : `${filePath}`
+        const oInput = document.createElement('input')
+        oInput.value = oInputValue
+        document.body.appendChild(oInput)
+        oInput.select() // 选择对象;
+        document.execCommand('Copy') // 执行浏览器复制命令
         this.$message({
-          message: "已成功复制到剪切板",
-          type: "success"
-        });
-        console.log(oInputValue);
-        oInput.remove();
+          message: '已成功复制到剪切板',
+          type: 'success'
+        })
+        console.log(oInputValue)
+        oInput.remove()
       }
     },
 
@@ -159,17 +159,17 @@ export default {
     gotoLogin() {
       const loading = this.$loading({
         lock: true,
-        text: "正在为您跳转中...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
+        text: '正在为您跳转中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       setTimeout(() => {
-        loading.close();
-        this.$router.push({ path: "/login" });
-      }, 2000);
+        loading.close()
+        this.$router.push({ path: '/login' })
+      }, 2000)
     }
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

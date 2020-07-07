@@ -1,5 +1,6 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 /**
- * 社交管理
+ * 公益活动管理
  */
 import request from '@/utils/request'
 import Qs from 'qs'
@@ -29,42 +30,26 @@ export function add(obj) {
   return request({
     url: '/community_correction/webClass/sociallyUsefulActivity/add.jhtml',
     method: 'post',
-    isShowTips:true,
-		data: Qs.stringify({
-		  theme:obj.theme,
-		  content:obj.content,
-		  location:obj.location,
-		  longitude:obj.longitude,
-		  latitude:obj.latitude,
-		  type:obj.type,
-		  startDate:obj.startDate,
-		  endDate:obj.endDate,
-		  userIds:obj.userIds
-		})
-    // data: Qs.stringify({
-    //   theme:obj.theme,
-    //   content:obj.content,
-    //   location:obj.location,
-    //   longitude:obj.longitude,
-    //   latitude:obj.latitude,
-    //   type:obj.type,
-    //   startDate:obj.startDate,
-    //   endDate:obj.endDate,
-    //   applyStartDate:obj.applyStartDate,
-    //   applyEndDate:obj.applyEndDate,
-    //   state:obj.state,
-    //   integral:obj.integral,
-    //   limitedNumber:obj.limitedNumber,
-    //   userIds:obj.userIds
-    // })
+    isShowTips: true,
+    data: Qs.stringify({
+		  theme: obj.theme,
+		  content: obj.content,
+		  location: obj.location,
+		  longitude: obj.longitude,
+		  latitude: obj.latitude,
+		  type: obj.type,
+		  startDate: obj.startDate,
+		  endDate: obj.endDate,
+		  userIds: obj.userIds
+    })
   })
 }
 
 /**
- * @description 查询矫正人员 (社区矫正)
+ * @description 查询矫正对象 (社区矫正)
  * @return [list]
  */
-export function findUserList(name = '',phone = '',pageSize = 5,pageNumber = 1) {
+export function findUserList(name = '', phone = '', pageSize = 5, pageNumber = 1) {
   return request({
     url: '/community_correction/webClass/sociallyUsefulActivity/findUserList.jhtml',
     method: 'post',
@@ -85,7 +70,7 @@ export function deletea(activityId = '') {
   return request({
     url: '/community_correction/webClass/sociallyUsefulActivity/delete.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       activityId
     })
@@ -99,7 +84,7 @@ export function deletea(activityId = '') {
 export function findJudicial() {
   return request({
     url: '/community_correction/webClass/sociallyUsefulActivity/findJudicial.jhtml',
-    method: 'post',
+    method: 'post'
   })
 }
 
@@ -107,7 +92,7 @@ export function findJudicial() {
  * @description 查询公益活动打卡列表 (社区矫正)
  * @return [list]
  */
-export function findEasyClockInList(pageNumber = 1,activityId = '',pageSize = 5) {
+export function findEasyClockInList(pageNumber = 1, activityId = '', pageSize = 5) {
   return request({
     url: '/community_correction/webClass/userParticipatePicInfo/findEasyClockInList.jhtml',
     method: 'post',
@@ -137,11 +122,11 @@ export function findClockInListDetail(participateId = '') {
  * @description 公益活动打卡详情审核 (社区矫正)
  * @return [state]
  */
-export function findClockInListDetail2(participateId = '',state) {
+export function findClockInListDetail2(participateId = '', state) {
   return request({
     url: '/community_correction/webClass/userParticipatePicInfo/findClockInListDetail.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       participateId,
       state

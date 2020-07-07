@@ -4,10 +4,8 @@
 import request from '@/utils/request'
 import Qs from 'qs'
 
-
-
 /**
- * @description 获取个人打卡列表 (社区矫正)
+ * @description 用户查看矫正人员报告记录详情 (社区矫正)
  * @return [List]
  */
 export function getCheckList2(userId = '', pageNumber = 1, pageSize = 10, ) {
@@ -22,7 +20,7 @@ export function getCheckList2(userId = '', pageNumber = 1, pageSize = 10, ) {
   })
 }
 /**
- * @description 获取考勤列表
+ * @description 获取报告任务列表
  * @return [List]
  */
 export function geclockList(ruleName = '', pageSize = 10, pageNumber = 1, ruleId = '') {
@@ -45,14 +43,12 @@ export function deleteTask(ruleId = '') {
   return request({
     url: '/community_correction/webClass/clock/delete.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       ruleId
     })
   })
 }
-
-
 
 /**
  * @description 新增打卡规则(社区矫正使用)
@@ -62,7 +58,7 @@ export function addclock(ruleName, ruleType, period, startTimes, endTimes) {
   return request({
     url: '/community_correction/webClass/clock/add.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       ruleName,
       // 规则名称
@@ -107,14 +103,14 @@ export function update(obj) {
   return request({
     url: '/community_correction/webClass/clock/update.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       // ...obj,
-      ruleId:obj.ruleId,
-      ruleName:obj.ruleName,
-      period:obj.period,
-      startTimes:obj.startTimes,
-      endTimes:obj.endTimes
+      ruleId: obj.ruleId,
+      ruleName: obj.ruleName,
+      period: obj.period,
+      startTimes: obj.startTimes,
+      endTimes: obj.endTimes
     })
   })
 }

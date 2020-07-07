@@ -78,48 +78,51 @@
 
 <script>
 const taskTypeList = [
-  { id: "0", value: "每天" },
-  { id: "1", value: "法定工作日" },
-  { id: "2", value: "自定义" }
-];
+  { id: '0', value: '每天' },
+  { id: '1', value: '法定工作日' },
+  { id: '2', value: '自定义' }
+]
 const dateList = [
-  { id: "sunday", value: " 星期日" },
-  { id: "monday", value: " 星期一" },
-  { id: "tuesday", value: " 星期二" },
-  { id: "wednesday", value: " 星期三" },
-  { id: "thursday", value: " 星期四" },
-  { id: "friday", value: " 星期五" },
-  { id: "saturday", value: " 星期六" }
-];
-import { addTask } from "@/api/attendance";
+  { id: 'sunday', value: '星期日' },
+  { id: 'monday', value: '星期一' },
+  { id: 'tuesday', value: '星期二' },
+  { id: 'wednesday', value: '星期三' },
+  { id: 'thursday', value: '星期四' },
+  { id: 'friday', value: '星期五' },
+  { id: 'saturday', value: '星期六' }
+]
+import { addTask } from '@/api/attendance'
 export default {
   props: {
-    dialogVisible: false
+    dialogVisible: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data() {
     var checkTasktype = (rule, value, callback) => {
-      if (value === "2" && this.taskInfo.customDate.length === 0) {
-        callback(new Error("请选择自定义考勤日期"));
+      if (value === '2' && this.taskInfo.customDate.length === 0) {
+        callback(new Error('请选择自定义考勤日期'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       taskTypeList: taskTypeList,
       dateList: dateList,
       facesetList: [],
       webcamList: [],
-      webcamIdStr: "",
-      facesetIdStr: "",
+      webcamIdStr: '',
+      facesetIdStr: '',
       taskInfo: {
-        taskName: "",
-        taskType: "0",
+        taskName: '',
+        taskType: '0',
         customDate: [],
-        timeRange: ["09:00:00", "18:00:00"],
-        startTime: "",
-        endTime: "",
-        attendanceType: "0"
+        timeRange: ['09:00:00', '18:00:00'],
+        startTime: '',
+        endTime: '',
+        attendanceType: '0'
       },
 
       bindingWebcams: [
@@ -131,19 +134,19 @@ export default {
       ],
       rules: {
         taskName: [
-          { required: true, message: "请输入任务名称", trigger: "blur" }
+          { required: true, message: '请输入任务名称', trigger: 'blur' }
         ],
         timeRange: [
           {
-            type: "array",
+            type: 'array',
             required: true,
-            message: "请输入任务时间段",
-            trigger: "change"
+            message: '请输入任务时间段',
+            trigger: 'change'
           }
         ],
-        taskType: [{ validator: checkTasktype, trigger: "blur" }]
+        taskType: [{ validator: checkTasktype, trigger: 'blur' }]
       }
-    };
+    }
   },
 
   methods: {
@@ -155,19 +158,19 @@ export default {
           // 当摄像头与绑定的人脸库只有一组但是其中一项为空时
           if (
             this.bindingWebcams.length === 1 &&
-            (this.bindingWebcams[0].webcamValue === "" ||
+            (this.bindingWebcams[0].webcamValue === '' ||
               this.bindingWebcams[0].facesetValue.length === 0)
           ) {
             this.$message({
-              type: "warning",
-              message: "请至少绑定一组摄像头与人脸库"
-            });
+              type: 'warning',
+              message: '请至少绑定一组摄像头与人脸库'
+            })
             // 当摄像头与绑定的人脸库大于一组但是其中某项为空时
           } else if (this.handleDealBindingData() === true) {
             const customDateStr =
-              this.taskInfo.taskType === "2"
-                ? this.taskInfo.customDate.join(",")
-                : "";
+              this.taskInfo.taskType === '2'
+                ? this.taskInfo.customDate.join(',')
+                : ''
             addTask(
               this.taskInfo.taskName,
               this.facesetIdStr,
@@ -179,38 +182,38 @@ export default {
               customDateStr
             )
               .then(res => {
-                this.handleReset();
-                this.$message({ type: "success", message: "更新成功" });
-                this.$emit("submitSuccess");
+                this.handleReset()
+                this.$message({ type: 'success', message: '更新成功' })
+                this.$emit('submitSuccess')
               })
-              .catch(() => {});
+              .catch(() => {})
           }
         }
-      });
+      })
     },
 
     // 判断当前是否符合提交条件
     handleDealBindingData() {
-      const webcamIdsObj = [];
-      const facesetIdsObj = [];
-      let isCorret = true; // 是否完成发送请求条件
+      const webcamIdsObj = []
+      const facesetIdsObj = []
+      let isCorret = true // 是否完成发送请求条件
       this.bindingWebcams.every(val => {
-        if (val.webcamValue === "" || val.facesetValue.length === 0) {
+        if (val.webcamValue === '' || val.facesetValue.length === 0) {
           this.$message({
-            type: "warning",
-            message: "绑定的摄像头或人脸库不能为空"
-          });
-          isCorret = false;
-          return false; // 跳出every循环
+            type: 'warning',
+            message: '绑定的摄像头或人脸库不能为空'
+          })
+          isCorret = false
+          return false // 跳出every循环
         } else {
-          webcamIdsObj.push(val.webcamValue.join(";"));
-          facesetIdsObj.push(val.facesetValue.join(";"));
-          return true;
+          webcamIdsObj.push(val.webcamValue.join(';'))
+          facesetIdsObj.push(val.facesetValue.join(';'))
+          return true
         }
-      });
-      this.webcamIdStr = webcamIdsObj.join(",");
-      this.facesetIdStr = facesetIdsObj.join(",");
-      return isCorret;
+      })
+      this.webcamIdStr = webcamIdsObj.join(',')
+      this.facesetIdStr = facesetIdsObj.join(',')
+      return isCorret
     },
 
     // 新增摄像头绑定人脸库
@@ -219,38 +222,38 @@ export default {
         id: parseInt(this.bindingWebcams.length + 1),
         webcamValue: [],
         facesetValue: []
-      };
-      this.bindingWebcams.push(obj);
+      }
+      this.bindingWebcams.push(obj)
     },
 
     // 移除绑定摄像头与人脸库
     handleRemoveBinding(index) {
-      this.bindingWebcams.splice(index, 1);
+      this.bindingWebcams.splice(index, 1)
     },
 
     // 关闭摄像头
     handleClose() {
-      this.handleReset();
-      this.$emit("closeModal");
+      this.handleReset()
+      this.$emit('closeModal')
     },
 
     // 重置数据
     handleReset() {
-      this.webcamIdStr = "";
-      this.facesetIdStr = "";
-      this.$refs.addtaskrefs.resetFields();
-      this.bindingWebcams = [{ id: 1, webcamValue: [], facesetValue: [] }];
+      this.webcamIdStr = ''
+      this.facesetIdStr = ''
+      this.$refs.addtaskrefs.resetFields()
+      this.bindingWebcams = [{ id: 1, webcamValue: [], facesetValue: [] }]
       this.taskInfo = {
-        taskName: "",
-        taskType: "0",
-        startTime: "",
-        endTime: "",
+        taskName: '',
+        taskType: '0',
+        startTime: '',
+        endTime: '',
         customDate: [],
-        timeRange: ["09:00:00", "18:00:00"]
-      };
+        timeRange: ['09:00:00', '18:00:00']
+      }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

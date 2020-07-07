@@ -17,8 +17,6 @@ NProgress.configure({
 const whiteList = ['/login', '/', '/api', '/index'] // no redirect whitelist
 
 router.beforeEach((to, from, next) => {
-  // to: Route: 即将要进入的目标 路由对象
-  // from: Route: 当前导航正要离开的路由
   if (getLogin()) {
     NProgress.start() // start progress bar
     if (to.path === '/login') {
@@ -29,9 +27,6 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(res => { // 拉取user_info
-          // console.log(res.data.authorityCodes)
-          // console.log(res)
-          // console.log('在权限拦截处')
           const roles = res.data.authorityCodes // note: roles must be a array! such as: ['editor','develop']
           store.dispatch('GenerateRoutes', {
             roles
@@ -57,8 +52,6 @@ router.beforeEach((to, from, next) => {
   } else {
     if (Cookies.get('flag') === '1') {
       store.dispatch('GetInfo').then(res => { // 拉取user_info
-        // console.log(res.data.authorityCodes)
-        // console.log('在权限拦截处')
         const roles = res.data.authorityCodes// note: roles must be a array! such as: ['editor','develop']
         store.dispatch('GenerateRoutes', {
           roles
@@ -81,7 +74,7 @@ router.beforeEach((to, from, next) => {
       // eslint-disable-next-line brace-style
     }
     /* has no token*/
-    else if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+    else if (whiteList.includes(to.path)) { // 在免登录白名单，直接进入
       next()
     } else {
       next(`/login`) // 否则全部重定向到登录页

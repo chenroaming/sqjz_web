@@ -71,7 +71,7 @@ export const asyncRouterMap = [
     redirect: '/home/index',
     meta: {
       title: '首页',
-      icon: 'more',
+      icon: 'more'
       // roles: ['Communityuser:admin']
     },
     children: [
@@ -80,10 +80,10 @@ export const asyncRouterMap = [
         component: () => import('@/views/home/index'), // Parent router-view
         name: 'screen-manger',
         meta: {
-          title: '首页',
+          title: '首页'
           // roles: ['Communityuser:admin']
         }
-      },
+      }
     ]
   },
   {
@@ -92,7 +92,7 @@ export const asyncRouterMap = [
     redirect: '/Communityuser/index',
     meta: {
       title: '矫正电子档案',
-      icon: 'more',
+      icon: 'community',
       roles: ['user:admin']
     },
     children: [
@@ -117,12 +117,33 @@ export const asyncRouterMap = [
       {
         path: 'changeUser',
         hidden: true,
-        component: () => import('@/views/Communityuser/changeUser/changeUser'), // Parent router-view
+        component: () => import('@/views/Communityuser/changeUser/index'), // Parent router-view
         name: 'change-user',
         meta: {
           title: '修改信息'
         }
-      },
+      }
+    ]
+  },
+  {
+    path: '/Relation',
+    component: Layout,
+    redirect: '/Relation/index',
+    meta: {
+      title: '矫正对象分组',
+      icon: 'example',
+      roles: ['user:admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/Relation/index'), // Parent router-view
+        name: 'relation-group',
+        meta: {
+          title: '矫正对象分组',
+          roles: ['user:admin']
+        }
+      }
     ]
   },
   {
@@ -131,55 +152,19 @@ export const asyncRouterMap = [
     redirect: '/record/normal',
     meta: {
       title: '报告任务管理',
-      icon: 'attendance',
+      icon: 'camera',
       roles: ['clock:admin']
     },
     children: [
-    // {
-    //   path: 'normal',
-    //   component: () => import('@/views/attendance/index'),
-    //   name: 'normal-manger',
-    //   meta: {
-    //     title: '通知规则',
-    //     roles: ['clock:admin']
-    //   }
-    // },
-    {
-      path: 'area',
-      component: () => import('@/views/attendance/area/index'),
-      name: 'area-manger',
-      meta: {
-        title: '报告任务管理',
-        roles: ['clock:admin']
+      {
+        path: 'area',
+        component: () => import('@/views/attendance/area/index'),
+        name: 'area-manger',
+        meta: {
+          title: '报告任务管理',
+          roles: ['clock:admin']
+        }
       }
-    },
-    // {
-    //   path: 'normaldetail',
-    //   hidden: true,
-    //   component: () => import('@/views/attendance/detail/detail'), // Parent router-view
-    //   name: 'attendance-detail',
-    //   meta: {
-    //     title: '普通考勤详情'
-    //   }
-    // },
-    // {
-    //   path: 'areadetail',
-    //   hidden: true,
-    //   component: () => import('@/views/attendance/area/detail/detail'), // Parent router-view
-    //   name: 'area-detail',
-    //   meta: {
-    //     title: '区间考勤详情'
-    //   }
-    // },
-    // {
-    //   path: 'areacount',
-    //   hidden: true,
-    //   component: () => import('@/views/attendance/area/count/count'), // Parent router-view
-    //   name: 'area-count',
-    //   meta: {
-    //     title: '区间考勤统计'
-    //   }
-    // }
     ]
   },
   {
@@ -188,7 +173,7 @@ export const asyncRouterMap = [
     redirect: '/warningInfo/index',
     meta: {
       title: '预警信息管理',
-      icon: 'attendance',
+      icon: 'eye-open',
       roles: ['warningInfo:admin']
     },
     children: [
@@ -209,7 +194,7 @@ export const asyncRouterMap = [
     redirect: '/interviewRecord/index',
     meta: {
       title: '走访记录管理',
-      icon: 'attendance',
+      icon: 'meeting',
       roles: ['interviewRecord:admin']
     },
     children: [
@@ -230,7 +215,7 @@ export const asyncRouterMap = [
     redirect: '/socially/index',
     meta: {
       title: '公益活动管理',
-      icon: 'attendance',
+      icon: 'visitor',
       roles: ['sociallyUsefulActivity:admin']
     },
     children: [
@@ -242,7 +227,7 @@ export const asyncRouterMap = [
           title: '公益活动管理',
           roles: ['sociallyUsefulActivity:admin']
         }
-      },
+      }
     ]
   },
   {
@@ -251,7 +236,7 @@ export const asyncRouterMap = [
     redirect: '/productInfo/index',
     meta: {
       title: '商品管理',
-      icon: 'attendance',
+      icon: 'snapshot',
       roles: ['productInfo:admin']
     },
     children: [
@@ -263,7 +248,7 @@ export const asyncRouterMap = [
           title: '商品管理',
           roles: ['productInfo:admin']
         }
-      },
+      }
     ]
   },
   {
@@ -272,7 +257,7 @@ export const asyncRouterMap = [
     redirect: '/educationInfo/index',
     meta: {
       title: '教育管理',
-      icon: 'attendance',
+      icon: 'schoolmsg',
       roles: ['educationInfo:admin']
     },
     children: [
@@ -284,7 +269,7 @@ export const asyncRouterMap = [
           title: '教育管理',
           roles: ['educationInfo:admin']
         }
-      },
+      }
     ]
   },
   {
@@ -293,7 +278,7 @@ export const asyncRouterMap = [
     redirect: '/application/index',
     meta: {
       title: '事项申请管理',
-      icon: 'attendance',
+      icon: 'device',
       roles: ['application:admin']
     },
     children: [
@@ -305,7 +290,7 @@ export const asyncRouterMap = [
           title: '事项申请管理',
           roles: ['application:admin']
         }
-      },
+      }
     ]
   },
   {
@@ -376,7 +361,7 @@ export const asyncRouterMap = [
     redirect: '/system/usermanger',
     meta: {
       title: '系统管理',
-      icon: 'more',
+      icon: 'user',
       roles: ['system:admin']
     },
     children: [{
@@ -415,7 +400,7 @@ export const asyncRouterMap = [
         title: 'App更新管理',
         roles: ['versionFile:admin']
       }
-    },
+    }
     // {
     //   path: 'auth',
     //   component: () => import('@/views/auth/index'), // Parent router-view

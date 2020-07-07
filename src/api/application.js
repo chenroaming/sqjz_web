@@ -13,9 +13,9 @@ export function find(applyType = '', pageNumber = 1, pageSize = 5) {
     url: '/community_correction/webClass/application/find.jhtml',
     method: 'post',
     data: Qs.stringify({
-        applyType,
-        pageNumber,
-        pageSize
+      applyType,
+      pageNumber,
+      pageSize
     })
   })
 }
@@ -25,15 +25,15 @@ export function find(applyType = '', pageNumber = 1, pageSize = 5) {
  * @return [state]
  */
 export function audit(data) {
-    return request({
-      url: '/community_correction/webClass/application/audit.jhtml',
-      method: 'post',
-      isShowTips:true,
-      data: Qs.stringify({
-        applyType:data.applyType,
-        applyId:data.applyId,
-        auditState:data.auditState,
-        auditReason:data.auditReason
-      })
+  return request({
+    url: '/community_correction/webClass/application/audit.jhtml',
+    method: 'post',
+    isShowTips: true,
+    data: Qs.stringify({
+      applyType: data.applyType,
+      applyId: data.applyId,
+      auditState: data.auditState,
+      auditReason: data.auditReason
     })
-  }
+  })
+}

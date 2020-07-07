@@ -1,5 +1,5 @@
-import { login, logout, getInfo, login2 } from '@/api/login'
-import { setAccount, removeAccount, removeFlag, setLogin, removeSetLogin, removeToken, setroleType, getroleType, removeroleType,setCommunityName,getCommunityName,setAdminName,getAdminName } from '@/utils/auth'
+import { logout, getInfo, login2 } from '@/api/login'
+import { setAccount, removeAccount, removeFlag, setLogin, removeSetLogin, removeToken, setroleType, getroleType, removeroleType, setCommunityName, getCommunityName, setAdminName, getAdminName } from '@/utils/auth'
 
 const user = {
   state: {
@@ -9,7 +9,7 @@ const user = {
     roleType: 0,
     // 管理员类型0为其它，1为超级管理员,2为社区管理员
     areaName: '',
-    adminName: '',
+    adminName: ''
   },
 
   mutations: {
@@ -36,7 +36,7 @@ const user = {
     },
     CHANGE_AREANAME: (state, name) => {
       state.areaName = name
-    },
+    }
   },
 
   actions: {
@@ -65,11 +65,11 @@ const user = {
         const res2 = {
           data: {
             name: '测试环境权限',
-            authoritys:[]
+            authoritys: []
           }
         }
         getInfo().then(response => {
-          if (response.data.state == 100){
+          if (response.data.state == 100) {
             response.data.authorityCodes && response.data.authorityCodes.length > 0 && commit('SET_ROLES', response.data.authorityCodes)
             const data = res2.data
             console.log('获取当前人员的角色类型')
@@ -78,7 +78,7 @@ const user = {
             const communityName = getCommunityName()
             const adminName = getAdminName()
             commit('SET_NAME', adminName)
-            commit('CHANGE_AREANAME',communityName);//司法所名字
+            commit('CHANGE_AREANAME', communityName)// 司法所名字
             setAccount(data.name)
             commit('SET_AVATAR', 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png')
           }
@@ -86,29 +86,6 @@ const user = {
         })
       })
     },
-    // 测试获取用户信息2(原来使用的)
-    // GetInfo2({ commit, state }) {
-    //   return new Promise((resolve, reject) => {
-    //     getInfo().then(response => {
-    //       console.log('在仓库获取用户信息')
-    //       console.log(response)
-    //       const data = response.data
-    //       setAccount(data.name)
-    //       if (data.authoritys && data.authoritys.length > 0) { // 验证返回的roles是否是一个非空数组
-    //         commit('SET_ROLES', data.authoritys)
-    //       } else {
-    //         reject('getInfo: roles must be a non-null array !')
-    //       }
-    //       commit('SET_NAME', data.name)
-    //       commit('SET_ROLE_TYPE', data.roleType)
-    //       // commit('SET_AREA', data.areaName)
-    //       commit('SET_AVATAR', 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png')
-    //       resolve(response)
-    //     }).catch(error => {
-    //       reject(error)
-    //     })
-    //   })
-    // },
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

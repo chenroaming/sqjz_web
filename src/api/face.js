@@ -8,7 +8,7 @@ import Qs from 'qs'
  * @description 查看规则关联或未关联的人脸列表
  * @return [List]
  */
-export function getFaceList(type = '', ruleId = '', pageSize = 10, pageNumber = 1) {
+export function getFaceList(type = '', ruleId = '', pageSize = 10, pageNumber = 1, name = '') {
   return request({
     url: '/community_correction/webClass/clock/findUserList.jhtml',
     method: 'post',
@@ -16,7 +16,8 @@ export function getFaceList(type = '', ruleId = '', pageSize = 10, pageNumber = 
       type,
       ruleId,
       pageSize,
-      pageNumber
+      pageNumber,
+      name
     })
   })
 }

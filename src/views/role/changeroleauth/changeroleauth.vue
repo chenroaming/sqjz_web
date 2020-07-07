@@ -1,25 +1,24 @@
 <template>
   <el-drawer
-    title="权限配置"
     :visible.sync="drawer"
-    :direction="direction">
+    :direction="direction"
+    title="权限配置">
     <el-row>
-      <p class="title">角色名称：{{role.roleName}}</p>
+      <p class="title">角色名称：{{ role.roleName }}</p>
     </el-row>
     <el-row>
-      <p class="title">角色描述：{{role.description}}</p>
+      <p class="title">角色描述：{{ role.description }}</p>
     </el-row>
     <div class="tree-box">
       <el-tree
+        ref="authTree"
         :data="getAuthTree"
-        show-checkbox
-        node-key="authorityCode"
         :props="defaultProps"
         :default-expanded-keys="['sysmanage:admin']"
         :default-checked-keys="defaultChecked"
-        ref="authTree"
-        :highlight-current="highlight">
-      </el-tree>
+        :highlight-current="highlight"
+        show-checkbox
+        node-key="authorityCode"/>
     </div>
     <div style="text-align: center;">
       <el-button type="success" @click="submit">提交修改</el-button>
@@ -28,58 +27,58 @@
 </template>
 
 <script>
-import { findAuthority,updateAuthority } from '@/api/role';
+import { findAuthority, updateAuthority } from '@/api/role'
 export default {
-  data () {
-    return {
-      highlight:true,
-      drawer: false,
-      direction: 'rtl',
-      authTree:[],//权限列表数组
-      defaultProps: {//权限字段配置
-        children: 'childList',
-        label: 'authorityName'
-      },
-      defaultChecked:[],//已拥有的权限
-    }
-  },
   props: {
-    role:{
-      type:Object,
-      default:{
-        roleName:'',
-        description:'',
-        roleId:'',
+    role: {
+      type: Object,
+      default: {
+        roleName: '',
+        description: '',
+        roleId: ''
       }
     }
   },
-  computed:{
-    getAuthTree(){
+  data() {
+    return {
+      highlight: true,
+      drawer: false,
+      direction: 'rtl',
+      authTree: [], // 权限列表数组
+      defaultProps: {// 权限字段配置
+        children: 'childList',
+        label: 'authorityName'
+      },
+      defaultChecked: []// 已拥有的权限
+    }
+  },
+  computed: {
+    getAuthTree() {
       return this.authTree
     }
   },
   methods: {
-    show({ roleId }){
+    show({ roleId }) {
       findAuthority(roleId).then(res => {
-        if (res.data.state == 100){
-          const { authorityList,authorityCodes } = res.data
+        if (res.data.state == 100) {
+          const { authorityList, authorityCodes } = res.data
           this.authTree = authorityList
           this.defaultChecked = authorityCodes
         }
       })
-      this.drawer = true;
+      this.drawer = true
     },
-    submit(){
+    submit() {
       this.$confirm('确认修改该用户权限配置吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const checkedKeys = this.$refs.authTree.getCheckedKeys().concat(this.$refs.authTree.getHalfCheckedKeys()).join(',')
-        updateAuthority(this.role.roleId,checkedKeys)
-      }).catch(() => {});
-    },
-  },
+        updateAuthority(this.role.roleId, checkedKeys)
+      }).catch(() => {})
+    }
+  }
 }
 </script>
 

@@ -6,7 +6,8 @@ const app = {
       opened: !+Cookies.get('sidebarStatus'),
       withoutAnimation: false
     },
-    device: 'desktop'
+    device: 'desktop',
+    nowPage: 1 // 矫正电子档案当前页存储
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
@@ -25,6 +26,9 @@ const app = {
     },
     TOGGLE_DEVICE: (state, device) => {
       state.device = device
+    },
+    SET_NOWPAGE: (state, pageNum) => {
+      state.nowPage = pageNum
     }
   },
   actions: {
@@ -36,6 +40,9 @@ const app = {
     },
     ToggleDevice({ commit }, device) {
       commit('TOGGLE_DEVICE', device)
+    },
+    SetNowPage({ commit }, nowPage) {
+      commit('SET_NOWPAGE', nowPage)
     }
   }
 }

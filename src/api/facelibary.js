@@ -31,7 +31,7 @@ export function deleteFace(facesetId) {
     url: '/face_recognition/webClass/faceset/delete.jhtml',
     method: 'post',
     data: Qs.stringify({
-      facesetId,
+      facesetId
     })
   })
 }
@@ -59,7 +59,7 @@ export function updateFace(facesetId, facesetName, maxNum, identity, category) {
  * @return [Object]
  */
 export function addFaceLibary(facesetName, maxNum, identity, category, webcamIds = '') {
-  webcamIds = webcamIds.join(",");
+  webcamIds = webcamIds.join(',')
   return request({
     url: '/face_recognition/webClass/faceset/save.jhtml',
     method: 'post',

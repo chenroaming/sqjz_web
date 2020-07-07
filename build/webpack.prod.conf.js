@@ -55,7 +55,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true,
       favicon: resolve('favicon.ico'),
-      title: 'vue-admin-template',
+      title: '福建智慧矫正可视化监管平台',
       minify: {
         removeComments: true,
         collapseWhitespace: true,

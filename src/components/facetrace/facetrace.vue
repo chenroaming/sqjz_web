@@ -1,154 +1,167 @@
 <template>
-  <div class='auth-mask' v-if="authDrawerVisible" :class="isDrawerOpen?'animateFadeIn':'animateFadeOut'"
+  <div
+    v-if="authDrawerVisible"
+    :class="isDrawerOpen?'animateFadeIn':'animateFadeOut'"
+    class="auth-mask"
     @click="handleCloseSelect">
-    <div class='Wrap' :class="isDrawerOpen?'animateSlideIn':'animateSlideOut'" @click.stop>
-      <div class='close'>
-        <el-button circle icon="el-icon-close" type="danger" size="mini" @click="handleClose"></el-button>
+    <div :class="isDrawerOpen?'animateSlideIn':'animateSlideOut'" class="Wrap" @click.stop>
+      <div class="close">
+        <el-button circle icon="el-icon-close" type="danger" size="mini" @click="handleClose"/>
       </div>
-      <div class='loading' v-if="isLoading">
-        <div class='loading-circle'></div>
+      <div v-if="isLoading" class="loading">
+        <div class="loading-circle"/>
         <p>加载中...</p>
       </div>
-      <div class='loading' v-if="isNoTrace">
+      <div v-if="isNoTrace" class="loading">
         <p style="color:#409eff">暂无相关记录！</p>
       </div>
-      <div class='content'>
+      <div class="content">
         <el-timeline>
-          <el-timeline-item :timestamp=" item.createDate.time | formatTime " placement="top"
-            v-for="(item, index) in traceList" :key="index">
-            <span class='traceWebcamName'>{{ item.webcamName }}</span>
+          <el-timeline-item
+            v-for="(item, index) in traceList"
+            :timestamp=" item.createDate.time | formatTime "
+            :key="index"
+            placement="top">
+            <span class="traceWebcamName">{{ item.webcamName }}</span>
             <el-card>
-              <img style="cursor:pointer" :src="item.lPhoto" alt="" @click="handleLookLphoto(item.lPhoto)"
-                class='timelinePhoto'>
-              <h4>{{ item.name }} （{{ item.gender === '0'? '男' : '女'}}）</h4>
+              <img
+                :src="item.lPhoto"
+                style="cursor:pointer"
+                alt=""
+                class="timelinePhoto"
+                @click="handleLookLphoto(item.lPhoto)">
+              <h4>{{ item.name }} （{{ item.gender === '0'? '男' : '女' }}）</h4>
               <p>相似度：{{ item.similarity | similarityPercent }}</p>
             </el-card>
           </el-timeline-item>
         </el-timeline>
       </div>
-      <Sortpage :totalPages="totalPage" @sizeChange="handleSortPage" />
+      <Sortpage :total-pages="totalPage" @sizeChange="handleSortPage" />
     </div>
-    <div class='lamp'>
-      <img v-show="isShowLphoto" :src="lphotoPath" alt="预览大图" :class="isShowLphoto? 'animateScale' :'animateScaleOut'"
+    <div class="lamp">
+      <img
+        v-show="isShowLphoto"
+        :src="lphotoPath"
+        :class="isShowLphoto? 'animateScale' :'animateScaleOut'"
+        alt="预览大图"
         style="width: 405px;cursor: pointer;height: 720px;">
     </div>
-
 
   </div>
 </template>
 
 <script>
-  import { getSnapShotList } from '@/api/snapshot';
-  import { computedFormatTime } from '@/utils/tools';
-  import Sortpage from "@/components/sortpage/sortpage"; // 分页组件
-  export default {
-    props: {
-      authDrawerVisible: false,
-    },
-    // 传输值
-    components: {
-      Sortpage
-    },
+import { getSnapShotList } from '@/api/snapshot'
+import { computedFormatTime } from '@/utils/tools'
+import Sortpage from '@/components/sortpage/sortpage' // 分页组件
+export default {
+  // 传输值
+  components: {
+    Sortpage
+  },
 
-    data() {
-      return {
-        totalPage: 0, // 总页数
-        pageNumber: 1, // 当前页数
-        isLoading: true,
-        traceList: [],
-        lphotoPath: '',
-        isShowLphoto: false,
-        isDrawerOpen: false,
-        isNoTrace: false,
-      }
+  filters: {
+    formatTime(val) {
+      return computedFormatTime(val)
     },
 
-    filters: {
-      formatTime(val) {
-        return computedFormatTime(val);
-      },
+    // 相似度匹配
+    similarityPercent(val) {
+      // console.log(val)
 
-      // 相似度匹配
-      similarityPercent(val) {
-        // console.log(val)
+      const beforeDot = parseFloat(val).toFixed(4).split('.')[1].slice(0, 2)
+      const afterDot = parseFloat(val).toFixed(4).split('.')[1].slice(2, 4)
+      return beforeDot + '.' + afterDot + '%'
+    }
+  },
+  props: {
+    authDrawerVisible: false
+  },
 
-        let beforeDot = parseFloat(val).toFixed(4).split('.')[1].slice(0, 2);
-        let afterDot = parseFloat(val).toFixed(4).split('.')[1].slice(2, 4);
-        return beforeDot + '.' + afterDot + '%';
-      }
+  data() {
+    return {
+      totalPage: 0, // 总页数
+      pageNumber: 1, // 当前页数
+      isLoading: true,
+      traceList: [],
+      lphotoPath: '',
+      isShowLphoto: false,
+      isDrawerOpen: false,
+      isNoTrace: false
+    }
+  },
+
+  beforeDestroy() {
+    clearTimeout(this.timer)
+    this.timer = null
+  },
+
+  methods: {
+    // 分页
+    handleSortPage(num) {
+      this.pageNumber = num
+      this.isLoading = true
+      this.traceList = []
+      this.getList()
+    },
+    // 关闭抽屉
+    handleClose() {
+      this.isDrawerOpen = false
+      this.isShowLphoto = false
+      this.timer = setTimeout(() => {
+        this.lphotoPath = ''
+        this.isNoTrace = false
+        this.traceList = []
+        this.$emit('closeModal')
+      }, 300)
     },
 
-    methods: {
-      // 分页
-      handleSortPage(num) {
-        this.pageNumber = num;
-        this.isLoading = true;
-        this.traceList = [];
-        this.getList();
-      },
-      // 关闭抽屉
-      handleClose() {
-        this.isDrawerOpen = false;
-        this.isShowLphoto = false;
-        this.timer = setTimeout(() => {
-          this.lphotoPath = '';
-          this.isNoTrace = false;
-          this.traceList = [];
-          this.$emit('closeModal');
-        }, 300);
-      },
-
-      // 获取人脸轨迹
-      getFaceTraceList(faceId) {
-        this.faceId = faceId;
-        this.getList();
-      },
-      //获取列表
-      getList() {
-        let pageSize = 10;
-        let pageNumber = this.pageNumber;
-        let category = '';
-        let webcamId = '';
-        let faceId = this.faceId;
-        this.isDrawerOpen = true;
-        getSnapShotList(pageSize, pageNumber, category, webcamId, faceId)
-          .then(res => {
-            this.traceList = res.data.List;
-            this.lphotoPath = res.data.List[0].lPhoto;
-            this.pageNumber = res.data.pageNumber;
-            this.totalPage = res.data.total;
-            this.$notify({
-              title: '提示',
-              message: '点击小图可查看完整抓拍图',
-              position: 'top-left',
-              duration: 2000,
-            });
-            this.isLoading = false;
+    // 获取人脸轨迹
+    getFaceTraceList(faceId) {
+      this.faceId = faceId
+      this.getList()
+    },
+    // 获取列表
+    getList() {
+      const pageSize = 10
+      const pageNumber = this.pageNumber
+      const category = ''
+      const webcamId = ''
+      const faceId = this.faceId
+      this.isDrawerOpen = true
+      getSnapShotList(pageSize, pageNumber, category, webcamId, faceId)
+        .then(res => {
+          this.traceList = res.data.List
+          this.lphotoPath = res.data.List[0].lPhoto
+          this.pageNumber = res.data.pageNumber
+          this.totalPage = res.data.total
+          this.$notify({
+            title: '提示',
+            message: '点击小图可查看完整抓拍图',
+            position: 'top-left',
+            duration: 2000
           })
-          .catch(() => {
-            this.traceList = [];
-            this.isLoading = false;
-            this.isNoTrace = true;
-          });
-      },
-      // 查看大图
-      handleLookLphoto(path) {
-        this.lphotoPath = path;
-        this.isShowLphoto = true;
-      },
-
-      // 点击遮罩依次关闭
-      handleCloseSelect() {
-        if (this.isShowLphoto === false) this.handleClose();
-        else this.isShowLphoto = false;
-      }
+          this.isLoading = false
+        })
+        .catch(() => {
+          this.traceList = []
+          this.isLoading = false
+          this.isNoTrace = true
+        })
+    },
+    // 查看大图
+    handleLookLphoto(path) {
+      this.lphotoPath = path
+      this.isShowLphoto = true
     },
 
-    beforeDestroy() {
-      clearTimeout(this.timer);
-      this.timer = null;
+    // 点击遮罩依次关闭
+    handleCloseSelect() {
+      if (this.isShowLphoto === false) this.handleClose()
+      else this.isShowLphoto = false
     }
   }
+}
 </script>
 
 <style lang='scss' scoped>
@@ -252,7 +265,6 @@
   .animateScaleOut {
     animation: ScaleOut .3s forwards ease-in-out;
   }
-
 
   @keyframes fadeIn {
     from {

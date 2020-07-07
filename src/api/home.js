@@ -10,7 +10,7 @@ import request from '@/utils/request'
 export function getCardList() {
   return request({
     url: '/face_recognition/webClass/statistics/baseMessageCount.jhtml',
-    method: 'post',
+    method: 'post'
   })
 }
 
@@ -21,7 +21,7 @@ export function getCardList() {
 export function getChartList() {
   return request({
     url: '/face_recognition/webClass/statistics/countByDateRange.jhtml',
-    method: 'post',
+    method: 'post'
   })
 }
 
@@ -32,6 +32,6 @@ export function getChartList() {
 export function getPersonSortList() {
   return request({
     url: '/face_recognition/webClass/statistics/countByUserType.jhtml',
-    method: 'post',
+    method: 'post'
   })
 }

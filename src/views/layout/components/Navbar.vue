@@ -7,22 +7,10 @@
     />
     <breadcrumb />
     <el-dropdown class="avatar-container" trigger="click">
-      <div class="avatar-wrapper">
-        <router-link style="margin-right:15px;" :to="{ path:'/index' }">
-          <el-button type="primary" size="mini">返回官网</el-button>
-        </router-link>
-        <span class="avatar-username">
-          所属区域：
-        <span style="color:#409eff;margin-right:10px">{{ areaName }}</span>
-        </span>
-        <span class="avatar-username">
-          欢迎您：
-          <span style="color:#409eff">{{ name }}</span>
-        </span>
-        <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar" />
-        <i class="el-icon-caret-bottom" />
-      </div>
-
+      <span style="cursor: pointer;">
+        <el-image :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"/>
+        <i class="el-icon-caret-bottom"/>
+      </span>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item>主页</el-dropdown-item>
@@ -35,6 +23,19 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    <div class="avatar-container">
+      <router-link :to="{ path:'/index' }" style="margin-right:15px;" target="_blank">
+        <el-button type="primary" size="mini">返回官网</el-button>
+      </router-link>
+      <span class="avatar-username">
+        所属区域：
+        <span style="color:#409eff;margin-right:10px">{{ areaName }}</span>
+      </span>
+      <span class="avatar-username">
+        欢迎您：
+        <span style="color:#409eff">{{ name }}</span>
+      </span>
+    </div>
     <!-- <el-dropdown class="area-container">
       <div class="avatar-wrapper"></div>
     </el-dropdown>-->
@@ -42,10 +43,10 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
-import Breadcrumb from "@/components/Breadcrumb";
-import Hamburger from "@/components/Hamburger";
-import { getChangeAreaList, replaceArea } from "@/api/area";
+import { mapGetters, mapState } from 'vuex'
+import Breadcrumb from '@/components/Breadcrumb'
+import Hamburger from '@/components/Hamburger'
+import { getChangeAreaList, replaceArea } from '@/api/area'
 
 export default {
   components: {
@@ -54,11 +55,11 @@ export default {
   },
   data() {
     return {
-      areaList: [] //所有的区域列表
-    };
+      areaList: [] // 所有的区域列表
+    }
   },
   computed: {
-    ...mapGetters(["sidebar", "avatar"]),
+    ...mapGetters(['sidebar', 'avatar']),
     ...mapState({
       name: state => state.user.name,
       areaName: state => state.user.areaName
@@ -66,40 +67,40 @@ export default {
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch("ToggleSideBar");
+      this.$store.dispatch('ToggleSideBar')
     },
     logout() {
-      this.$store.dispatch("LogOut").then(() => {
-        location.reload(); // 为了重新实例化vue-router对象 避免bug
-      });
+      this.$store.dispatch('LogOut').then(() => {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      })
     },
     // 点击区域名字，获取区域列表
     changeArea() {
       getChangeAreaList()
         .then(res => {
-          this.areaList = res.data.List;
+          this.areaList = res.data.List
         })
         .catch(() => {
-          this.areaList = [];
-        });
+          this.areaList = []
+        })
     },
     // 点击其中一个区域名字，变更区域
     replaceAreaName(item) {
-      console.log(item.areaId, item.areaName);
+      console.log(item.areaId, item.areaName)
       replaceArea(item.areaId)
         .then(res => {
-          this.$message({ type: "success", message: "账号所在区域变更成功！" });
-          this.$store.dispatch("ChangeAreaname").then(() => {
-            location.reload(); // 为了重新实例化vue-router对象 避免bug
-          });
-          this.areaList = [];
+          this.$message({ type: 'success', message: '账号所在区域变更成功！' })
+          this.$store.dispatch('ChangeAreaname').then(() => {
+            location.reload() // 为了重新实例化vue-router对象 避免bug
+          })
+          this.areaList = []
         })
         .catch(() => {
-          this.areaList = [];
-        });
+          this.areaList = []
+        })
     }
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
@@ -132,12 +133,14 @@ export default {
     height: 50px;
     display: inline-block;
     margin-right: 20px;
-    cursor: pointer;
+    /* cursor: pointer; */
     // position: absolute;
     // right: 35px;
     float: right;
     .avatar-username {
       margin-right: 20px;
+      font-size: 14px;
+      color: #606266;
     }
     // .avatar-wrapper {
     //   cursor: pointer;
@@ -149,6 +152,7 @@ export default {
       height: 40px;
       border-radius: 10px;
       vertical-align: middle;
+      cursor: pointer;
     }
     //   .el-icon-caret-bottom {
     //     position: absolute;

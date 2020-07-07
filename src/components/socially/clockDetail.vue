@@ -1,17 +1,16 @@
 <template>
   <div>
-    <el-dialog title="详情" width="60%" append-to-body :visible.sync="dialogTableVisible">
+    <el-dialog :visible.sync="dialogTableVisible" title="详情" width="60%" append-to-body>
       <el-row>
         <el-col :span="3">
           <span>打卡照片：</span>
         </el-col>
         <el-col :span="21">
           <div class="bigBox">
-            <div class="picBox" v-for="(item,index) in picArr" :key="index">
+            <div v-for="(item,index) in picArr" :key="index" class="picBox">
               <el-image
-                style="width: 300px;height: 300px;"
-                :src="item">
-              </el-image>
+                :src="item"
+                style="width: 300px;height: 300px;"/>
             </div>
           </div>
         </el-col>
@@ -21,7 +20,7 @@
           <span>打卡视频：</span>
         </el-col>
         <el-col :span="21">
-          <video v-if="hasVideo" :src="videoSrc" style="width: 100%;height: 300px;" controls></video>
+          <video v-if="hasVideo" :src="videoSrc" style="width: 100%;height: 300px;" controls/>
           <span v-else>暂无视频</span>
         </el-col>
       </el-row>
@@ -80,46 +79,46 @@
 </template>
 
 <script>
-  export default {
-    name: "clockDetail",
-    props:{
-      detail:{
-        type:Object,
-        default:() => {}
-      }
-    },
-    data() {
-      return {
-        dialogTableVisible:false,
-        dialogTableVisible2:false,
-        direction: 'rtl',
-        videoPath:'',
-      }
-    },
-    computed: {
-      picArr(){
-        return this.detail.picPath ? this.detail.picPath.split(',') : []
-      },
-      hasVideo(){
-        return this.detail.videoPath ? true : false
-      },
-      videoSrc(){
-        return `${location.origin}${this.detail.videoPath}`
-      }
-    },
-    mounted() {
-
-    },
-    methods: {
-      show(){
-        this.dialogTableVisible = true
-      },
-      // showPic(item){
-      //   this.videoPath = item.videoPath
-      //   this.dialogTableVisible2 = true
-      // },
+export default {
+  name: 'ClockDetail',
+  props: {
+    detail: {
+      type: Object,
+      default: () => ({})
     }
-  };
+  },
+  data() {
+    return {
+      dialogTableVisible: false,
+      dialogTableVisible2: false,
+      direction: 'rtl',
+      videoPath: ''
+    }
+  },
+  computed: {
+    picArr() {
+      return this.detail.picPath ? this.detail.picPath.split(',') : []
+    },
+    hasVideo() {
+      return !!this.detail.videoPath
+    },
+    videoSrc() {
+      return `${location.origin}${this.detail.videoPath}`
+    }
+  },
+  mounted() {
+
+  },
+  methods: {
+    show() {
+      this.dialogTableVisible = true
+    }
+    // showPic(item){
+    //   this.videoPath = item.videoPath
+    //   this.dialogTableVisible2 = true
+    // },
+  }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
@@ -133,7 +132,7 @@
   }
   .picBox{
     display: inline-block;
-    width: 300px; 
+    width: 300px;
     height: 300px;
     margin-right: 10px;
   }

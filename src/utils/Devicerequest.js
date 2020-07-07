@@ -1,6 +1,6 @@
 import axios from 'axios'
 // 引入axios
-import { Message, MessageBox } from 'element-ui'
+import { Message } from 'element-ui'
 // 引入提示
 axios.defaults.withCredentials = true
 // 创建axios实例

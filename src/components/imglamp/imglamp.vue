@@ -1,14 +1,14 @@
 <template>
-  <transition name='fade'>
-    <div class='wrap-mask' v-if="isShow" @click="$emit('closeModal')">
+  <transition name="fade">
+    <div v-if="isShow" class="wrap-mask" @click="$emit('closeModal')">
       <el-button
-      type="danger"
-      icon="el-icon-close"
-      circle
-      class='closeBtn'
-      @click="$emit('closeModal')"
-      ></el-button>
-      <div class='wrap-lamp' @click.stop>
+        type="danger"
+        icon="el-icon-close"
+        circle
+        class="closeBtn"
+        @click="$emit('closeModal')"
+      />
+      <div class="wrap-lamp" @click.stop>
         <img :src="path" alt="" class="bigImg">
       </div>
     </div>
@@ -18,9 +18,11 @@
 <script>
 export default {
   props: {
+    // eslint-disable-next-line vue/require-default-prop
     isShow: false,
-    path: '',
-  },
+    // eslint-disable-next-line vue/require-default-prop
+    path: ''
+  }
 }
 </script>
 
@@ -34,7 +36,7 @@ export default {
       left: 0;
       background: rgba(0, 0, 0, .8);
       position: fixed;
-      
+
     }
     &-lamp {
       width: 1280px;

@@ -7,17 +7,17 @@
     width="40%"
   >
     <el-form
-      label-position="left"
-      label-width="120px"
+      ref="rolesettings_form"
       :model="roleInfo"
       :rules="rules"
-      ref="rolesettings_form"
+      label-position="left"
+      label-width="120px"
     >
       <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="roleInfo.roleName"></el-input>
+        <el-input v-model="roleInfo.roleName"/>
       </el-form-item>
       <el-form-item label="角色描述">
-        <el-input v-model="roleInfo.description"></el-input>
+        <el-input v-model="roleInfo.description"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { addRole2, updateRole2 } from "@/api/role";
+import { addRole2, updateRole2 } from '@/api/role'
 export default {
   props: {
     dialogVisible: {
@@ -37,50 +37,50 @@ export default {
     },
     title: {
       type: String,
-      default: "修改人脸"
+      default: '修改人脸'
     }
   },
 
   data() {
     return {
-      type: "CHANGE_ROLE",
+      type: 'CHANGE_ROLE',
       roleInfo: {
-        roleId: "",
-        roleName: "",
-        description: ""
+        roleId: '',
+        roleName: '',
+        description: ''
       },
       rules: {
         roleName: [
-          { required: true, message: "请输入角色名称", trigger: "blur" }
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
         ]
       }
-    };
+    }
   },
 
   methods: {
     // 接收信息
     sendRoleInfo(type, payload) {
-      this.type = type;
-      this.roleInfo = { ...payload };
+      this.type = type
+      this.roleInfo = { ...payload }
     },
 
     // 关闭
     handleClose() {
-      this.$refs.rolesettings_form.resetFields();
-      this.$emit("closeModal");
+      this.$refs.rolesettings_form.resetFields()
+      this.$emit('closeModal')
     },
 
     // 提交
     handleSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (this.type === "CHANGE_ROLE") {
-            this.handleChangeRole();
+          if (this.type === 'CHANGE_ROLE') {
+            this.handleChangeRole()
           } else {
-            this.handleAddRole();
+            this.handleAddRole()
           }
         }
-      });
+      })
     },
 
     // 修改用户
@@ -91,20 +91,20 @@ export default {
         this.roleInfo.description
       )
         .then(res => {
-          this.$emit("requestSuccess");
+          this.$emit('requestSuccess')
         })
-        .catch(() => {});
+        .catch(() => {})
     },
 
     // 新增用户
     handleAddRole() {
       addRole2(this.roleInfo.roleName, this.roleInfo.description)
         .then(res => {
-          this.$emit("requestSuccess");
+          this.$emit('requestSuccess')
         })
-        .catch(() => {});
+        .catch(() => {})
     }
   }
-};
+}
 </script>
 

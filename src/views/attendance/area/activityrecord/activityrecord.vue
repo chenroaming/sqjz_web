@@ -1,22 +1,21 @@
 <template>
   <el-dialog
-    title="个人考勤时长统计记录"
     :visible.sync="dialogVisible"
     :close-on-click-modal="true"
-    @close="$emit('update:dialogVisible', false)"
     :show-close="false"
+    :center="true"
+    title="个人考勤时长统计记录"
     width="70%"
-    :center=true
+    @close="$emit('update:dialogVisible', false)"
   >
     <div class="charts">
-      <ve-line :data="chartData" :settings="chartSettings" height="350px" width="1000px"></ve-line>
+      <ve-line :data="chartData" :settings="chartSettings" height="350px" width="1000px"/>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { personRecordCount } from '@/api/attendance';
-
+import { personRecordCount } from '@/api/attendance'
 
 export default {
   props: {
@@ -38,22 +37,22 @@ export default {
         ]
       },
       show: this.dialogVisible
-    };
+    }
   },
 
   methods: {
-    getList(id,strary,startime,endtime){
-      personRecordCount(id,strary,startime,endtime)
-      .then(res=>{   
-        this.chartData.rows = res.data.List.map(item=>{
-          return {'日期': item.date, '考勤时长': item.duration};
+    getList(id, strary, startime, endtime) {
+      personRecordCount(id, strary, startime, endtime)
+        .then(res => {
+          this.chartData.rows = res.data.List.map(item => {
+            return { '日期': item.date, '考勤时长': item.duration }
+          })
+        }).catch(() => {
+
         })
-      }).catch(()=>{
-        
-      });
     }
   }
-};
+}
 </script>
 
 <style>

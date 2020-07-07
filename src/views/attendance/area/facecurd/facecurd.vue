@@ -23,13 +23,19 @@
           <el-radio-group
             v-model="tabPosition"
             size="mini"
-            style="line-height: 50px;"
+            style="line-height: 50px;display: inline-block;"
             @change="label=>{tabPosition = label}"
           >
             <el-radio label="delete">已有人员</el-radio>
             <el-radio label="add">添加人员</el-radio>
           </el-radio-group>
+          <div style="display: inline-block;height: 50px;line-height: 50px;float: right;">
+            <el-input v-model="userName" style="width: 150px;" placeholder="请输入姓名"></el-input>
+            <el-button type="primary" @click="search">搜索</el-button>
+          </div>
         </div>
+
+        
 
         <div v-show="tabPosition === 'add'" class="addFace">
           <el-table
@@ -136,7 +142,8 @@ export default {
         sortShow: true,
         multipleSelection: [],
         totalPages: 0
-      }
+      },
+      userName:'',
     };
   },
 
@@ -149,7 +156,6 @@ export default {
     // 接收信息
     receiveInfo(payload) {
       this.facesetInfo = Object.assign({}, payload);
-
       console.log(this.facesetInfo);
       Promise.all([this.getAddFaceList(), this.getDeleteFaceList()])
         .then(nameList => {
@@ -167,37 +173,18 @@ export default {
         });
     },
 
-    // 搜索
-    handleSearchFace() {
-      const facesetId = this.facesetInfo.facesetId;
-      if (this.tabPosition === "add") {
-        getFaceList(
-          "",
-          facesetId,
-          this.searchfaceName,
-          10,
-          1,
-          null,
-          null,
-          "faceset"
-        ).then(res => {
-          this.addTableInfo.currentPage = res.data.pageNumber;
-          this.addTableInfo.tableData = res.data.List;
-          this.addTableInfo.totalPages = res.data.total;
-        });
+    search(){
+      if (this.tabPosition == 'add'){
+        this.getAddFaceList('add',this.facesetInfo.ruleId,this.userName,1)
       } else {
-        getFaceList("", facesetId, this.searchfaceName, 10, 1).then(res => {
-          this.deleteTableInfo.currentPage = res.data.pageNumber;
-          this.deleteTableInfo.tableData = res.data.List;
-          this.deleteTableInfo.totalPages = res.data.total;
-        });
+        this.getDeleteFaceList("find",this.facesetInfo.ruleId,10,1,this.userName)
       }
     },
 
     // 添加人脸-获取列表
-    getAddFaceList() {
+    getAddFaceList(type = 'add',ruleId = this.facesetInfo.ruleId,name,num) {
       return new Promise((resolve, reject) => {
-        getFaceList("add", this.facesetInfo.ruleId, 10, 1)
+        getFaceList(type, ruleId, 10, num, name)
           .then(res => {
             console.log(res.data.list);
             this.addTableInfo.tableData = [];
@@ -205,13 +192,13 @@ export default {
             if (res.data.list.length !== 0) {
               this.addTableInfo.currentPage = res.data.pageNumber;
               this.addTableInfo.tableData = res.data.list;
-
               this.addTableInfo.totalPages = res.data.total;
               resolve("addTableInfo");
             }
           })
           .catch(() => {
             this.addTableInfo.tableData = [];
+            // this.$message.warning('无相关信息')
             reject({ msg: "暂无数据(添加)" });
           });
       });
@@ -239,7 +226,7 @@ export default {
               type: "success",
               message: "添加成功!"
             });
-            this.getDeleteFaceList("", this.facesetInfo.facesetId);
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
             this.getAddFaceList();
             this.$refs.addFaceTable.clearSelection();
           })
@@ -250,7 +237,7 @@ export default {
     // 添加人脸-分页
     sizeChangeAdd(num) {
       this.getAddFaceList(
-        "",
+        'add',
         this.facesetInfo.facesetId,
         this.searchfaceName,
         10,
@@ -279,7 +266,7 @@ export default {
               type: "success",
               message: "添加成功!"
             });
-            this.getDeleteFaceList("", this.facesetInfo.facesetId);
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
             this.getAddFaceList();
             this.$refs.addFaceTable.clearSelection();
           })
@@ -294,28 +281,29 @@ export default {
       type = "find",
       facesetId = this.facesetInfo.ruleId,
       pageSize = 10,
-      pageNumber = 1
+      pageNumber = 1,
+      name,
     ) {
       facesetId = this.facesetInfo.ruleId;
       return new Promise((resolve, reject) => {
         getFaceList(
-          "find",
+          type,
           facesetId,
           pageSize,
           pageNumber,
-          this.facesetInfo.ruleId
+          name
         )
           .then(res => {
             if (res.data.list.length !== 0) {
-              console.log(res);
               this.deleteTableInfo.currentPage = res.data.pageNumber;
               this.deleteTableInfo.tableData = res.data.list;
               this.deleteTableInfo.totalPages = res.data.total;
               resolve("deleteTableInfo");
             }
           })
-          .catch(() => {
+          .catch(err => {
             this.deleteTableInfo.tableData = [];
+            // this.$message.warning('无相关信息')
             reject({ msg: "暂无已有人员数据" });
           });
       });
@@ -329,9 +317,8 @@ export default {
     // 删除人脸-分页
     sizeChangeDelete(num) {
       this.getDeleteFaceList(
-        "",
+        "find",
         this.facesetInfo.facesetId,
-        this.searchfaceName,
         10,
         num
       );
@@ -358,7 +345,7 @@ export default {
               type: "success",
               message: "移除成功!"
             });
-            this.getDeleteFaceList("", this.facesetInfo.facesetId);
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
             this.getAddFaceList();
           })
           .catch(() => {});
@@ -380,7 +367,7 @@ export default {
               message: "移除成功!"
             });
             this.$emit("delteFaceInfoSuccess");
-            this.getDeleteFaceList("", this.facesetInfo.facesetId);
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
             this.getAddFaceList();
           })
           .catch(() => {});

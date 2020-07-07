@@ -1,38 +1,38 @@
 <script>
-  import { findRecordDetail } from '@/api/user'
-  import tablemix from '@/utils/tablemix'
-  export default {
-    name:'detail',
-    data() {
-      return {
-        centerDialogVisible:false,
-        list:[]
-      };
-    },
-    mixins:[tablemix],
-    mounted(){
-
-    },
-    methods: {
-      show(activity){
-        const data = {
-          userId:activity.userId,
-          date:activity.date
-        }
-        findRecordDetail(data).then(res => {
-          if (res.data.state == 100){
-            this.list = res.data.list.map(item => {
-              return {
-                ...item,
-                clockTime:item.clockDate ? this.exChange(item.clockDate.time) : ''
-              }
-            })
-            this.centerDialogVisible = true
-          }
-        })
-      }
+import { findRecordDetail } from '@/api/user'
+import tablemix from '@/utils/tablemix'
+export default {
+  name: 'Detail',
+  mixins: [tablemix],
+  data() {
+    return {
+      centerDialogVisible: false,
+      list: []
     }
-  };
+  },
+  mounted() {
+
+  },
+  methods: {
+    show({ userId, date }) {
+      const data = {
+        userId: userId,
+        date: date
+      }
+      findRecordDetail(data).then(({ data: { state, list }}) => {
+        if (state == 100) {
+          this.list = list.map(item => {
+            return {
+              ...item,
+              clockTime: item.clockDate ? this.exChange(item.clockDate.time) : ''
+            }
+          })
+          this.centerDialogVisible = true
+        }
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -45,14 +45,14 @@
 
 <template>
   <el-dialog
-    title="报告记录详情"
     :visible.sync="centerDialogVisible"
+    title="报告记录详情"
     width="35%"
     append-to-body
     center>
-    <el-row :gutter="20" v-for="(item,index) in list" :key="item.detailId">
+    <el-row v-for="item in list" :gutter="20" :key="item.detailId">
       <el-col :span="24" style="text-align: center;margin-bottom: 30px;">
-        <el-image :src="item.picPath"></el-image>
+        <el-image :src="item.picPath"/>
       </el-col>
       <el-col :span="24">
         <el-row>

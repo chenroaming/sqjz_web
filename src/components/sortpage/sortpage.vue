@@ -1,17 +1,16 @@
-<template>
-  <div class='sortpage'>
+div<template>
+  <div class="sortpage">
     <el-pagination
-    v-if="sortShow"
-    class='sortPageArea'
-    background
-    layout="prev, pager, next, total"
-    style="text-align:right;margin-top:10px"
-    :current-page="currentPage"
-    :total="totalPages"
-    :page-size="pageSize"
-    @current-change="(pages)=>{$emit('sizeChange',pages)}"
-    >
-    </el-pagination>
+      v-if="sortShow"
+      :current-page="currentPage"
+      :total="totalPages"
+      :page-size="pageSize"
+      class="sortPageArea"
+      background
+      layout="prev, pager, next, total"
+      style="text-align:right;margin-top:10px"
+      @current-change="(pages)=>{$emit('sizeChange',pages)}"
+    />
   </div>
 </template>
 
@@ -25,17 +24,17 @@ export default {
     },
     pageSize: {
       type: Number,
-      default: 10,
+      default: 10
     },
     currentPage: {
       type: Number,
-      default: 1,
+      default: 1
     },
     sortShow: {
       type: Boolean,
-      default: true,
+      default: true
     }
-  },
+  }
 }
 </script>
 

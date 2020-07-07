@@ -3,37 +3,36 @@
     <el-scrollbar class="scrollbar">
       <div class="select-box">
         <el-button-group>
-          <el-button type="primary" v-for="(item,index) in buttonGroup" :key="index" plain :class="nowIndex === item.index ? 'isSelect' : ''" @click="changeSelect(item.index)">{{item.label}}</el-button>
+          <el-button v-for="(item,index) in buttonGroup" :key="index" :class="nowIndex === item.index ? 'isSelect' : ''" type="primary" plain @click="changeSelect(item.index)">{{ item.label }}</el-button>
         </el-button-group>
       </div>
       <div class="input-box">
-        <el-input style="width: 200px;" v-model="nowName" placeholder="请输入名称"></el-input>
+        <el-input v-model="nowName" style="width: 200px;" placeholder="请输入名称"/>
         <el-button type="primary" @click="search">搜索</el-button>
       </div>
       <el-table
         v-loading="isLoading"
         :data="tableData"
-        class="tableShadow"
         :header-cell-style="rowClass"
+        class="tableShadow"
         element-loading-text="数据拼命加载中...."
       >
-        <el-table-column prop="name" label="矫正人姓名"" align="center"></el-table-column>
+        <el-table-column prop="name" label="矫正人姓名"" align="center"/>
         <el-table-column prop="picPath" label="照片" align="center">
           <template slot-scope="scope">
             <el-image
-            style="width: 100px; height: 100px"
-            :src="scope.row.picPath">
-            </el-image>
+              :src="scope.row.picPath"
+              style="width: 100px; height: 100px"/>
           </template>
         </el-table-column>
-        <el-table-column prop="createDate" label="创建时间" align="center"></el-table-column>
+        <el-table-column prop="createDate" label="创建时间" align="center"/>
         <el-table-column prop="interviewType" label="走访类型" align="center">
           <template slot-scope="scope">
-            <el-tag>{{scope.row.interviewType}}</el-tag>
+            <el-tag>{{ scope.row.interviewType }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="adminName" label="走访人" align="center"></el-table-column>
-        <el-table-column prop="location" label="位置信息" align="center"></el-table-column>
+        <el-table-column prop="adminName" label="走访人" align="center"/>
+        <el-table-column prop="location" label="位置信息" align="center"/>
         <el-table-column prop="interviewPicPaths" label="走访照片集" align="center">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="showDetail(scope.row)">查看</el-button>
@@ -41,91 +40,90 @@
         </el-table-column>
       </el-table>
     </el-scrollbar>
-    
+
     <div style="margin-top: 20px;text-align: right;">
       <el-pagination
-        @current-change="handleCurrentChange"
         :current-page.sync="currentPage"
         :page-size="10"
+        :total="totalPage"
         layout="total, prev, pager, next"
-        :total="totalPage">
-      </el-pagination>
+        @current-change="handleCurrentChange"/>
     </div>
-    <showDetail ref="showDetail" :interviewPicPaths="interviewPicPaths"></showDetail>
+    <showDetail ref="showDetail" :interview-pic-paths="interviewPicPaths"/>
   </div>
 </template>
 
 <script>
-import { find } from "@/api/interviewRecord";
-import showDetail from "@/components/interviewRecord/showDetail.vue"
+import { find } from '@/api/interviewRecord'
+import showDetail from '@/components/interviewRecord/showDetail.vue'
 export default {
-  name: "interviewRecord",
-  components:{
-    showDetail,
+  name: 'InterviewRecord',
+  components: {
+    showDetail
   },
   data() {
     return {
-      buttonGroup:[{index:3,label:'全部'},{index:1,label:'现场'},{index:2,label:'远程'}],
-      isLoading:false,
-      nowIndex:3,
-      tableData:[],
-      currentPage:1,
-      totalPage:1,
-      nowName:'',
-      interviewPicPaths:[],
+      buttonGroup: [{ index: 3, label: '全部' }, { index: 1, label: '现场' }, { index: 2, label: '远程' }],
+      isLoading: false,
+      nowIndex: 3,
+      tableData: [],
+      currentPage: 1,
+      totalPage: 1,
+      nowName: '',
+      interviewPicPaths: []
     }
   },
   computed: {
 
   },
   mounted() {
-    this.getList();
+    this.getList()
   },
   methods: {
-    changeSelect(index){
-      this.nowIndex = index;
-      const searchIn = index === 3 ? '' : index;
-      this.currentPage = 1;
-      if(index === 3){
-        this.nowName = '';
+    changeSelect(index) {
+      this.nowIndex = index
+      const searchIn = index === 3 ? '' : index
+      this.currentPage = 1
+      if (index === 3) {
+        this.nowName = ''
       }
-      this.getList(searchIn);
+      this.getList(searchIn)
     },
-    handleCurrentChange(e){
-      const searchIn = this.nowIndex === 3 ? '' : this.nowIndex;
-      this.getList(searchIn,this.nowName,e);
+    handleCurrentChange(e) {
+      const searchIn = this.nowIndex === 3 ? '' : this.nowIndex
+      this.getList(searchIn, this.nowName, e)
     },
-    search(){
-      this.getList('',this.nowName);
+    search() {
+      this.getList('', this.nowName)
     },
-    showDetail(item){
-      this.interviewPicPaths = item.interviewPicPaths;
-      this.$refs.showDetail.show();
+    showDetail(item) {
+      this.interviewPicPaths = item.interviewPicPaths
+      this.$refs.showDetail.show()
     },
-    getList(interviewType = '',name = '',pageNumber = 1){
-      find('','',name,interviewType,pageNumber).then(res => {
-        if(res.data.state == 100){
+    getList(interviewType = '', name = '', pageNumber = 1) {
+      find('', '', name, interviewType, pageNumber).then(res => {
+        if (res.data.state == 100) {
           const newArr = res.data.list.map(item => {
             return {
               ...item,
-              createDate:this.exChange(item.createDate.time),
-              interviewType:this.buttonGroup[item.interviewType].label
+              createDate: this.exChange(item.createDate.time),
+              interviewType: this.buttonGroup[item.interviewType].label
             }
           })
-          this.tableData = newArr;
-          this.totalPage = res.data.total;
-          return;
+          this.tableData = newArr
+          this.totalPage = res.data.total
+          return
         }
-        this.tableData = [];
-        this.totalPage = 0;
+        this.tableData = []
+        this.totalPage = 0
       })
     },
-    exChange(time){
-      const myDate = new Date(time);
-      return `${myDate.getFullYear()}-${(myDate.getMonth()+1)}-${myDate.getDate()}   ${myDate.getHours()}:${myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()}`;
-    },
+    exChange(time) {
+      const myDate = new Date(time)
+      return `${myDate.getFullYear()}-${(myDate.getMonth() + 1)}-${myDate.getDate()}   ${myDate.getHours()}:${myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()}`
+    }
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

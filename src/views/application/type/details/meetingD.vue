@@ -1,23 +1,23 @@
 <script>
-  export default {
-    name:'meetingD',
-    props:{
-      row:{
-        type:Object,
-        default:() => {}
-      }
-    },
-    data() {
-      return {
-        centerDialogVisible:false,
-      }
-    },
-    methods: {
-      showDetail(){
-        this.centerDialogVisible = true
-      }
-    },
+export default {
+  name: 'MeetingD',
+  props: {
+    row: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data() {
+    return {
+      centerDialogVisible: false
+    }
+  },
+  methods: {
+    showDetail() {
+      this.centerDialogVisible = true
+    }
   }
+}
 </script>
 
 <style scoped>
@@ -28,63 +28,63 @@
 
 <template>
   <el-dialog
-    title="查看详情"
     :visible.sync="centerDialogVisible"
+    title="查看详情"
     width="35%"
     append-to-body
     center>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-image :src="row.picPath" style="width: 180px;height: 200px;"></el-image>
+        <el-image :src="row.picPath" style="width: 180px;height: 200px;"/>
       </el-col>
       <el-col :span="12">
         <el-row>
           <el-col :span="8">
             姓名：
           </el-col>
-          {{row.name}}
+          {{ row.name }}
         </el-row>
         <el-row>
           <el-col :span="8">
             申请时间：
           </el-col>
-          {{row.applyDate}}
+          {{ row.applyDate }}
         </el-row>
         <el-row>
           <el-col :span="8">
             会客理由：
           </el-col>
-          {{row.reason}}
+          {{ row.reason }}
         </el-row>
         <el-row>
           <el-col :span="8">
             审核状态：
           </el-col>
-          {{row.auditText}}
+          {{ row.auditText }}
         </el-row>
         <el-row>
           <el-col :span="8">
             审核人：
           </el-col>
-          {{row.auditAdmin}}
+          {{ row.auditAdmin }}
         </el-row>
         <el-row>
           <el-col :span="8">
             开始时间：
           </el-col>
-          {{row.startDate}}
+          {{ row.startDate }}
         </el-row>
         <el-row>
           <el-col :span="8">
             结束时间：
           </el-col>
-          {{row.endDate}}
+          {{ row.endDate }}
         </el-row>
         <el-row>
           <el-col :span="8">
             电话号码：
           </el-col>
-          {{row.phone}}
+          {{ row.phone }}
         </el-row>
       </el-col>
     </el-row>

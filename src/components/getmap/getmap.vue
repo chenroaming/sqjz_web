@@ -15,11 +15,11 @@
           :scroll-wheel-zoom="true"
           class="bm-view"
           ak="DvoyV7vtMIgqmpM0UM7Xg0Yd0MyUyvi8"
+          map-type="BMAP_NORMAL_MAP"
           @moving="syncCenterAndZoom"
           @moveend="syncCenterAndZoom"
           @zoomend="syncCenterAndZoom"
           @ready="handler"
-          mapType="BMAP_NORMAL_MAP"
           @click="choicePoint"
         >
           <bm-view style="width: 100%; height:500px;" />
@@ -30,34 +30,34 @@
           >
             <bm-label
               :content="'选中位置:' + locationName"
-              labelStyle="{color: 'red', fontSize : '10px'}"
               :offset="{width:-20, height: 30}"
+              label-style="{color: 'red', fontSize : '10px'}"
             />
           </bm-marker>
           <bm-control offset="{width: '10px', height: '10px'}">
             <bm-auto-complete v-model="keyword" :sug-style="{zIndex: 999999}">
-              <input type="text" placeholder="请输入搜索关键字" class="serachinput" />
+              <input type="text" placeholder="请输入搜索关键字" class="serachinput" >
             </bm-auto-complete>
           </bm-control>
           <bm-local-search
-            @searchcomplete="text2"
             :keyword="keyword"
             :auto-viewport="true"
-            :selectFirstResult="true"
+            :select-first-result="true"
             style="width:0px;height:0px;overflow: hidden;"
+            @searchcomplete="text2"
           />
 
           <bm-geolocation
+            :show-address-bar="true"
+            :auto-location="true"
             anchor="BMAP_ANCHOR_BOTTOM_RIGHT"
-            :showAddressBar="true"
-            :autoLocation="true"
             @locationSuccess="text"
-          ></bm-geolocation>
+          />
 
           <bm-copyright
-            anchor="BMAP_ANCHOR_TOP_RIGHT"
             :copyright="[{id: 1, content: '纵横集团', bounds: {ne: {lng: 110, lat: 40}, sw:{lng: 0, lat: 0}}}, {id: 2, content: '<a>纵横集团</a>'}]"
-          ></bm-copyright>
+            anchor="BMAP_ANCHOR_TOP_RIGHT"
+          />
         </baidu-map>
       </div>
       <div slot="footer" style="text-align:right;padding-right:10px;margin-top:15px;">
@@ -79,7 +79,7 @@ import {
   BmGeolocation,
   BmCopyright,
   BmLabel
-} from "vue-baidu-map";
+} from 'vue-baidu-map'
 export default {
   components: {
     BaiduMap,
@@ -102,23 +102,23 @@ export default {
   data: function() {
     return {
       showMapComponent: this.value,
-      keyword: "",
+      keyword: '',
       mapStyle: {
-        width: "100%",
-        height: this.mapHeight + "px"
+        width: '100%',
+        height: this.mapHeight + 'px'
       },
       center: { lng: 118.184633, lat: 24.493337 },
       zoom: 19,
-      mapObj: "",
-      geoCoder:null,
-      locationName:'',
-    };
+      mapObj: '',
+      geoCoder: null,
+      locationName: ''
+    }
   },
   watch: {
     value: function(currentValue) {
-      this.showMapComponent = currentValue;
+      this.showMapComponent = currentValue
       if (currentValue) {
-        this.keyword = "";
+        this.keyword = ''
       }
     }
   },
@@ -127,37 +127,38 @@ export default {
       // console.log("触发搜索完成");
       if (results != undefined) {
         try {
-          console.log(results.Ir[0]);
-          this.center.lng = results.Ir[0].point.lng;
-          this.center.lat = results.Ir[0].point.lat;
-          this.dw = results.Ir[0].address + "(" + results.Ir[0].address + ")";
+          console.log(results.Ir[0])
+          this.center.lng = results.Ir[0].point.lng
+          this.center.lat = results.Ir[0].point.lat
+          this.dw = results.Ir[0].address + '(' + results.Ir[0].address + ')'
         } catch (err) {
-          console.error(err);
+          console.error(err)
         }
       }
     },
 
     text({ point, AddressComponent, marker }) {
-      console.log(point);
+      console.log(point)
       // console.log("触发定位");
-      this.center.lng = point.lng;
-      this.center.lat = point.lat;
+      this.center.lng = point.lng
+      this.center.lat = point.lat
     },
 
     // 地图初始化
     handler({ BMap, map }) {
-      this.mapObj = map;
-      this.geoCoder = new BMap.Geocoder();
+      this.mapObj = map
+      this.geoCoder = new BMap.Geocoder()
       //  this.mapObj.disableDragging();
-      const _this = this;
+      // eslint-disable-next-line no-unused-vars
+      const _this = this
     },
-    choicePoint(e){
-      this.center.lng = e.point.lng;
-      this.center.lat = e.point.lat;
-      this.geoCoder.getLocation(e.point,res => {
-        if(res.surroundingPois.length > 0){
-          this.locationName = res.surroundingPois[0].title;
-          this.dw = res.surroundingPois[0].title;
+    choicePoint(e) {
+      this.center.lng = e.point.lng
+      this.center.lat = e.point.lat
+      this.geoCoder.getLocation(e.point, res => {
+        if (res.surroundingPois.length > 0) {
+          this.locationName = res.surroundingPois[0].title
+          this.dw = res.surroundingPois[0].title
         }
       })
     },
@@ -169,44 +170,44 @@ export default {
     },
     syncCenterAndZoom(e) {
       // console.log("触发syncCenterAndZoom");
-      const { lng, lat } = e.target.getCenter();
-      this.center.lng = lng;
-      this.center.lat = lat;
-      this.zoom = e.target.getZoom();
+      const { lng, lat } = e.target.getCenter()
+      this.center.lng = lng
+      this.center.lat = lat
+      this.zoom = e.target.getZoom()
     },
     /** *
      * 确认
      */
     confirm: function() {
-      this.showMapComponent = false;
+      this.showMapComponent = false
       const obj = {
         lng: this.center.lng,
         lat: this.center.lat,
-        dw: this.dw ? this.dw : "未识别的经纬度信息"
-      };
-      this.$emit("map-confirm", obj);
+        dw: this.dw ? this.dw : '未识别的经纬度信息'
+      }
+      this.$emit('map-confirm', obj)
     },
     /** *
      * 取消
      */
     cancel: function() {
-      this.showMapComponent = false;
-      this.center = { lng: 118.184633, lat: 24.493337 };
-      this.$emit("cancel", this.showMapComponent);
+      this.showMapComponent = false
+      this.center = { lng: 118.184633, lat: 24.493337 }
+      this.$emit('cancel', this.showMapComponent)
     },
     initCenter(val) {
-      console.log("默认中心" + val);
-      if (val[0] != undefined && val[0] != "" && val[0] != null) {
-        this.center.lng = val[0];
+      console.log('默认中心' + val)
+      if (val[0] != undefined && val[0] != '' && val[0] != null) {
+        this.center.lng = val[0]
       }
-      if (val[1] != undefined && val[1] != "" && val[1] != null) {
-        this.center.lat = val[1];
+      if (val[1] != undefined && val[1] != '' && val[1] != null) {
+        this.center.lat = val[1]
       }
-      console.log("当前中心");
-      console.log(this.center);
+      console.log('当前中心')
+      console.log(this.center)
     }
   }
-};
+}
 </script>
 
 <style scoped>

@@ -26,7 +26,7 @@ export function audit(data) {
   return request({
     url: '/community_correction/webClass/productInfo/audit.jhtml',
     method: 'post',
-    isShowTips:true,
+    isShowTips: true,
     data: Qs.stringify({
       ...data
     })

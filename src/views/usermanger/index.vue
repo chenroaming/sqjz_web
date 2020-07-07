@@ -8,15 +8,24 @@
       >
         <div slot="extraArea">
           <el-button
+            v-if="checkPermission(['admin:operate'])"
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleUserCurd('ADD_USER')"
-            v-if="checkPermission(['admin:operate'])"
           >新增用户</el-button>
           <el-input v-model="searchData" placeholder="请输入用户名称" style="width:200px" />
         </div>
       </Searcharea>
-      <el-table v-loading="isLoading" :data="tableData" class="tableShadow" :header-cell-style="rowClass">
+      <el-table v-loading="isLoading" :data="tableData" :header-cell-style="rowClass" class="tableShadow">
+        <el-table-column prop="name" label="照片" align="center">
+          <template slot-scope="scope">
+            <el-image :src="scope.row.picPath" style="width: 80px;height:100px;line-height: 105px;">
+              <div slot="error">
+                <span>暂无图片</span>
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="name" label="姓名" align="center" />
         <el-table-column prop="username" label="账号" align="center">
           <template slot-scope="scope">
@@ -29,9 +38,9 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="roleName" label="角色名称" align="center"></el-table-column>
-        <el-table-column prop="communityName" label="所属区域" align="center"></el-table-column>
-        <el-table-column prop="loginIp" label="登录时间" align="center">
+        <el-table-column prop="roleName" label="角色名称" align="center"/>
+        <el-table-column prop="communityName" label="所属区域" align="center"/>
+        <el-table-column prop="loginIp" label="登录时间" align="center" width="180">
           <template slot-scope="scope">
             <span v-if="scope.row.loginDate">{{ scope.row.loginDate | setLastLoginTime }}</span>
             <el-tag v-if="!scope.row.loginDate" type="info">暂无</el-tag>
@@ -42,10 +51,10 @@
             <el-tag>是</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="300">
+        <el-table-column align="center" label="操作" width="250">
           <template slot-scope="scope">
-            <el-button size="small" v-if="checkPermission(['admin:operate'])" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
-            <el-button size="small" v-if="checkPermission(['admin:operate'])" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
+            <el-button v-if="checkPermission(['admin:operate'])" size="small" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
+            <el-button v-if="checkPermission(['admin:operate'])" size="small" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -65,7 +74,8 @@
     />
 
     <ChangeUserAuth
-      ref="UserAuthrefs" :user="roleObj"
+      ref="UserAuthrefs"
+      :user="roleObj"
     />
 
     <Adduser
@@ -79,19 +89,18 @@
 </template>
 
 <script>
-import ChangeUserModal from "./changeuserinfo/changeuserinfo";
-import ChangeUserAuth from "./changeuserauth/changeuserauth";
-import Adduser from "./adduser/adduser";
-import Searcharea from "@/components/searcharea/searcharea";
-import SortPage from "@/components/sortpage/sortpage";
+import ChangeUserModal from './changeuserinfo/changeuserinfo'
+import ChangeUserAuth from './changeuserauth/changeuserauth'
+import Adduser from './adduser/adduser'
+import Searcharea from '@/components/searcharea/searcharea'
+import SortPage from '@/components/sortpage/sortpage'
 
-import authmix from "@/utils/authmix";
-import sortmix from "@/utils/sortmix";
+import authmix from '@/utils/authmix'
+import sortmix from '@/utils/sortmix'
 
-import { getUserList2, deleteUser2 } from "@/api/user";
-import { updateInterface } from "@/api/face";
-import { computedFormatTime } from "@/utils/tools";
-import { mapState } from "vuex";
+import { getUserList2, deleteUser2 } from '@/api/user'
+import { computedFormatTime } from '@/utils/tools'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -105,8 +114,8 @@ export default {
   filters: {
     // 格式化登录时间
     setLastLoginTime(timeObj) {
-      if (timeObj === null) return "";
-      return computedFormatTime(timeObj.time);
+      if (timeObj === null) return ''
+      return computedFormatTime(timeObj.time)
     }
   },
   mixins: [authmix, sortmix],
@@ -115,7 +124,7 @@ export default {
     return {
       sortpagesTotal: 0, // 数据总数量
       currentPages: 1, // 当前页数
-      searchData: "", // 搜索框内容
+      searchData: '', // 搜索框内容
       tableData: [], // 用户表格数据
       userModalVisible: false,
       authDrawerVisible: false,
@@ -123,19 +132,20 @@ export default {
       authInfo: {
         // 权限用户信息
         adminId: 0,
-        username: "",
-        name: ""
+        username: '',
+        name: ''
       },
-      roleObj:{},
-      roleNameArr:['','系统管理员','省级管理员','市级管理员','区级管理员','司法所管理员','司法人员','协矫人员',],
-    };
+      roleObj: {},
+      roleNameArr: ['', '系统管理员', '省级管理员', '市级管理员', '区级管理员', '司法所管理员', '司法人员', '协矫人员']
+    }
   },
 
   created() {
     // 获取用户列表
-    this.__init();
+    this.__init()
   },
 
+  // eslint-disable-next-line vue/order-in-components
   computed: {
     ...mapState({
       roleType: state => state.user.roleType
@@ -144,106 +154,92 @@ export default {
 
   methods: {
     // 获取用户列表
-    __init(username = "", pageNumber = this.pageNumber) {
+    __init(username = '', pageNumber = this.pageNumber) {
       getUserList2(username, pageNumber)
         .then(res => {
           this.tableData = res.data.list.map(item => {
             return {
               ...item,
-              roleName:this.roleNameArr[item.roleType]
+              roleName: this.roleNameArr[item.roleType]
             }
           })
-          this.pageNumber = res.data.pageNumber;
-          this.sortpagesTotal = res.data.total;
-          this.handleResetSort();
+          this.pageNumber = res.data.pageNumber
+          this.sortpagesTotal = res.data.total
+          this.handleResetSort()
         })
         .catch(res => {
-          this.tableData = [];
-          this.isLoading = false;
-        });
+          this.tableData = []
+          this.isLoading = false
+        })
     },
 
     handleUserCurd(modalType, payload = {}) {
       switch (modalType) {
-        case "ADD_USER":
-          this.$refs.adduserrefs.__init();
-          this.addUserVisible = true;
-          break;
+        case 'ADD_USER':
+          this.$refs.adduserrefs.__init()
+          this.addUserVisible = true
+          break
         // eslint-disable-next-line no-case-declarations
-        case "CHANGE_USER_INFO":
-          const userInfo = { ...payload };
-          this.$refs.chguserrefs.receiveUserInfo(userInfo);
-          this.userModalVisible = true;
-          break;
-        case "DELETE_USER":
-          this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
+        case 'CHANGE_USER_INFO':
+          const userInfo = { ...payload }
+          this.$refs.chguserrefs.receiveUserInfo(userInfo)
+          this.userModalVisible = true
+          break
+        case 'DELETE_USER':
+          this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
             .then(() => {
               deleteUser2(payload.adminId)
                 .then(() => {
-                  this.$message({ type: "success", message: "删除成功" });
-                  this.__init();
+                  this.$message({ type: 'success', message: '删除成功' })
+                  this.__init()
                 })
-                .catch(() => {});
+                .catch(() => {})
             })
-            .catch(() => {});
-          break;
+            .catch(() => {})
+          break
         // eslint-disable-next-line no-case-declarations
-        case "CHANGE_AUTH":
-          this.roleObj = payload;
-          this.$refs.UserAuthrefs.show(payload);
-          break;
+        case 'CHANGE_AUTH':
+          this.roleObj = payload
+          this.$refs.UserAuthrefs.show(payload)
+          break
         default:
-          break;
+          break
       }
     },
 
     // 用户CURD事件反馈
     handleUserSuccess(status) {
       switch (status) {
-        case "CHANGE_USER_INFO_SUCCESS":
-          this.__init();
-          this.userModalVisible = false;
-          break;
-        case "ADD_USER_INFO_SUCCESS":
-          this.__init();
-
-          this.addUserVisible = false;
-          break;
+        case 'CHANGE_USER_INFO_SUCCESS':
+          this.__init()
+          this.userModalVisible = false
+          break
+        case 'ADD_USER_INFO_SUCCESS':
+          this.__init()
+          this.addUserVisible = false
+          break
         default:
-          break;
+          break
       }
     },
 
     // 分页切换
     sizeChange(nums) {
-      this.pageNumber = nums;
-      this.__init(this.searchData, nums);
+      this.pageNumber = nums
+      this.__init(this.searchData, nums)
     },
 
     // 刷新
     handleRefresh() {
-      this.searchData = "";
-      this.__init("", 1);
-    },
-
-    // 更新算法
-    handleFaceCurd() {
-      alert("更新算法");
-      // updateInterface()
-      //   .then(() => {
-      //     this.$message({
-      //       type: "success",
-      //       message: "更新成功"
-      //     });
-      //   })
-      //   .catch(() => {});
+      this.searchData = ''
+      this.__init('', 1)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
