@@ -8,10 +8,10 @@
       >
         <div slot="extraArea">
           <el-button
+            v-if="checkPermission(['clock:operate'])"
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleCheckCurd('ADD_TASK')"
-            v-if="checkPermission(['clock:operate'])"
           >新增报告规则</el-button>
           <el-input v-model="searchData" placeholder="请输入任务名称" style="width:200px" />
         </div>
@@ -19,8 +19,8 @@
       <el-table
         v-loading="isLoading"
         :data="tableData"
-        class="tableShadow"
         :header-cell-style="rowClass"
+        class="tableShadow"
         element-loading-text="数据拼命加载中...."
       >
         <el-table-column prop="taskName" label="规则名称" align="center">
@@ -37,12 +37,12 @@
         <el-table-column prop="startTime" label="时间段" align="center">
           <template slot-scope="scope">
             <el-tag
-            v-for="(value,index) in scope.row.clockRuleTimes"
-            :key="index"
-            type="success"
-            size="mini"
-            style="margin-right:10px"
-          >{{ value.startTime }} - {{ value.endTime }}</el-tag>
+              v-for="(value,index) in scope.row.clockRuleTimes"
+              :key="index"
+              type="success"
+              size="mini"
+              style="margin-right:10px"
+            >{{ value.startTime }} - {{ value.endTime }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="attendanceType" label="任务类型" align="center">
@@ -52,11 +52,12 @@
             <el-tag v-if="scope.row.ruleType == 3" type="warning">每月</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="taskType" label="任务周期" align="center">
+        <!-- <el-table-column prop="taskType" label="任务周期" align="center">
           <template slot-scope="scope">
             <el-tag :type="getPeriodText(scope.row.period) === '每天' ? 'info' : 'warning'">{{getPeriodText(scope.row.period)}}</el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
+        <el-table-column prop="communityName" label="所属司法所" align="center"/>
         <el-table-column label="任务操作" align="center" width="220px">
           <template slot-scope="scope">
             <el-button
@@ -64,19 +65,25 @@
               size="mini"
               @click="handleTaskCallBack('FACE_CURD', scope.row)"
             >关联人员</el-button>
-            <el-button type="danger" v-if="checkPermission(['clock:operate'])" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
+            <el-button v-if="checkPermission(['clock:operate'])" type="danger" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    
-    <rules ref="rules" :rulesObj="rulesObj" @getList="getList"></rules>
+
+    <rules ref="rules" :rules-obj="rulesObj" @getList="getList"/>
     <!-- 人脸库操作 -->
-    <Facecurd
+    <!-- <Facecurd
       ref="facecurdrefs"
       :auth-drawer-visible="faceCurdModalVisible"
       @closeModal="faceCurdModalVisible=false"
       @faceCurdSuccess="handleTaskCallBack('FACE_CURD_SUCCESS')"
+    /> -->
+    <Facecurd2
+      ref="facecurdrefs2"
+      :rule-id="ruleId"
+      :is-loading.sync="isLoading"
+      :face-curd-modal-visible.sync="faceCurdModalVisible"
     />
 
     <Sortpage
@@ -113,19 +120,19 @@
 </template>
 
 <script>
-import { geclockList, deleteTask } from "@/api/attendance";
-import sortmix from "@/utils/sortmix";
-import Facecurd from "./facecurd/facecurd";
+import { geclockList, deleteTask } from '@/api/attendance'
+import sortmix from '@/utils/sortmix'
+import Facecurd2 from './facecurd/facecurd2'
 // 绑定操作
-import Search from "@/components/searcharea/searcharea";
-import Sortpage from "@/components/sortpage/sortpage";
+import Search from '@/components/searcharea/searcharea'
+import Sortpage from '@/components/sortpage/sortpage'
 
-import Changetask from "./changetask/changetask";
-import Addtask from "./addtask/addtask";
-import Looktask from "./looktask/looktask";
-import Exporttask from "./exporttask/exporttask";
+import Changetask from './changetask/changetask'
+import Addtask from './addtask/addtask'
+import Looktask from './looktask/looktask'
+import Exporttask from './exporttask/exporttask'
 import rules from '@/components/attendance/rules.vue'
-import authmix from "@/utils/authmix";//引入权限校验
+import authmix from '@/utils/authmix'// 引入权限校验
 export default {
   components: {
     Search,
@@ -134,154 +141,155 @@ export default {
     Addtask,
     Looktask,
     Exporttask,
-    Facecurd,
+    Facecurd2,
     rules
   },
-  mixins: [authmix,sortmix],//混入文件
+  mixins: [authmix, sortmix], // 混入文件
   data() {
     return {
       faceCurdModalVisible: false,
-      searchData: "",
+      searchData: '',
       totalPages: 0,
       tableData: [],
       chgTaskModalVisible: false,
       addTaskModalVisible: false,
       lookTaskModalVisible: false,
       exportTaskModalVisible: false,
-      rulesObj:{},
-    };
+      rulesObj: {},
+      ruleId: ''
+    }
   },
 
   mounted() {
-    this.__init();
+    this.__init()
   },
 
   methods: {
-    __init(taskName = "", pageSize = 10, pageNumber = this.pageNumber) {
-      this.isLoading = true;
+    __init(taskName = '', pageSize = 10, pageNumber = this.pageNumber) {
+      this.isLoading = true
       geclockList(taskName, pageSize, pageNumber)
         .then(res => {
-          this.pageNumber = res.data.pageNumber;
-          this.tableData = res.data.list;
-          this.totalPages = res.data.total;
-          this.handleResetSort();
+          this.pageNumber = res.data.pageNumber
+          this.tableData = res.data.list
+          this.totalPages = res.data.total
+          this.handleResetSort()
         })
         .catch(() => {
-          this.isLoading = false;
-          this.tableData = [];
-        });
+          this.isLoading = false
+          this.tableData = []
+        })
     },
-    getList(e){
-      this.__init();
+    getList(e) {
+      this.__init()
     },
-    //规则任务名称
-    changeRules(item){
-      this.rulesObj = item;
-      this.$refs.rules.show();
+    // 规则任务名称
+    changeRules(item) {
+      this.rulesObj = item
+      this.$refs.rules.show()
     },
     // 任务操作
     handleCheckCurd(action, payload) {
       switch (action) {
-        case "LOOK_COUNT":
-          this.$router.push({ name: "area-count", params: {} });
-          break;
-        case "LOOK_TASK":
+        case 'LOOK_COUNT':
+          this.$router.push({ name: 'area-count', params: {}})
+          break
+        case 'LOOK_TASK':
           // this.lookTaskModalVisible = true;
           this.$router.push({
-            name: "area-detail",
+            name: 'area-detail',
             params: {
-              facesetId: "",
+              facesetId: '',
               taskId: payload.taskId,
-              date: "",
+              date: '',
               pageSize: 10,
               pageNumber: 1
             }
-          });
+          })
           // this.$refs.looktaskrefs.receiveTaskInfo(payload.taskId);
-          break;
-        case "ADD_TASK":
-          this.addTaskModalVisible = true;
-          this.$refs.addtaskrefs.receiveTaskInfo();
-          break;
-        case "EXPORT_TASK":
-          this.exportTaskModalVisible = true;
-          this.$refs.exporttaskrefs.receiveTaskInfo(payload.taskId);
-          break;
-        case "CHANGE_TASK":
-          this.chgTaskModalVisible = true;
-          this.$refs.changetaskrefs.receiveTaskInfo(payload);
-          break;
-        case "DELETE_TASK":
-          this.$confirm("是否确认删除?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
+          break
+        case 'ADD_TASK':
+          this.addTaskModalVisible = true
+          this.$refs.addtaskrefs.receiveTaskInfo()
+          break
+        case 'EXPORT_TASK':
+          this.exportTaskModalVisible = true
+          this.$refs.exporttaskrefs.receiveTaskInfo(payload.taskId)
+          break
+        case 'CHANGE_TASK':
+          this.chgTaskModalVisible = true
+          this.$refs.changetaskrefs.receiveTaskInfo(payload)
+          break
+        case 'DELETE_TASK':
+          this.$confirm('是否确认删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
             .then(() => {
               deleteTask(payload.ruleId)
                 .then(res => {
-                  this.$message({ type: "success", message: "删除成功" });
-                  this.__init();
+                  this.$message({ type: 'success', message: '删除成功' })
+                  this.__init()
                 })
-                .catch(() => {});
+                .catch(() => {})
             })
-            .catch(() => {});
-          break;
+            .catch(() => {})
+          break
         default:
-          break;
+          break
       }
     },
 
     // 任务操作反馈
     handleTaskCallBack(action, payload = {}) {
       switch (action) {
-        case "CHANGE_TASK_SUCCESS":
-          this.__init();
-          this.chgTaskModalVisible = false;
-          break;
-        case "ADD_TASK_SUCCESS":
-          this.__init();
-          this.addTaskModalVisible = false;
-          break;
-        case "FACE_CURD":
-          this.$refs.facecurdrefs.receiveInfo(payload);
-          this.faceCurdModalVisible = true;
-          break;
-
-        case "FACE_CURD_SUCCESS":
-          this.faceCurdModalVisible = false;
-          this.__init();
-          break;
+        case 'CHANGE_TASK_SUCCESS':
+          this.__init()
+          this.chgTaskModalVisible = false
+          break
+        case 'ADD_TASK_SUCCESS':
+          this.__init()
+          this.addTaskModalVisible = false
+          break
+        case 'FACE_CURD':
+          this.ruleId = payload.ruleId
+          this.faceCurdModalVisible = true
+          this.$refs.facecurdrefs2.show()
+          break
+        case 'FACE_CURD_SUCCESS':
+          this.faceCurdModalVisible = false
+          this.__init()
+          break
         default:
-          break;
+          break
       }
     },
-    //转换日期格式
-    getPeriodText(period){
+    // 转换日期格式
+    getPeriodText(period) {
       const week = new Map([
-        ['monday','周一'],
-        ['tuesday','周二'],
-        ['wednesday','周三'],
-        ['thursday','周四'],
-        ['friday','周五'],
-        ['saturday','周六'],
-        ['sunday','周日'],
+        ['monday', '周一'],
+        ['tuesday', '周二'],
+        ['wednesday', '周三'],
+        ['thursday', '周四'],
+        ['friday', '周五'],
+        ['saturday', '周六'],
+        ['sunday', '周日']
       ])
-      return period === 'everyday' ? '每天' : !isNaN(period) ? `每月${period}号` : week.get(period);
+      return period === 'everyday' ? '每天' : !isNaN(period) ? `每月${period}号` : week.get(period)
     },
     // 刷新
     handleRefresh() {
-      this.searchData = "";
-      this.__init("", 10, 1);
+      this.searchData = ''
+      this.__init('', 10, 1)
     },
 
     // 分页
     handleSizeChange(num) {
-      this.pageNumber = num;
-      this.__init(this.searchData, 10, num);
+      this.pageNumber = num
+      this.__init(this.searchData, 10, num)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

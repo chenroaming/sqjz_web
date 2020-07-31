@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view v-if="isRouterAlive" />
+    <transition name="fade-transform" mode="out-in">
+      <router-view v-if="isRouterAlive" />
+    </transition>
   </div>
 </template>
 

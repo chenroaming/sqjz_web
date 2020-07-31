@@ -1,6 +1,6 @@
 import { logout, getInfo, login2 } from '@/api/login'
 import { setAccount, removeAccount, removeFlag, setLogin, removeSetLogin, removeToken, setroleType, getroleType, removeroleType, setCommunityName, getCommunityName, setAdminName, getAdminName } from '@/utils/auth'
-
+import router from '@/router'
 const user = {
   state: {
     name: '',
@@ -42,10 +42,10 @@ const user = {
   actions: {
     // 社区矫正平台接口测试
     Login2({ commit, state }, userInfo) {
-      const username = userInfo.username.trim()
+      // const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login2(username, userInfo.password, userInfo.pinCode).then(response => {
-          console.log('在仓库中调用登录')
+        login2(userInfo).then(response => {
+          // console.log('在仓库中调用登录')
           setroleType(response.data.roleType)
           setCommunityName(response.data.communityName)
           setAdminName(response.data.name)
@@ -69,10 +69,10 @@ const user = {
           }
         }
         getInfo().then(response => {
-          if (response.data.state == 100) {
+          if (response.data.state === '100') {
             response.data.authorityCodes && response.data.authorityCodes.length > 0 && commit('SET_ROLES', response.data.authorityCodes)
             const data = res2.data
-            console.log('获取当前人员的角色类型')
+            // console.log('获取当前人员的角色类型')
             const roleType_res = getroleType()
             commit('SET_ROLE_TYPE', roleType_res)
             const communityName = getCommunityName()
@@ -81,8 +81,10 @@ const user = {
             commit('CHANGE_AREANAME', communityName)// 司法所名字
             setAccount(data.name)
             commit('SET_AVATAR', 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png')
+            resolve(response)
+          } else {
+            reject(response)
           }
-          resolve(response)
         })
       })
     },
@@ -97,6 +99,11 @@ const user = {
           removeSetLogin()
           removeroleType()
           resolve()
+          location.reload() // 刷新页面重置路由表
+          // router.matcher = new Router({
+          //   routes: constantRouterMap
+          // }).matcher // 重置路由表,此方法有问题，待探究
+          // router.$addRoutes() // 新的重置路由方法，同样有问题，待探究
         }).catch(() => {
           // reject(error)
           commit('SET_ROLES', [])
@@ -118,7 +125,10 @@ const user = {
         removeFlag()
         removeToken()
         removeSetLogin()
+        removeroleType()
         resolve()
+        // router.$addRoutes()
+        location.reload() // 刷新页面重置路由表
       })
     },
     // 变更区域

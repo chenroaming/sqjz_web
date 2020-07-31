@@ -132,17 +132,15 @@ export default {
     })
   },
   methods: {
-    copyText({ versionType, filePath }) {
-      if (filePath == '') {
+    copyText({ versionType, fileLink }) {
+      if (!fileLink) {
         this.$message({
-          message: '链接复制错误',
+          message: '暂无链接！',
           type: 'error'
         })
       } else {
-        var oInputValue =
-          versionType === 1 ? `${location.origin}${filePath}` : `${filePath}`
         const oInput = document.createElement('input')
-        oInput.value = oInputValue
+        oInput.value = fileLink
         document.body.appendChild(oInput)
         oInput.select() // 选择对象;
         document.execCommand('Copy') // 执行浏览器复制命令
@@ -150,7 +148,6 @@ export default {
           message: '已成功复制到剪切板',
           type: 'success'
         })
-        console.log(oInputValue)
         oInput.remove()
       }
     },

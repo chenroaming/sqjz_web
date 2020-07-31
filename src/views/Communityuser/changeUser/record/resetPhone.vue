@@ -22,10 +22,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        resetPhoneInfo(this.userId).then(({ data: { state, message }}) => {
-          state == 100 && this.$message.success(message)
-          return this.$message.warning(message)
-        })
+        resetPhoneInfo(this.userId).then(({ data: { state, message }}) => {})
       }).catch(() => {})
     }
   }

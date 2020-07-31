@@ -1,12 +1,12 @@
 <script>
-import relationShip from './relationShip'
+import relationShip2 from './relationShip2'
 import Search from '@/components/searcharea/searcharea'
 import { getUserList2 } from '@/api/user'
 import authmix from '@/utils/authmix'// 引入权限校验
 import tablemix from '@/utils/tablemix'
 export default {
   name: 'Relation',
-  components: { relationShip, Search },
+  components: { relationShip2, Search },
   mixins: [authmix, tablemix], // 混入文件
   props: {
 
@@ -34,21 +34,22 @@ export default {
     },
     getList(pageNum = 1) {
       getUserList2(this.userName, pageNum).then(({ data: { state, list, total }}) => {
-        // eslint-disable-next-line eqeqeq
-        this.tableData = state == 100 ? list.map(item => {
+        this.tableData = state === '100' ? list.map(item => {
           return {
             ...item,
             roleText: this.roleArr[item.roleType - 1],
             quantity: item.userInfos.length
           }
         }) : []
-        // eslint-disable-next-line eqeqeq
-        this.totalPage = state == 100 ? total : 0
+        this.totalPage = state === '100' ? total : 0
       })
     },
     showRelation({ adminId }) {
       this.userInfos = { adminId }
-      this.$refs.relationShip.show()
+      // console.log(this.userInfos)
+      // this.$refs.relationShip.show()
+      this.isLoading = true
+      this.$refs.relationShip2.show()
     },
     handleCurrentChange(e) {
       this.getList(e)
@@ -109,7 +110,11 @@ export default {
           label="操作"
           align="center">
           <template slot-scope="scope">
-            <el-button v-if="checkPermission(['user:operate'])" type="primary" size="mini" @click="showRelation(scope.row)">关联人员</el-button>
+            <el-button
+              v-if="checkPermission(['user:operate'])"
+              type="primary"
+              size="mini"
+              @click="showRelation(scope.row)">关联人员</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -122,6 +127,11 @@ export default {
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange"/>
     </div>
-    <relationShip ref="relationShip" :user-infos="userInfos" :drawer="drawer" @done="done"/>
+    <relationShip2
+      ref="relationShip2"
+      :user-infos="userInfos"
+      :drawer="drawer"
+      :is-loading.sync="isLoading"
+      @done="done"/>
   </div>
 </template>

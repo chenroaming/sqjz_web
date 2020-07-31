@@ -30,6 +30,7 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   response => {
+    // console.log(response)
     /**
      * code为非20000是抛错 可结合自己业务进行修改
      */
@@ -53,9 +54,7 @@ service.interceptors.response.use(
           type: 'warning'
         }
       ).then(() => {
-        store.dispatch('LogOut').then(() => {
-          location.reload() // 为了重新实例化vue-router对象 避免bug
-        })
+        store.dispatch('FedLogOut')
       })
       // return Promise.reject('error')
     } else {
@@ -69,6 +68,7 @@ service.interceptors.response.use(
   },
   error => {
     // console.log('err' + error) // for debug
+    // console.log('111' + error)
     Message({
       message: '网络错误，请刷新重试',
       type: 'error',

@@ -11,7 +11,10 @@ export default {
       isLoading: false,
       drawer: false,
       direction: 'rtl',
-      buttonGroup: [{ index: '0', label: '已报告' }, { index: '1', label: '未报告' }],
+      buttonGroup: [
+        { index: '0', label: `已报告`, total: 0 },
+        { index: '1', label: `未报告`, total: 0 }
+      ],
       tableData: [],
       currentPage: 1,
       totalPage: 0,
@@ -27,23 +30,41 @@ export default {
     show() {
       const myDate = new Date()
       this.params.date = `${myDate.getFullYear()}-${myDate.getMonth() + 1 < 10 ? '0' + (myDate.getMonth() + 1) : myDate.getMonth() + 1}-${myDate.getDate() < 10 ? '0' + myDate.getDate() : myDate.getDate()}`
-      this.getList(1)
+      this.getList()
       this.drawer = true
     },
     getList() {
       this.isLoading = true
       findRecord(this.params).then(({ data: { state, list, total }}) => {
         this.isLoading = false
+        this.getButtonArr(state === '100' ? total : 0)
         state !== '100' && (this.tableData = []) && (this.totalPage = 0)
         state === '100' && (this.tableData = list) && (this.totalPage = total)
       })
     },
+    getButtonArr(total1) {
+      const data = { // 重新用一个参数对象去请求已报告or未报告的数量
+        date: this.params.date, // 日期
+        abnormal: this.params.abnormal === '0' ? '1' : '0', // 获取相反的报告数据类型
+        pageNumber: 1, // 页码
+        pageSize: 5 // 每页数目
+      }
+      findRecord(data).then(({ data: { state, total }}) => {
+        if (state === '100') {
+          this.buttonGroup[0].total = this.params.abnormal === '0' ? total1 : total
+          this.buttonGroup[1].total = this.params.abnormal === '1' ? total1 : total
+        } else {
+          this.params.abnormal === '1' && (this.buttonGroup[0].total = 0)
+          this.params.abnormal === '0' && (this.buttonGroup[1].total = 0)
+        }
+      })
+    },
     changeSelect(index) {
       if (this.params.abnormal === index) return false
-      this.params.abnormal = index
       this.params.pageNumber = 1
       this.currentPage = 1
-      this.getList()
+      this.params.abnormal = index
+      this.getList(index)
     },
     handleCurrentChange(e) {
       this.params.pageNumber = e
@@ -79,7 +100,14 @@ export default {
       <el-button :disabled="isLoading" type="primary" @click="getList">搜索</el-button>
     </div>
     <el-button-group style="margin:3%;">
-      <el-button v-for="item in buttonGroup" :key="item.index" :class="params.abnormal === item.index ? 'isSelect' : ''" type="primary" size="mini" plain @click="changeSelect(item.index)">{{ item.label }}</el-button>
+      <el-button
+        v-for="item in buttonGroup"
+        :key="item.index"
+        :class="params.abnormal === item.index ? 'isSelect' : ''"
+        type="primary"
+        size="mini"
+        plain
+        @click="changeSelect(item.index)">{{ item.label }}（{{ item.total }}）</el-button>
     </el-button-group>
     <transition-group name="breadcrumb">
       <el-table

@@ -19,6 +19,20 @@ export function getUserList2(username = '', pageNumber = 1, adminId) {
 }
 
 /**
+ * @description 矫正人员解矫(社区矫正使用)
+ * @return [List]
+ */
+export function PersonnelCorrection(userId) {
+  return request({
+    url: '/community_correction/webClass/user/remove.jhtml',
+    method: 'post',
+    data: Qs.stringify({
+      userId
+    })
+  })
+}
+
+/**
  * @description 获取可查看区域(社区矫正使用)
  * @return [List]
  */
@@ -36,17 +50,11 @@ export function getUsercommunity(pageSize = 500) {
  * @description 获取矫正对象列表(社区矫正使用)
  * @return [List]
  */
-export function getCommunityUserList(name = '', identityCard = '', pageNumber = 1, communityId = '') {
+export function getCommunityUserList(data) {
   return request({
     url: '/community_correction/webClass/user/find.jhtml',
     method: 'post',
-    data: Qs.stringify({
-      name,
-      identityCard,
-      pageSize: 10,
-      pageNumber,
-      communityId
-    })
+    data: Qs.stringify({ ...data })
   })
 }
 
@@ -257,6 +265,7 @@ export function resetPhoneInfo(userId) {
   return request({
     url: '/community_correction/webClass/user/resetPhoneInfo.jhtml',
     method: 'post',
+    isShowTips: true,
     data: Qs.stringify({ userId })
   })
 }
@@ -321,5 +330,29 @@ export function addUser(data) {
     method: 'post',
     isShowTips: true,
     data: data
+  })
+}
+
+/**
+ * @description 矫正对象人脸识别记录(社区矫正使用)
+ * @return [list]
+ */
+export function findRecognitionRecordAdmin(data) {
+  return request({
+    url: '/community_correction/webClass/admin/findRecognitionRecord.jhtml',
+    method: 'post',
+    data: Qs.stringify({ ...data })
+  })
+}
+
+/**
+ * @description 解除矫正人员(社区矫正使用)
+ * @return [list]
+ */
+export function remove(data) {
+  return request({
+    url: '/community_correction/webClass/user/remove.jhtml',
+    method: 'post',
+    data: Qs.stringify({ ...data })
   })
 }

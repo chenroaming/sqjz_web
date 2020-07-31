@@ -35,18 +35,19 @@ import { asyncRouterMap, constantRouterMap } from '@/router'
 // }
 
 /**
- * 通过meta.role判断是否与当前用户权限匹配,自己改造的方法，对比之前的哪个更好呢？ by Roaming
+ * 通过meta.role判断是否与当前用户权限匹配,自己改造的方法 by Roaming
  * @param roles
  * @param route
  */
 function hasPermission({ meta }, roles) {
+  // console.log(meta?.roles) // ES2020的链式运算符语法，需babel转译支持
   return meta && meta.roles ? roles
     .some(rolesItem => meta.roles
       .includes(rolesItem)) : true
 }
 
 /**
- * 递归过滤异步路由表，返回符合用户角色权限的路由表,自己改造的方法,对比之前的哪个更好呢？ by Roaming
+ * 递归过滤异步路由表，返回符合用户角色权限的路由表,自己改造的方法 by Roaming
  * @param routes asyncRouterMap
  * @param roles
  */
@@ -66,7 +67,7 @@ const permission = {
   mutations: {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
-      state.routers = constantRouterMap.concat(routers)
+      state.routers = routers.concat(constantRouterMap)
     }
   },
   actions: {

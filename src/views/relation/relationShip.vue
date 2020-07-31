@@ -97,6 +97,7 @@ export default {
 </style>
 
 <template>
+  <!-- 原来的矫正分组人员关联模块，已改版至relationShip2，暂时不用这个了 -->
   <el-drawer
     :visible.sync="drawer"
     :direction="direction"

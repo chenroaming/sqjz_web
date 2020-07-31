@@ -9,7 +9,6 @@ import resetPhone from './record/resetPhone'
 import evaluationInfo from './record/evaluationInfo'
 import monthReport from './record/monthReport'
 import authmix from '@/utils/authmix'
-// import test from './record/test'
 export default {
   name: 'ButtonBox',
   components: {
@@ -38,7 +37,7 @@ export default {
         padding: '10px'
       },
       buttonArr: [
-        // { span: 8, item: 'trackMap', picSrc: require('../../../assets/index_images/dz.png'), auth: 'user:findTrackRecord', text: '查看轨迹' },
+        // { span: 8, item: 'trackMap', picSrc: require('../../../assets/index_images/dz.png'), auth: 'user:findTrackRecord', text: '查看轨迹' }, // 暂时不用
         { span: 8, item: 'record', picSrc: require('../../../assets/index_images/pj.png'), auth: 'user:admin', text: '日常报告' },
         { span: 8, item: 'wrinfo', picSrc: require('../../../assets/index_images/sm.png'), auth: 'user:admin', text: '书面报告' },
         { span: 8, item: 'ramdomTask', picSrc: require('../../../assets/index_images/sj.png'), auth: 'user:admin', text: '随机抽查' },
@@ -46,6 +45,7 @@ export default {
         { span: 8, item: 'faceInfo', picSrc: require('../../../assets/index_images/rl.png'), auth: 'user:admin', text: '人脸识别' },
         { span: 8, item: 'evaluationInfo', picSrc: require('../../../assets/index_images/xl.png'), auth: 'user:admin', text: '心理测评' },
         { span: 8, item: 'monthReport', picSrc: require('../../../assets/index_images/yd.svg'), auth: 'user:admin', text: '月度报告' }
+        // { span: 8, item: 'remove', picSrc: require('../../../assets/index_images/yd.svg'), auth: 'user:admin', text: '解除矫正' }
       ]
     }
   },
@@ -58,15 +58,15 @@ export default {
   methods: {
     handleUserCurd(modalType) {
       this.isLoading = modalType
-      const { userId, name } = this.userInfo
-      if (modalType === 'trackMap') { // 轨迹记录比较特殊，单独处理
-        const authInfo = {
-          userId: userId,
-          name: name
-        }
-        this.$refs[modalType].show(authInfo)
-        return true
-      }
+      // const { userId, name } = this.userInfo
+      // if (modalType === 'trackMap') { // 轨迹记录比较特殊，单独处理
+      //   const authInfo = {
+      //     userId: userId,
+      //     name: name
+      //   }
+      //   this.$refs[modalType].show(authInfo)
+      //   return true
+      // }
       this.$refs[modalType].show()
     }
   }
@@ -112,15 +112,14 @@ export default {
           </span>
         </div>
       </el-col>
-      <!-- <resetPhone :user-id="userInfo.userId"/> -->
-      <!-- <test/> -->
+      <resetPhone :user-id="userInfo.userId"/>
     </el-row>
     <trackMap ref="trackMap" :done.sync="isLoading"/>
     <record ref="record" :user-id="userInfo.userId" :done.sync="isLoading"/>
     <wrinfo ref="wrinfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
     <ramdomTask ref="ramdomTask" :user-id="userInfo.userId" :done.sync="isLoading"/>
     <warninginfo ref="warninginfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
-    <faceInfo ref="faceInfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
+    <faceInfo ref="faceInfo" :user-id="userInfo.userId" :done.sync="isLoading" type="user"/>
     <evaluationInfo ref="evaluationInfo" :user-id="userInfo.userId" :done.sync="isLoading"/>
     <monthReport ref="monthReport" :user-id="userInfo.userId" :done.sync="isLoading"/>
   </el-card>

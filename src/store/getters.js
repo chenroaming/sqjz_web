@@ -9,6 +9,7 @@ const getters = {
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
   roleType: state => state.user.roleType,
-  nowPage: state => state.app.nowPage
+  nowPage: state => state.app.nowPage,
+  searchData: state => state.app.currentSeachData
 }
 export default getters

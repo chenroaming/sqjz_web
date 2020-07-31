@@ -46,7 +46,7 @@
 import { mapGetters, mapState } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import { getChangeAreaList, replaceArea } from '@/api/area'
+import { getChangeAreaList } from '@/api/area'
 
 export default {
   components: {
@@ -71,7 +71,7 @@ export default {
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {
-        location.reload() // 为了重新实例化vue-router对象 避免bug
+        // location.reload() // 为了重新实例化vue-router对象 避免bug
       })
     },
     // 点击区域名字，获取区域列表
@@ -79,21 +79,6 @@ export default {
       getChangeAreaList()
         .then(res => {
           this.areaList = res.data.List
-        })
-        .catch(() => {
-          this.areaList = []
-        })
-    },
-    // 点击其中一个区域名字，变更区域
-    replaceAreaName(item) {
-      console.log(item.areaId, item.areaName)
-      replaceArea(item.areaId)
-        .then(res => {
-          this.$message({ type: 'success', message: '账号所在区域变更成功！' })
-          this.$store.dispatch('ChangeAreaname').then(() => {
-            location.reload() // 为了重新实例化vue-router对象 避免bug
-          })
-          this.areaList = []
         })
         .catch(() => {
           this.areaList = []

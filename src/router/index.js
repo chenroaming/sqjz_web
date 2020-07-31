@@ -1,10 +1,10 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
-Vue.use(Router)
+Vue.use(VueRouter)
 
 /* Layout */
 import Layout from '../views/layout/Layout'
@@ -23,45 +23,67 @@ import Layout from '../views/layout/Layout'
   }
 **/
 
-export const constantRouterMap = [{
-  path: '/login',
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/404',
-  component: () => import('@/views/404'),
-  hidden: true
-},
-{
-  path: '/Visualization',
-  component: () => import('@/views/Visualization'),
-  hidden: true
-},
-{
-  path: '/index',
-  component: () => import('@/views/introduce'),
-  hidden: true
-},
-{
-  path: '/',
-  component: Layout,
-  redirect: '/home/index',
-  hidden: true,
-  children: [
-    {
-      path: '/home/index',
-      name: 'home',
-      component: () => import('@/views/home/index'),
-      meta: {
-        title: '主页',
-        icon: 'example',
-        breadcrumb: false
+export const constantRouterMap = [
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
+    path: '/Visualization',
+    component: () => import('@/views/Visualization'),
+    hidden: true
+  },
+  {
+    path: '/index',
+    component: () => import('@/views/introduce'),
+    hidden: true
+  },
+  {
+    path: '/test',
+    component: () => import('@/views/test/tree'),
+    hidden: true,
+    children: [
+      {
+        path: '/test/children1',
+        name: 'children1',
+        component: () => import('@/views/test/children/children1')
+      },
+      {
+        path: '/test/children2',
+        name: 'children2',
+        component: () => import('@/views/test/children/children2')
       }
-    }
-  ]
-}
-
+    ]
+  },
+  {
+    path: '/test2',
+    component: () => import('@/views/test/test'),
+    hidden: true
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/home/index',
+    hidden: true,
+    children: [
+      {
+        path: '/home/index',
+        name: 'home',
+        component: () => import('@/views/home/index'),
+        meta: {
+          title: '主页',
+          icon: 'example',
+          breadcrumb: false
+        }
+      }
+    ]
+  }
 ]
 
 export const asyncRouterMap = [
@@ -101,7 +123,16 @@ export const asyncRouterMap = [
         component: () => import('@/views/Communityuser/index'), // Parent router-view
         name: 'screen-manger',
         meta: {
-          title: '矫正电子档案',
+          title: '在矫人员',
+          roles: ['user:admin']
+        }
+      },
+      {
+        path: 'CorrectionPersonnel',
+        component: () => import('@/views/Communityuser/CorrectionPersonnel/index'), // Parent router-view
+        name: 'screen-CorrectionPersonnel',
+        meta: {
+          title: '解矫人员',
           roles: ['user:admin']
         }
       },
@@ -412,7 +443,6 @@ export const asyncRouterMap = [
     // }
     ]
   },
-
   {
     path: '*',
     redirect: '/404',
@@ -420,10 +450,41 @@ export const asyncRouterMap = [
   }
 ]
 
-export default new Router({
+const router = new VueRouter({
   // mode: 'history', //后端支持可开
   scrollBehavior: () => ({
     y: 0
   }),
   routes: constantRouterMap
 })
+/* 以下方法存在一个问题，当登录一个权限较少的用户时，再注销然后登录一个权限较多的用户时，
+权限较多的用户会无法访问权限许可访问的页面，而先登录权限较多的用户，再注销然后登录权限较少的用户时，
+权限较少的用户访问一切正常，并且也无法通过更改URL的方式访问不属于自己的页面，原因待探究，
+先用刷新页面重置整个路由的方式进行解决 */
+// router.$resetRouter = () => { // new一个路由对象，并通过重新匹配路由的方式清除原有路由和注入新的路由防止BUG
+//   router.matcher = new VueRouter({
+//     scrollBehavior: () => ({
+//       y: 0
+//     }),
+//     routes: constantRouterMap
+//   }).matcher
+// }
+
+// router.$goLogin = () => { // 跳转至登录页
+//   router.push({ path: '/login' })
+// }
+
+// router.$addRoutes = (routes = []) => { // 动态添加路由
+//   const newRouter = new VueRouter({
+//     scrollBehavior: () => ({
+//       y: 0
+//     }),
+//     routes: constantRouterMap
+//   }).matcher
+//   newRouter.addRoutes(routes)
+//   router.matcher = newRouter
+//   console.log(routes)
+//   // router.push({ path: '/home' })
+// }
+
+export default router

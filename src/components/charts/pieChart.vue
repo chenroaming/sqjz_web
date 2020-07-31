@@ -28,10 +28,14 @@ export default {
     seriesData() {
       return this.chartData
         .filter(item => item.number) // 过滤为0的数据
-        .map(({ number, type }) => { // 图表绘图数据处理
+        .map(({ number, type, ageType, communityId, sex, userType }) => { // 图表绘图数据处理
           return {
             value: number,
-            name: type
+            name: type,
+            ageType, // 年龄类型
+            communityId, // 司法所id
+            sex, // 性别
+            userType // 矫正人员类型
           }
         })
     }
@@ -75,6 +79,9 @@ export default {
         ]
       }
       myChart.setOption(option)
+      myChart.on('click', 'series', (e) => {
+        this.$emit('getUserList', e)
+      })
     }
   }
 }

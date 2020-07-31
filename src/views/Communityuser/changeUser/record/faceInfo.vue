@@ -1,11 +1,15 @@
 <script>
-import { findRecognitionRecord } from '@/api/user'
+import { findRecognitionRecord, findRecognitionRecordAdmin } from '@/api/user'
 import tablemix from '@/utils/tablemix'
 export default {
   name: 'Warninginfo',
   mixins: [tablemix],
   props: {
     userId: {
+      type: String,
+      default: ''
+    },
+    type: {
       type: String,
       default: ''
     }
@@ -18,16 +22,16 @@ export default {
       activities: [],
       currentPage: 1,
       totalPage: 0,
-      centerDialogVisible: false
+      centerDialogVisible: false,
+      adminId: ''
     }
-  },
-  mounted() {
-
   },
   methods: {
     show() {
-      this.currentPage = 1
-      this.getList()
+      this.$nextTick(() => {
+        this.currentPage = 1
+        this.getList()
+      })
     },
     getColor(type) {
       const color = new Map([
@@ -39,36 +43,37 @@ export default {
       return color.get(type)
     },
     getList(pageNumber = 1) {
-      const data = {
-        userId: this.userId,
+      const params = {
         pageNumber: pageNumber,
         pageSize: 5
       }
-      findRecognitionRecord(data).then(({ data: { state, list, total }}) => {
-        this.$emit('update:done', '')
-        if (state == 100) {
-          this.activities = list.map(item => {
-            return {
-              ...item,
-              operateText: item.operateType === 1 ? '登录人脸识别' : '报告人脸识别',
-              createTime: item.createDate ? this.exChange(item.createDate.time) : '',
-              color: '#409EFF'
-            }
-          })
-          this.totalPage = total
-          this.drawer = true
-          return
-        }
-        this.activities = []
-        this.totalPage = 0
-      })
+      this.type === 'admin' && (params.adminId = this.userId) && findRecognitionRecordAdmin(params).then(({ data: { state, list, total }}) => {
+        this.refreshList(state, list, total)
+      }) // type为admin则查询admin接口的人脸记录
+      this.type === 'user' && (params.userId = this.userId) && findRecognitionRecord(params).then(({ data: { state, list, total }}) => {
+        this.refreshList(state, list, total)
+      }) // type为user则查询user接口的人脸记录
     },
-    showDetail(activity) {
-      this.report = activity
-      this.centerDialogVisible = true
+    refreshList(state, list, total) {
+      this.$emit('update:done', '')
+      if (state === '100') {
+        this.activities = list.map(item => {
+          return {
+            ...item,
+            operateText: item.operateType === 1 ? '登录人脸识别' : '报告人脸识别',
+            createTime: item.createDate ? this.exChange(item.createDate.time) : '',
+            color: '#409EFF'
+          }
+        })
+        this.totalPage = total
+        this.drawer = true
+        return
+      }
+      this.activities = []
+      this.totalPage = 0
     },
     handleCurrentChange(e) {
-      this.getList(e)
+      this.getList(e, this.userId, this.type)
     }
   }
 }

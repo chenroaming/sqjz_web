@@ -51,8 +51,9 @@
             <el-tag>是</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="250">
+        <el-table-column align="center" label="操作" width="300">
           <template slot-scope="scope">
+            <el-button size="small" type="primary" @click="handleUserCurd('SHOW_FACEINFO', scope.row)">人脸识别记录</el-button>
             <el-button v-if="checkPermission(['admin:operate'])" size="small" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
             <el-button v-if="checkPermission(['admin:operate'])" size="small" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
           </template>
@@ -85,6 +86,10 @@
       @closeModal="addUserVisible=false"
       @submitSuccess="handleUserSuccess('ADD_USER_INFO_SUCCESS')"
     />
+    <faceInfo
+      ref="faceInfo"
+      :user-id="roleObj.adminId"
+      type="admin"/>
   </div>
 </template>
 
@@ -97,7 +102,7 @@ import SortPage from '@/components/sortpage/sortpage'
 
 import authmix from '@/utils/authmix'
 import sortmix from '@/utils/sortmix'
-
+import faceInfo from '@/views/Communityuser/changeUser/record/faceInfo'
 import { getUserList2, deleteUser2 } from '@/api/user'
 import { computedFormatTime } from '@/utils/tools'
 import { mapState } from 'vuex'
@@ -108,7 +113,8 @@ export default {
     ChangeUserAuth,
     Searcharea,
     SortPage,
-    Adduser
+    Adduser,
+    faceInfo
   },
 
   filters: {
@@ -135,7 +141,9 @@ export default {
         username: '',
         name: ''
       },
-      roleObj: {},
+      roleObj: {
+        adminId: ''
+      },
       roleNameArr: ['', '系统管理员', '省级管理员', '市级管理员', '区级管理员', '司法所管理员', '司法人员', '协矫人员']
     }
   },
@@ -156,15 +164,15 @@ export default {
     // 获取用户列表
     __init(username = '', pageNumber = this.pageNumber) {
       getUserList2(username, pageNumber)
-        .then(res => {
-          this.tableData = res.data.list.map(item => {
+        .then(({ data: { list, pageNumber, total }}) => {
+          this.tableData = list.map(item => {
             return {
               ...item,
               roleName: this.roleNameArr[item.roleType]
             }
           })
-          this.pageNumber = res.data.pageNumber
-          this.sortpagesTotal = res.data.total
+          this.pageNumber = pageNumber
+          this.sortpagesTotal = total
           this.handleResetSort()
         })
         .catch(res => {
@@ -205,6 +213,10 @@ export default {
         case 'CHANGE_AUTH':
           this.roleObj = payload
           this.$refs.UserAuthrefs.show(payload)
+          break
+        case 'SHOW_FACEINFO':
+          this.roleObj = payload
+          this.$refs.faceInfo.show()
           break
         default:
           break

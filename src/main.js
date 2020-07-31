@@ -8,12 +8,13 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
-
 import '@/icons' // icon
 import '@/permission' // permission control
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.use(VCharts)
+// console.log(process.env)
+// require('./mock/index.js') // 虚拟请求，开发时可用，打包生产包前需注释再打包
 
 Vue.mixin({// 全局混入表格表头样式
   methods: {

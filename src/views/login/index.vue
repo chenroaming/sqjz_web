@@ -1,68 +1,81 @@
 <template>
-  <div>
-    <div class="login-container">
-      <div>
-        <img
-          src="../../assets/login_images/webLogo.png"
-          alt
-          style="position: absolute;top: 10px;width: 45px;left:50px;"
-          class="webLogo"
-        >
-        <span
-          style="position: absolute;top: 20px;left: 122px;font-size: 20px;color: white;letter-spacing: 5px;"
-        >智慧矫正可视化监管平台</span>
-        <!-- 智慧司法-矫正一体化平台 -->
-      </div>
-      <div class="uiiui">
-        <img
-          src="../../assets/login_images/bigLogin.jpg"
-          alt
-          style="position: absolute; width: 60%;left: 0;top: 0;   height: 100%;"
-        >
-        <el-form
-          ref="loginForm"
-          :model="loginForm"
-          :rules="loginRules"
-          class="login-form"
-          auto-complete="on"
-          label-position="left"
-        >
-          <p
-            style="text-align: center;color: #00a1ea;font-weight: 800;letter-spacing: 10px;font-size: 20px;margin-top: 20px;"
-          >欢迎登陆</p>
-          <div id="blueline" />
-          <el-form-item prop="username">
-            <span class="svg-container">
-              <svg-icon icon-class="user" />
-            </span>
-            <el-input
-              v-model="loginForm.username"
-              name="username"
-              type="text"
-              auto-complete="on"
-              placeholder="请输入用户名"
-            />
-          </el-form-item>
+  <div class="login-container">
+    <div>
+      <img
+        src="../../assets/login_images/webLogo.png"
+        alt
+        style="position: absolute;top: 10px;width: 45px;left:50px;"
+        class="webLogo"
+      >
+      <span
+        style="position: absolute;top: 20px;left: 122px;font-size: 20px;color: white;letter-spacing: 5px;"
+      >智慧矫正可视化监管平台</span>
+      <!-- 智慧司法-矫正一体化平台 -->
+    </div>
+    <div class="uiiui">
+      <img
+        src="../../assets/login_images/bigLogin.jpg"
+        alt
+        style="position: absolute; width: 60%;left: 0;top: 0;   height: 100%;"
+      >
+      <el-form
+        ref="loginForm"
+        :model="loginForm"
+        :rules="loginRules"
+        class="login-form"
+        auto-complete="on"
+        label-position="left"
+      >
+        <p
+          style="text-align: center;color: #00a1ea;font-weight: 800;letter-spacing: 10px;font-size: 20px;margin-top: 20px;"
+        >欢迎登陆</p>
+        <div id="blueline" />
+        <el-form-item prop="username">
+          <span class="svg-container">
+            <svg-icon icon-class="user" />
+          </span>
+          <el-input
+            v-model="loginForm.username"
+            name="username"
+            type="text"
+            auto-complete="on"
+            placeholder="请输入用户名"
+          />
+        </el-form-item>
 
-          <el-form-item prop="password">
-            <span class="svg-container">
-              <svg-icon icon-class="password" />
-            </span>
-            <el-input
-              v-model="loginForm.password"
-              placeholder="请输入密码"
-              show-password/>
-          </el-form-item>
-          <el-form-item class="loginBtn">
-            <el-button
-              :loading="loading"
-              type="primary"
-              style="width:100%;margin-top:20px"
-              @click="logintext2"
-            >登录</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            v-model="loginForm.password"
+            placeholder="请输入密码"
+            show-password/>
+        </el-form-item>
+
+        <el-form-item prop="pinCode">
+          <span class="svg-container">
+            <svg-icon icon-class="snapshot" />
+          </span>
+          <el-input
+            v-model="loginForm.pinCode"
+            type="text"
+            placeholder="请输入验证码"/>
+          <el-image
+            :src="codeSrc"
+            style="position: absolute;top: 5px;right: 15px;cursor: pointer;"
+            @click="getCode"/>
+        </el-form-item>
+
+        <el-form-item class="loginBtn">
+          <el-button
+            :loading="loading"
+            type="primary"
+            style="width:100%;"
+            @click="logintext2"
+          >登录</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -71,6 +84,7 @@
 // eslint-disable-next-line no-unused-vars
 import { isvalidUsername } from '@/utils/validate'
 import mixin from '@/utils/mixins'
+// import { validateCode } from '@/api/login'
 // import PuzzleVerification from 'vue-puzzle-verification'
 export default {
   name: 'Login',
@@ -93,10 +107,18 @@ export default {
         callback()
       }
     }
+    const validateCode = (rule, value, callback) => {
+      if (value.length !== 4) {
+        callback(new Error('请输入正确的验证码'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        pinCode: ''
       },
       loginRules: {
         username: [
@@ -112,10 +134,18 @@ export default {
             trigger: 'blur',
             validator: validatePass
           }
+        ],
+        pinCode: [
+          {
+            required: true,
+            trigger: 'blur',
+            validator: validateCode
+          }
         ]
       },
       loading: false,
-      redirect: undefined
+      redirect: undefined,
+      codeSrc: '/community_correction/webAdmin/admin/validateCode.jhtml'
     }
   },
   watch: {
@@ -132,29 +162,22 @@ export default {
   methods: {
     // 登录事件
     logintext2() {
-      if (this.loginForm.username === '' || this.loginForm.password === '') {
-        // 账号或密码为空时限制登录
-        this.$message({
-          type: 'error',
-          message: '请填写完整信息'
-        })
-        return
-      }
-      this.loading = true
-
-      this.$store
-        .dispatch('Login2', this.loginForm)
-        .then(res => {
-          this.loading = false
-          if (res.data.state === '100') {
-            this.$router.push({
-              path: '/home/index'
-            })
-          }
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      this.$refs['loginForm'].validate((valid) => {
+        if (!valid) return
+        this.loading = true
+        this.$store
+          .dispatch('Login2', this.loginForm)
+          .then(({ data: { state }}) => {
+            state === '100' && this.$router.push({ path: '/home/index' })
+            state !== '100' && this.getCode()
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      })
+    },
+    getCode() {
+      this.codeSrc = `${this.codeSrc}?${Math.random()}`
     }
   }
 }

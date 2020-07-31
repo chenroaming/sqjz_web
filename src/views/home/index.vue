@@ -10,7 +10,10 @@
     </el-row>
     <el-row :gutter="20" style="margin-bottom: 10px;">
       <el-col v-for="item in chartArr" :span="item.span" :key="item.chartTitle">
-        <pieChart :chart-data="item.chartData" :chart-title="item.chartTitle">
+        <pieChart
+          :chart-data="item.chartData"
+          :chart-title="item.chartTitle"
+          @getUserList="getUserList">
           <!-- 此项目vue版本为2.5，无法使用2.6才有的v-slot -->
           <template v-if="item.isOperating" slot="button">
             <el-button style="float: right; padding: 3px 0" type="text" @click="showDetail">查看详情</el-button>
@@ -22,6 +25,8 @@
       </el-col>
     </el-row>
     <record ref="record"/>
+    <userTypeCount
+      ref="userTypeCount"/>
   </div>
 </template>
 
@@ -32,6 +37,7 @@ import count from './count/count.vue'
 import pieChart from '@/components/charts/pieChart'
 import histogram from '@/components/charts/histogram'
 import record from './record'
+import userTypeCount from './userTypeCount'
 export default {
   name: 'Dashboard',
   components: {
@@ -39,7 +45,8 @@ export default {
     count,
     pieChart,
     histogram,
-    record
+    record,
+    userTypeCount
   },
   data() {
     return {
@@ -93,6 +100,9 @@ export default {
   methods: {
     showDetail() {
       this.$refs.record.show()
+    },
+    getUserList({ data }) {
+      this.$refs.userTypeCount.show(data)
     }
   }
 }

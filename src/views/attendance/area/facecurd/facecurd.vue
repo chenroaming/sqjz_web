@@ -1,4 +1,5 @@
 <template>
+  <!-- 原来的关联人员模块，已改版至facecurd2，暂时不用 -->
   <div
     v-if="authDrawerVisible"
     :class="authDrawerVisible?'auth-animateFadeIn':''"
@@ -30,12 +31,10 @@
             <el-radio label="add">添加人员</el-radio>
           </el-radio-group>
           <div style="display: inline-block;height: 50px;line-height: 50px;float: right;">
-            <el-input v-model="userName" style="width: 150px;" placeholder="请输入姓名"></el-input>
+            <el-input v-model="userName" style="width: 150px;" placeholder="请输入姓名"/>
             <el-button type="primary" @click="search">搜索</el-button>
           </div>
         </div>
-
-        
 
         <div v-show="tabPosition === 'add'" class="addFace">
           <el-table
@@ -50,7 +49,7 @@
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column label="人脸图像" align="center">
               <template slot-scope="scope">
-                <img :src="scope.row.picPath" alt style="width:80px;height:100px;cursor:pointer" />
+                <img :src="scope.row.picPath" alt style="width:80px;height:100px;cursor:pointer" >
               </template>
             </el-table-column>
             <el-table-column prop="name" label="姓名" align="center" />
@@ -80,7 +79,7 @@
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column label="人脸图像" align="center">
               <template slot-scope="scope">
-                <img :src="scope.row.picPath" alt style="width:80px;height:100px;cursor:pointer" />
+                <img :src="scope.row.picPath" alt style="width:80px;height:100px;cursor:pointer" >
               </template>
             </el-table-column>
             <el-table-column prop="name" label="姓名" align="center" />
@@ -102,13 +101,13 @@
 </template>
 
 <script>
-import { getFaceList } from "@/api/face";
-import { addFaceInfo, deleteFaceInfo } from "@/api/facelibary";
-import Sortpage from "@/components/sortpage/sortpage";
+import { getFaceList } from '@/api/face'
+import { addFaceInfo, deleteFaceInfo } from '@/api/facelibary'
+import Sortpage from '@/components/sortpage/sortpage'
 // eslint-disable-next-line no-unused-vars
-import { Message, MessageBox } from "element-ui";
+import { Message, MessageBox } from 'element-ui'
 // eslint-disable-next-line no-unused-vars
-import { resolve, reject } from "q";
+import { resolve, reject } from 'q'
 export default {
   components: {
     Sortpage
@@ -125,11 +124,11 @@ export default {
   data() {
     return {
       facesetInfo: {}, // 人脸库信息
-      searchfaceName: "", // 搜索名称
-      tabPosition: "delete", // 切换选项标识
+      searchfaceName: '', // 搜索名称
+      tabPosition: 'delete', // 切换选项标识
       isLoadingEnd: true,
       addTableInfo: {
-        tableData: [{ name: "测试" }],
+        tableData: [{ name: '测试' }],
         currentPage: 1,
         sortShow: true,
         multipleSelection: [],
@@ -143,95 +142,95 @@ export default {
         multipleSelection: [],
         totalPages: 0
       },
-      userName:'',
-    };
+      userName: ''
+    }
   },
 
   methods: {
     // 关闭抽屉
     closeModal() {
-      this.$emit("closeModal");
+      this.$emit('closeModal')
     },
 
     // 接收信息
     receiveInfo(payload) {
-      this.facesetInfo = Object.assign({}, payload);
-      console.log(this.facesetInfo);
+      this.facesetInfo = Object.assign({}, payload)
+      console.log(this.facesetInfo)
       Promise.all([this.getAddFaceList(), this.getDeleteFaceList()])
         .then(nameList => {
-          this.isLoadingEnd = false;
+          this.isLoadingEnd = false
           nameList.forEach(val => {
-            this[val].sortShow = false;
+            this[val].sortShow = false
             this.$nextTick(() => {
-              this[val].sortShow = true;
-            });
-          });
+              this[val].sortShow = true
+            })
+          })
         })
         .catch(payload => {
-          this.isLoadingEnd = false;
+          this.isLoadingEnd = false
           // this.$message({ type: 'error', message: payload.msg })
-        });
+        })
     },
 
-    search(){
-      if (this.tabPosition == 'add'){
-        this.getAddFaceList('add',this.facesetInfo.ruleId,this.userName,1)
+    search() {
+      if (this.tabPosition == 'add') {
+        this.getAddFaceList('add', this.facesetInfo.ruleId, this.userName, 1)
       } else {
-        this.getDeleteFaceList("find",this.facesetInfo.ruleId,10,1,this.userName)
+        this.getDeleteFaceList('find', this.facesetInfo.ruleId, 10, 1, this.userName)
       }
     },
 
     // 添加人脸-获取列表
-    getAddFaceList(type = 'add',ruleId = this.facesetInfo.ruleId,name,num) {
+    getAddFaceList(type = 'add', ruleId = this.facesetInfo.ruleId, name, num) {
       return new Promise((resolve, reject) => {
         getFaceList(type, ruleId, 10, num, name)
           .then(res => {
-            console.log(res.data.list);
-            this.addTableInfo.tableData = [];
-            this.addTableInfo.totalPages = 0;
+            console.log(res.data.list)
+            this.addTableInfo.tableData = []
+            this.addTableInfo.totalPages = 0
             if (res.data.list.length !== 0) {
-              this.addTableInfo.currentPage = res.data.pageNumber;
-              this.addTableInfo.tableData = res.data.list;
-              this.addTableInfo.totalPages = res.data.total;
-              resolve("addTableInfo");
+              this.addTableInfo.currentPage = res.data.pageNumber
+              this.addTableInfo.tableData = res.data.list
+              this.addTableInfo.totalPages = res.data.total
+              resolve('addTableInfo')
             }
           })
           .catch(() => {
-            this.addTableInfo.tableData = [];
+            this.addTableInfo.tableData = []
             // this.$message.warning('无相关信息')
-            reject({ msg: "暂无数据(添加)" });
-          });
-      });
+            reject({ msg: '暂无数据(添加)' })
+          })
+      })
     },
 
     // 添加人脸-全选
     handleSelectionChangeAdd(val) {
-      this.addTableInfo.multipleSelection = val;
+      this.addTableInfo.multipleSelection = val
     },
     // 添加全部
     addAll() {
-      MessageBox.confirm("您确定要将所有人脸添加到该人脸库嘛？", "确定", {
-        confirmButtonText: "确定",
-        type: "warning",
-        customClass: "alertBox"
+      MessageBox.confirm('您确定要将所有人脸添加到该人脸库嘛？', '确定', {
+        confirmButtonText: '确定',
+        type: 'warning',
+        customClass: 'alertBox'
       }).then(() => {
         addFaceInfo(
           this.facesetInfo.facesetId,
-          "addAll",
+          'addAll',
           this.facesetInfo.category
         )
           .then(res => {
-            this.addTableInfo.multipleSelection = [];
+            this.addTableInfo.multipleSelection = []
             this.$message({
-              type: "success",
-              message: "添加成功!"
-            });
-            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
-            this.getAddFaceList();
-            this.$refs.addFaceTable.clearSelection();
+              type: 'success',
+              message: '添加成功!'
+            })
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId)
+            this.getAddFaceList()
+            this.$refs.addFaceTable.clearSelection()
           })
-          .catch(() => {});
-      });
+          .catch(() => {})
+      })
     },
 
     // 添加人脸-分页
@@ -242,35 +241,35 @@ export default {
         this.searchfaceName,
         10,
         num
-      );
+      )
     },
 
     // 添加人脸-提交
     submitFaceListAdd() {
       if (this.addTableInfo.multipleSelection.length === 0) {
         this.$message({
-          type: "warning",
-          message: "请选择人员"
-        });
+          type: 'warning',
+          message: '请选择人员'
+        })
       } else {
-        const mutiArray = [];
-        let mutiStr = "";
+        const mutiArray = []
+        let mutiStr = ''
         this.addTableInfo.multipleSelection.forEach(val => {
-          mutiArray.push(val.userId);
-        });
-        mutiStr = mutiArray.join(",");
+          mutiArray.push(val.userId)
+        })
+        mutiStr = mutiArray.join(',')
         addFaceInfo(mutiStr, this.facesetInfo.ruleId)
           .then(res => {
-            this.addTableInfo.multipleSelection = [];
+            this.addTableInfo.multipleSelection = []
             this.$message({
-              type: "success",
-              message: "添加成功!"
-            });
-            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
-            this.getAddFaceList();
-            this.$refs.addFaceTable.clearSelection();
+              type: 'success',
+              message: '添加成功!'
+            })
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId)
+            this.getAddFaceList()
+            this.$refs.addFaceTable.clearSelection()
           })
-          .catch(() => {});
+          .catch(() => {})
       }
     },
 
@@ -278,13 +277,13 @@ export default {
 
     // 删除人脸-获取列表
     getDeleteFaceList(
-      type = "find",
+      type = 'find',
       facesetId = this.facesetInfo.ruleId,
       pageSize = 10,
       pageNumber = 1,
       name,
     ) {
-      facesetId = this.facesetInfo.ruleId;
+      facesetId = this.facesetInfo.ruleId
       return new Promise((resolve, reject) => {
         getFaceList(
           type,
@@ -295,108 +294,108 @@ export default {
         )
           .then(res => {
             if (res.data.list.length !== 0) {
-              this.deleteTableInfo.currentPage = res.data.pageNumber;
-              this.deleteTableInfo.tableData = res.data.list;
-              this.deleteTableInfo.totalPages = res.data.total;
-              resolve("deleteTableInfo");
+              this.deleteTableInfo.currentPage = res.data.pageNumber
+              this.deleteTableInfo.tableData = res.data.list
+              this.deleteTableInfo.totalPages = res.data.total
+              resolve('deleteTableInfo')
             }
           })
           .catch(err => {
-            this.deleteTableInfo.tableData = [];
+            this.deleteTableInfo.tableData = []
             // this.$message.warning('无相关信息')
-            reject({ msg: "暂无已有人员数据" });
-          });
-      });
+            reject({ msg: '暂无已有人员数据' })
+          })
+      })
     },
 
     // 删除人脸-全选
     handleSelectionChangeDelete(val) {
-      this.deleteTableInfo.multipleSelection = val;
+      this.deleteTableInfo.multipleSelection = val
     },
 
     // 删除人脸-分页
     sizeChangeDelete(num) {
       this.getDeleteFaceList(
-        "find",
+        'find',
         this.facesetInfo.facesetId,
         10,
         num
-      );
+      )
     },
 
     // 删除人脸-提交
     submitFaceListDelete() {
       if (this.deleteTableInfo.multipleSelection.length === 0) {
         this.$message({
-          type: "warning",
-          message: "请选择人脸"
-        });
+          type: 'warning',
+          message: '请选择人脸'
+        })
       } else {
-        const mutiArray = [];
-        let mutiStr = "";
+        const mutiArray = []
+        let mutiStr = ''
         this.deleteTableInfo.multipleSelection.forEach(val => {
-          mutiArray.push(val.userId);
-        });
-        mutiStr = mutiArray.join(",");
+          mutiArray.push(val.userId)
+        })
+        mutiStr = mutiArray.join(',')
         deleteFaceInfo(this.facesetInfo.ruleId, mutiStr)
           .then(res => {
-            this.deleteTableInfo.multipleSelection = [];
+            this.deleteTableInfo.multipleSelection = []
             this.$message({
-              type: "success",
-              message: "移除成功!"
-            });
-            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
-            this.getAddFaceList();
+              type: 'success',
+              message: '移除成功!'
+            })
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId)
+            this.getAddFaceList()
           })
-          .catch(() => {});
+          .catch(() => {})
       }
     },
 
     // 添加全部
     removeAll() {
-      MessageBox.confirm("您确定要删除该人脸库的所有人脸嘛？", "确定", {
-        confirmButtonText: "确定",
-        type: "warning",
-        customClass: "alertBox"
+      MessageBox.confirm('您确定要删除该人脸库的所有人脸嘛？', '确定', {
+        confirmButtonText: '确定',
+        type: 'warning',
+        customClass: 'alertBox'
       }).then(() => {
-        deleteFaceInfo(this.facesetInfo.facesetId, "removeAll")
+        deleteFaceInfo(this.facesetInfo.facesetId, 'removeAll')
           .then(res => {
-            this.deleteTableInfo.multipleSelection = [];
+            this.deleteTableInfo.multipleSelection = []
             this.$message({
-              type: "success",
-              message: "移除成功!"
-            });
-            this.$emit("delteFaceInfoSuccess");
-            this.getDeleteFaceList('find', this.facesetInfo.facesetId);
-            this.getAddFaceList();
+              type: 'success',
+              message: '移除成功!'
+            })
+            this.$emit('delteFaceInfoSuccess')
+            this.getDeleteFaceList('find', this.facesetInfo.facesetId)
+            this.getAddFaceList()
           })
-          .catch(() => {});
-      });
+          .catch(() => {})
+      })
     },
 
     // 关闭
     handleClose() {
-      this.tabPosition = "delete";
+      this.tabPosition = 'delete'
       this.addTableInfo = {
         tableData: [],
         multipleSelection: [],
         totalPages: 0
-      };
+      }
       this.deleteTableInfo = {
         tableData: [],
         multipleSelection: [],
         totalPages: 0
-      };
-      this.$emit("faceCurdSuccess");
+      }
+      this.$emit('faceCurdSuccess')
     },
 
     // 刷新
     handleRefresh() {
-      this.searchfaceName = "";
-      this.handleSearchFace();
+      this.searchfaceName = ''
+      this.handleSearchFace()
     }
   }
-};
+}
 </script>
 
 <style lang='scss' scoped>

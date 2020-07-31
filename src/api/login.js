@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 import Qs from 'qs'
 import md5 from 'md5'
+import { stringify } from 'querystring'
 export function login(username, password, pinCode) {
   password = md5(password)
   const data = Qs.stringify({
@@ -17,18 +18,16 @@ export function login(username, password, pinCode) {
 /**
  * 社区矫正平台登录api(社区矫正使用)
  */
-export function login2(username, password, pinCode) {
-  password = md5(password)
-  const data = Qs.stringify({
-    username,
-    password,
-    pinCode
-  })
+export function login2(data) {
+  const params = {
+    ...data,
+    password: md5(data.password)
+  }
   return request({
     url: '/community_correction/webAdmin/admin/login.jhtml',
     method: 'post',
     isShowTips: true,
-    data
+    data: Qs.stringify({ ...params })
   })
 }
 
@@ -46,17 +45,15 @@ export function logout() {
   })
 }
 
-export function changePassword(old, newPwd) {
-  const oldPassword = md5(old)
-  const newPassword = md5(newPwd)
-  const data = Qs.stringify({
-    oldPassword,
-    newPassword
-  })
+export function changePassword(oldPassword, newPassword) {
   return request({
-    url: '/face_recognition/webClass/admin/changePassword.jhtml',
+    url: '/community_correction/webClass/admin/changePassword.jhtml',
     method: 'post',
-    data
+    isShowTips: true,
+    data: Qs.stringify({
+      oldPassword,
+      newPassword
+    })
   })
 }
 
@@ -71,6 +68,17 @@ export function verifyBlockValidateCode(pinCode) {
     data: Qs.stringify({
       pinCode
     })
+  })
+}
+
+/**
+ * @description 获取验证码
+ * @return [src]
+ */
+export function validateCode() {
+  return request({
+    url: '/community_correction/webAdmin/admin/validateCode.jhtml',
+    method: 'get'
   })
 }
 

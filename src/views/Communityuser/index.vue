@@ -12,7 +12,6 @@ import {
 } from '@/api/user'
 // eslint-disable-next-line no-unused-vars
 import { updateInterface } from '@/api/face'
-import { computedFormatTime } from '@/utils/tools'
 import { mapState } from 'vuex'
 
 export default {
@@ -21,30 +20,27 @@ export default {
     Adduser,
     trackMap
   },
-
-  filters: {
-    // 格式化登录时间
-    setLastLoginTime(timeObj) {
-      if (timeObj === null) return ''
-      return computedFormatTime(timeObj.time)
-    }
-  },
   mixins: [authmix, sortmix, tablemix],
-
   data() {
     return {
       options: [],
       showMap: false,
       // 控制地图抓取显示
       sortpagesTotal: 0, // 数据总数量
-      currentPages: 1, // 当前页数
+      currentPage: 1, // 当前页数
       searchData: {
-        username: '',
+        name: '',
         identityCard: '',
-        communityId: ''
+        communityId: '',
+        userType: ''
       }, // 搜索框内容
+      currentSearchData: {
+        name: '',
+        identityCard: '',
+        communityId: '',
+        userType: ''
+      }, // 点击搜索时的内容，避免分页时的搜索BUG
       tableData: [], // 用户表格数据
-      // userModalVisible: false,
       authDrawerVisible: false,
       addUserVisible: false,
       authInfo: {
@@ -52,16 +48,9 @@ export default {
         adminId: 0,
         username: '',
         name: ''
-      },
-      blogTitle: 'asdfasfasdfasf'
+      }
     }
   },
-
-  created() {
-    this.$store.getters.roleType < 5 && this.getUsercommunity()// 获取司法所列表,当用户rolyType小于5时才去获取
-    this.__init(this.$store.getters.nowPage)
-  },
-  // eslint-disable-next-line vue/order-in-components
   computed: {
     ...mapState({
       roleType: state => state.user.roleType
@@ -70,7 +59,18 @@ export default {
       return this.$store.getters.roleType < 5
     }
   },
-
+  watch: {
+    currentPage(cur, old) {
+      this.$store.dispatch('SetNowPage', cur)
+    }
+  },
+  created() {
+    this.$store.getters.roleType < 5 && this.getUsercommunity()// 获取司法所列表,当用户rolyType小于5时才去获取
+    this.currentSearchData = this.$store.getters.searchData // 获取当前搜索值
+    this.searchData = this.currentSearchData
+    this.currentPage = this.$store.getters.nowPage // 当前页必须在created中改变，在mounted中改变无效
+    this.__init()
+  },
   methods: {
     // 获取可查看司法所
     getUsercommunity() {
@@ -85,35 +85,41 @@ export default {
         })
     },
     // 获取用户列表
-    __init(pageNumber = this.pageNumber) {
-      getCommunityUserList(
-        this.searchData.username,
-        this.searchData.identityCard,
-        pageNumber,
-        this.searchData.communityId
-      )
-        .then(({ data: { list, pageNumber, total }}) => {
-          this.tableData = list.map(item => {
-            return {
-              ...item,
-              registerTime: this.exChange(item.createDate.time)
-            }
-          })
-          this.pageNumber = pageNumber
-          this.sortpagesTotal = total
-          this.isLoading = false
-          this.handleResetSort()
+    __init() {
+      const data = {
+        ...this.currentSearchData,
+        pageNumber: this.currentPage,
+        pageSize: 10
+      }
+      getCommunityUserList(data)
+        .then(({ data: { state, list, pageNumber, total }}) => {
+          if (state === '100') {
+            this.tableData = list.map(item => {
+              return {
+                ...item,
+                registerTime: this.exChange(item.createDate.time),
+                typeText: this.correctType
+                  .find(({ value }) => item.userType === value).label
+              }
+            })
+            this.pageNumber = pageNumber
+            this.sortpagesTotal = total
+            this.handleResetSort()
+            return
+          }
+          this.sortpagesTotal = 0
+          this.tableData = []
         })
         .catch(res => {
+          this.sortpagesTotal = 0
           this.tableData = []
-          this.isLoading = false
         })
+        .finally(() => { this.isLoading = false })
     },
 
     handleUserCurd(modalType, payload = {}) {
       switch (modalType) {
         case 'ADD_USER':
-          // alert("调用");
           this.$refs.adduserrefs.__init()
           this.addUserVisible = true
           break
@@ -121,7 +127,6 @@ export default {
         case 'CHANGE_USER_INFO':
           const userInfo = { ...payload }
           this.$router.push({ name: 'change-user', params: userInfo })
-          // this.userModalVisible = true;
           break
         case 'DELETE_USER':
           this.$confirm('是否确认删除?', '提示', {
@@ -130,11 +135,9 @@ export default {
             type: 'warning'
           })
             .then(() => {
-              // alert("确认");
-              // return false;
               delCorrectionalpersonnel(payload.userId)
                 .then(res => {
-                  if (res.data.state == 100) {
+                  if (res.data.state === '100') {
                     this.__init()
                   }
                 })
@@ -146,13 +149,10 @@ export default {
           break
       }
     },
-
-    // 用户CURD事件反馈
-    handleUserSuccess(status) {
+    handleUserSuccess(status) { // 用户CURD事件反馈
       switch (status) {
         case 'CHANGE_USER_INFO_SUCCESS':
           this.__init()
-          // this.userModalVisible = false;
           break
         case 'ADD_USER_INFO_SUCCESS':
           this.__init()
@@ -162,21 +162,31 @@ export default {
           break
       }
     },
-
-    // 分页切换
-    sizeChange(nums) {
-      this.$store.dispatch('SetNowPage', nums)
+    sizeChange() { // 分页切换
       this.isLoading = true
-      this.__init(nums)
+      this.__init()
     },
-
-    // 刷新
-    handleRefresh() {
+    handleRefresh() { // 刷新
       this.searchData = {
-        username: '',
-        identityCard: ''
+        name: '',
+        identityCard: '',
+        communityId: '',
+        userType: ''
       } // 搜索框内容;
-      this.__init('', 1)
+      this.getCurrent()
+      this.__init()
+    },
+    handleSearch() { // 搜索
+      this.getCurrent()
+      this.__init()
+    },
+    getCurrent() {
+      this.currentPage = 1
+      this.currentSearchData = { ...this.searchData }
+      this.$store.dispatch('SetSearchData', this.currentSearchData)
+    },
+    srcList(url) { // 图片放大功能
+      return [url]
     }
   }
 }
@@ -191,12 +201,21 @@ export default {
 }
 </style>
 
+<style lang="scss">
+  /* 改变关闭按钮样式 */
+  .enlarge {
+    .el-icon-circle-close {
+      color: #fff;
+    }
+  }
+</style>
+
 <template>
   <div>
     <el-scrollbar class="scrollbar">
       <Searcharea
         v-model="searchData"
-        @handleSearch="__init(1)"
+        @handleSearch="handleSearch"
         @refreshData="handleRefresh"
       >
         <div v-if="canChoice" slot="extraArea">
@@ -217,9 +236,23 @@ export default {
         </div>
 
         <div slot="extraArea">
+          <span>监管类别：</span>
+          <el-select
+            v-model="searchData.userType"
+            placeholder="请选择监管类别"
+            style="width:150px; margin-right:20px;">
+            <el-option
+              v-for="item in correctType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </div>
+
+        <div slot="extraArea">
           <span>人员姓名：</span>
           <el-input
-            v-model="searchData.username"
+            v-model="searchData.name"
             placeholder="请输入矫正对象姓名"
             style="width:150px; margin-right:20px;"
           />
@@ -254,11 +287,11 @@ export default {
           align="center"
         >
           <template slot-scope="scope">
-            <img
+            <el-image
               :src="scope.row.picPath"
-              alt
-              style="width:80px;height:100px;"
-            >
+              :preview-src-list="srcList(scope.row.picPath)"
+              class="enlarge"
+              style="width: 80px; height: 100px"/>
           </template>
         </el-table-column>
 
@@ -268,10 +301,6 @@ export default {
           align="center"
         >
           <template slot-scope="scope">
-            <!-- <span v-if="checkPermission(['user:operate'])" style="cursor:pointer" @click="handleUserCurd('CHANGE_USER_INFO', scope.row)">
-              {{ scope.row.name }}
-              <i class="el-icon-edit-outline" />
-            </span> -->
             <span>
               {{ scope.row.name }}
             </span>
@@ -286,18 +315,19 @@ export default {
           <template slot-scope="scope">
             <span>
               {{ scope.row.identityCard }}
-              <!-- <i class="el-icon-edit-outline"></i> -->
             </span>
           </template>
         </el-table-column>
-
-        <el-table-column prop="name" label="居住地址" align="center">
+        <el-table-column
+          prop="typeText"
+          label="监管类别"
+          align="center"
+        >
           <template slot-scope="scope">
-            <span v-if="scope.row.location != ''">
-              {{ scope.row.location }}
-              <!-- <i class="el-icon-edit-outline"></i> -->
-            </span>
-            <el-tag v-if="scope.row.location == ''" type="info">暂无</el-tag>
+            <el-tag
+              :type="scope.row.userType === 1 || scope.row.userType === 2 ? 'primary' : 'danger'">
+              {{ scope.row.typeText }}
+            </el-tag>
           </template>
         </el-table-column>
 
@@ -326,6 +356,17 @@ export default {
         </el-table-column>
 
         <el-table-column
+          prop="areaName"
+          label="矫正状态"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.correct">在矫</el-tag>
+            <el-tag v-if="!scope.row.correct" type="success">解矫</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           prop="registerTime"
           label="登记时间"
           align="center"
@@ -339,13 +380,13 @@ export default {
               @click="handleUserCurd('CHANGE_USER_INFO', scope.row)"
             >查看详情</el-button
             >
-            <el-button
+            <!-- <el-button
               v-if="checkPermission(['user:operate'])"
               size="mini"
               type="warning"
               @click="handleUserCurd('DELETE_USER', scope.row)"
             >删除</el-button
-            >
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -355,6 +396,7 @@ export default {
       :current-page.sync="currentPage"
       :page-size="10"
       :total="sortpagesTotal"
+      hide-on-single-page
       layout="total, prev, pager, next"
       style="float: right;"
       @current-change="sizeChange"
@@ -364,7 +406,7 @@ export default {
       ref="adduserrefs"
       :dialog-visible="addUserVisible"
       :role-type="roleType"
-      @closeModal="addUserVisible = false"
+      :close-modal.sync="addUserVisible"
       @submitSuccess="handleUserSuccess('ADD_USER_INFO_SUCCESS')"
     />
   </div>

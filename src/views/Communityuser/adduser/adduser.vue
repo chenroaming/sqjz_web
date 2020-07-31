@@ -15,7 +15,6 @@
       label-position="left"
       label-width="115px"
     >
-
       <el-form-item label="人脸照片" prop="picPath2">
         <div class="uploadImage">
           <div class="uploadImage-block" @click="is_yl">
@@ -58,8 +57,19 @@
         <el-input v-model="userInfo.phone" placeholder="请输入手机号码" />
       </el-form-item>
 
-      <el-form-item label="人员类型" prop="userType" required>
-        <el-select v-model="userInfo.userType" placeholder="人员类型">
+      <el-form-item label="矫正类型" prop="correctType" required>
+        <el-select v-model="userInfo.correctType" placeholder="请选择矫正类型">
+          <el-option
+            v-for="(item, index) in correctType"
+            :key="index"
+            :label="item.value"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="监管等级" prop="userType" required>
+        <el-select v-model="userInfo.userType" placeholder="请选择监管等级">
           <el-option
             v-for="(item, index) in userType"
             :key="index"
@@ -70,7 +80,7 @@
       </el-form-item>
 
       <el-form-item label="活动范围" prop="activityRange" required>
-        <el-select v-model="userInfo.activityRange" placeholder="活动范围">
+        <el-select v-model="userInfo.activityRange" placeholder="请选择活动范围">
           <el-option
             v-for="(item, index) in activityRange"
             :key="index"
@@ -80,33 +90,20 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="案由" prop="cause">
-        <el-input v-model="userInfo.cause" placeholder="请输入案由" />
+      <el-form-item label="罪名" prop="cause">
+        <el-input v-model="userInfo.cause" placeholder="请输入罪名" />
       </el-form-item>
       <!-- 预览照片 -->
       <el-form-item label="居住小区" prop="livingArea" required>
         <el-input v-model="userInfo.livingArea" placeholder="居住小区"/>
       </el-form-item>
-      <el-form-item label="区域位置" required>
-        <el-input
-          v-if="userInfo.dw !=''"
-          :value="userInfo.dw"
-          style="margin-top:10px"
-          placeholder="位置信息"
-          disabled
-        />
+      <el-form-item label="区域位置" prop="dw" required>
+        <p style="margin: 0;">{{ userInfo.dw }}</p>
         <el-button
-          v-if="userInfo.longitude =='' && userInfo.longitude ==''"
           type="primary"
           size="mini"
           @click="showMap = true"
-        >添加区域坐标</el-button>
-        <el-button
-          v-if="userInfo.longitude !='' && userInfo.longitude !=''"
-          type="primary"
-          size="mini"
-          @click="showMap = true"
-        >修改区域坐标</el-button>
+        >{{ buttontext }}</el-button>
       </el-form-item>
 
       <el-form-item label="工作情况" prop="workingCondition">
@@ -119,15 +116,11 @@
       <el-button :loading="isLoading" type="primary" @click="handleSubmit('addusermodalrefs')">提交</el-button>
     </span>
     <Getmap ref="getmapRefs" :value="showMap" @map-confirm="getPoint" @cancel="cancelPoint()" />
-
-    <!-- <Getmap ref="getmapRefs" :value="showMap" @map-confirm="getPoint" /> -->
   </el-dialog>
 </template>
 
 <script>
 // 地图坐标抓取
-// import Getmap from "@/components/getmap/getmap";
-
 import Getmap from '@/components/getmap/getmap'
 // eslint-disable-next-line no-unused-vars
 import { getAreaList2 } from '@/api/area'
@@ -135,47 +128,12 @@ import { getAreaList2 } from '@/api/area'
 import { getRoleList, getRoleList2 } from '@/api/role'
 // eslint-disable-next-line no-unused-vars
 import { addUser } from '@/api/user'
-import {
-  checkName,
-  checkPhone,
-  checkIdentityCard,
-  // eslint-disable-next-line no-unused-vars
-  checkPassword
-} from '@/utils/validate'
-// 身份证手机号校验
-
-// 矫正对象类型
-const userType = [
-  { id: '1', value: '宽管' },
-  { id: '2', value: '普管' },
-  { id: '3', value: '严管' }
-]
-// 矫正对象活动范围
-const activityRange = [
-  { id: '1', value: '区/县' },
-  { id: '2', value: '市' }
-]
+import formMixin from '@/utils/communityuser'
 export default {
-  filters: {
-    // 返回区域类型
-    filAreaType(val) {
-      return (val = val === 'school' ? '学校' : '其他')
-    },
-
-    // 返回学校类型
-    filroleType(val) {
-      if (val === 0) {
-        return '系统角色'
-      } else if (val === 1) {
-        return '管理员角色'
-      } else {
-        return '其他角色'
-      }
-    }
-  },
   components: {
     Getmap
   },
+  mixins: [formMixin],
   props: {
     // eslint-disable-next-line vue/require-default-prop
     dialogVisible: false,
@@ -188,10 +146,6 @@ export default {
       isLoading: false,
       show_Photo: '1',
       // 图片预览控制
-      userType: userType,
-      // 矫正对象类型
-      activityRange: activityRange,
-      // 矫正对象活动范围
       showMap: false,
       // 控制地图抓取显示
       pwdType: 'password',
@@ -205,6 +159,8 @@ export default {
         // 人员类型
         activityRange: '',
         // 活动范围
+        correctType: '',
+        // 矫正类型
         dw: '',
         cause: '',
         // 备注
@@ -219,57 +175,6 @@ export default {
         workingCondition: '' // 工作情况
       },
       areaList: [],
-      roleList: [],
-      rules: {
-        name: [
-          { required: true, validator: checkName, trigger: ['change', 'blur'] }
-        ],
-        phone: [
-          { required: true, validator: checkPhone, trigger: ['change', 'blur'] }
-        ],
-        identityCard: [
-          {
-            required: true,
-            validator: checkIdentityCard,
-            trigger: ['change', 'blur']
-          }
-        ],
-        communityId: [
-          {
-            required: true,
-            message: '请选择预设角色',
-            trigger: ['change', 'blur']
-          }
-        ],
-        userType: [
-          {
-            required: true,
-            message: '请选择人员类型',
-            trigger: ['change', 'blur']
-          }
-        ],
-        activityRange: [
-          {
-            required: true,
-            message: '请选择人员活动范围',
-            trigger: ['change', 'blur']
-          }
-        ],
-        cause: [
-          {
-            required: true,
-            message: '请输入案由',
-            trigger: ['change', 'blur']
-          }
-        ],
-        livingArea: [
-          {
-            required: true,
-            message: '请输入居住小区',
-            trigger: ['change', 'blur']
-          }
-        ]
-      },
       // 图片上传
       // ---------------------------------------------------------
       imageList: [], // 上传列表
@@ -281,9 +186,9 @@ export default {
       avatar: null
     }
   },
-  watch: {
-    dialogVisible(cur, old) {
-      !cur && this.handleReset()
+  computed: {
+    buttontext() {
+      return this.userInfo.longitude && this.userInfo.latitude ? '修改区域坐标' : '添加区域坐标'
     }
   },
   methods: {
@@ -295,15 +200,6 @@ export default {
 
     is_yl() {
       this.show_Photo = '1'
-    },
-
-    // 点击显示明文密码
-    showPwd() {
-      if (this.pwdType === 'password') {
-        this.pwdType = ''
-      } else {
-        this.pwdType = 'password'
-      }
     },
     // 地图使用
     cancelPoint() {
@@ -326,7 +222,7 @@ export default {
         if (!valid) {
           return this.$message.error('请正确输入内容')
         }
-        if (this.isUpload == false) {
+        if (this.isUpload === false) {
           this.$message.error('请上传人脸照片')
         } else {
           this.isLoading = true
@@ -337,7 +233,7 @@ export default {
           }
           addUser(formData).then(({ data: { state }}) => {
             this.isLoading = false
-            state == 100 && this.handleSuccess()
+            state === '100' && this.handleSuccess()
           })
         }
       })
@@ -352,21 +248,8 @@ export default {
 
     // 上传成功
     handleSuccess(response) {
-      console.log(response)
       this.$emit('submitSuccess')
       this.handleReset()
-      // eslint-disable-next-line eqeqeq
-      // if (response.state == 100) {
-      //   this.$message.success(response.message)
-      //   // this.handleReset()
-      //   this.$emit('submitSuccess')
-      //   return false
-      // } else {
-      //   this.show_Photo = '0'
-      //   this.isUpload = false
-      //   this.$message.error(response.message)
-      //   return false
-      // }
     },
     // 重置
     handleReset() {
@@ -390,21 +273,10 @@ export default {
       }
     },
 
-    // 获取角色列表
-    fetchGetRoleList() {
-      getRoleList2()
-        .then(res => {
-          console.log(res)
-          this.roleList = res.data.List
-        })
-        .catch(() => {})
-    },
-
     // 关闭弹窗
     handleClose() {
-      // this.$refs['addusermodalrefs'].resetFields()
-      // this.handleReset()
-      this.$emit('closeModal')
+      this.handleReset()
+      this.$emit('update:closeModal', false)
     }
   }
 }
@@ -470,7 +342,7 @@ export default {
   display: block;
 }
 
-.loading-mask {
+/* .loading-mask {
   width: 150px;
   height: 190px;
   background: rgba(0, 0, 0, 0);
@@ -515,5 +387,5 @@ export default {
     background: rgba(0, 0, 0, 0.5);
     opacity: 1;
   }
-}
+} */
 </style>

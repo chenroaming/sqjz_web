@@ -19,6 +19,9 @@
       <div v-if="showType == 3" style="height: 80vh;">
         <iframe :src="picSrc" width="100%" height="100%" frameborder="0" style="object-fit: fill;"/>
       </div>
+      <div v-if="showType == 4" style="height: 80vh;">
+        <video :src="picSrc" style="width: 100%;height: 100%;" controls/>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">关闭</el-button>
       </span>
@@ -42,32 +45,35 @@ export default {
   methods: {
     showEvidence(file) {
       const it = file
-      const picture = ['jpg', 'png', 'jpeg', 'bmp', 'gif']
-      const pdf = ['pdf']
-      const word = ['doc', 'docx']
-      const fileType = it.name.split('.')[1].toLowerCase()
-      if (this.judgType(picture, fileType)) {
-        this.picSrc = it.path
-        this.showType = 1
-        this.centerDialogVisible = true
-        return
-      }
-      if (this.judgType(pdf, fileType)) {
-        this.picSrc = it.path
-        this.showType = 2
-        this.centerDialogVisible = true
-        return
-      }
-      if (this.judgType(word, fileType)) {
-        this.picSrc = `https://view.officeapps.live.com/op/view.aspx?src=${location.origin}${it.path}`
-        this.showType = 3
-        this.centerDialogVisible = true
-      }
+      const fileType = it.name.includes('http')
+        ? [...it.name.split('.')].pop()
+        : it.name.split('.')[1].toLowerCase()
+      this.showType = this.judgType(fileType)
+      this.picSrc = this.changePath(it.path, this.showType)
+      this.centerDialogVisible = true
     },
-    judgType(typeArr, fileType) {
-      return typeArr.some(item => {
-        return item == fileType
-      })
+    judgType(fileType) { // 文件类型判断
+      const getFileType = [
+        { fileArr: ['jpg', 'png', 'jpeg', 'bmp', 'gif'], showType: 1 },
+        { fileArr: ['pdf'], showType: 2 },
+        { fileArr: ['doc', 'docx'], showType: 3 },
+        { fileArr: ['mp4'], showType: 4 }
+      ]
+      const [{ showType }] = getFileType.filter(item => item.fileArr.includes(fileType))
+      return showType
+    },
+    changePath(path, type) { // 文件路径处理
+      const action = new Map([
+        [1, (path) => path],
+        [2, (path) => path],
+        [3, (path) => path.includes('http')
+          ? `https://view.officeapps.live.com/op/view.aspx?src=${path}`
+          : `https://view.officeapps.live.com/op/view.aspx?src=${location.origin}${path}`],
+        [4, (path) => path.includes('http')
+          ? path
+          : `${location.origin}${path}`]
+      ])
+      return action.get(type)(path)
     }
   }
 }

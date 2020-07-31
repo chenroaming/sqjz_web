@@ -77,13 +77,13 @@ export function addFaceLibary(facesetName, maxNum, identity, category, webcamIds
  * @description 添加用户和规则的关联关系
  * @return [Object]
  */
-export function addFaceInfo(userIds, ruleId) {
+export function addFaceInfo(data) {
   return request({
     url: '/community_correction/webClass/clock/addRuleToUser.jhtml',
     method: 'post',
+    isShowTips: true,
     data: Qs.stringify({
-      userIds,
-      ruleId
+      ...data
     })
   })
 }
@@ -92,13 +92,13 @@ export function addFaceInfo(userIds, ruleId) {
  * @description 移除用户和规则的关联关系
  * @return [Object]
  */
-export function deleteFaceInfo(ruleId, userIds) {
+export function deleteFaceInfo(data) {
   return request({
     url: '/community_correction/webClass/clock/removeRuleFromUser.jhtml',
     method: 'post',
+    isShowTips: true,
     data: Qs.stringify({
-      ruleId,
-      userIds
+      ...data
     })
   })
 }

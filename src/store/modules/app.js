@@ -7,7 +7,13 @@ const app = {
       withoutAnimation: false
     },
     device: 'desktop',
-    nowPage: 1 // 矫正电子档案当前页存储
+    nowPage: 1, // 矫正电子档案当前页存储
+    currentSeachData: {
+      name: '',
+      identityCard: '',
+      communityId: '',
+      userType: ''
+    }
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
@@ -29,6 +35,9 @@ const app = {
     },
     SET_NOWPAGE: (state, pageNum) => {
       state.nowPage = pageNum
+    },
+    SET_SEARCHDATA: (state, searchData) => {
+      state.currentSeachData = { ...searchData }
     }
   },
   actions: {
@@ -43,6 +52,9 @@ const app = {
     },
     SetNowPage({ commit }, nowPage) {
       commit('SET_NOWPAGE', nowPage)
+    },
+    SetSearchData({ commit }, searchData) {
+      commit('SET_SEARCHDATA', searchData)
     }
   }
 }

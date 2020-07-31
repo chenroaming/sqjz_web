@@ -1,4 +1,4 @@
-import router from './router'
+import router from '@/router'
 import store from './store'
 // eslint-disable-next-line no-unused-vars
 import { Message, TabPane } from 'element-ui'
@@ -15,7 +15,6 @@ NProgress.configure({
 })
 // NProgress Configuration
 const whiteList = ['/login', '/', '/api', '/index'] // no redirect whitelist
-
 router.beforeEach((to, from, next) => {
   if (getLogin()) {
     NProgress.start() // start progress bar

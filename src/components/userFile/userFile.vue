@@ -70,7 +70,7 @@ export default {
         formData.append('files', item)
       }
       addFile(formData).then(({ data: { state, list }}) => {
-        if (state == 100) {
+        if (state === '100') {
           this.successList = list.map(item => {
             return {
               name: item.split('/').pop(),

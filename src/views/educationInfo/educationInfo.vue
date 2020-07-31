@@ -16,21 +16,22 @@ export default {
       currentPage: 1,
       totalPage: 0,
       columnW: '200px',
-      educationName: ''
+      educationName: '',
+      searchName: ''
     }
   },
   mounted() {
     this.getList()
   }, // 混入文件
   methods: {
-    getList(educationName, pageNumber = 1, pageSize = 10) {
+    getList() {
       const data = {
-        educationName: educationName,
-        pageNumber: pageNumber,
-        pageSize: pageSize
+        educationName: this.searchName,
+        pageNumber: this.currentPage,
+        pageSize: 10
       }
       find(data).then(res => {
-        if (res.data.state == 100) {
+        if (res.data.state === '100') {
           this.tableData = res.data.list.map(item => {
             return {
               ...item,
@@ -45,14 +46,16 @@ export default {
       })
     },
     handleCurrentChange(e) {
-      this.getList(this.educationName, e)
+      this.getList()
     },
     search() {
-      this.getList(this.educationName)
+      this.searchName = this.educationName
+      this.getList()
     },
     show(item) {
       const file = {
-        name: item.filePath
+        name: item.fileLink,
+        path: item.fileLink
       }
       this.$refs.showFile.showEvidence(file)
     },
@@ -64,10 +67,16 @@ export default {
         educationId: educationId
       }
       deleteInfo(data).then(res => {
-        if (res.data.state == 100) {
+        if (res.data.state === '100') {
           this.getList()
         }
       })
+    },
+    refresh() {
+      this.searchName = ''
+      this.educationName = ''
+      this.currentPage = 1
+      this.getList()
     }
   }
 }
@@ -87,6 +96,7 @@ export default {
       <div style="margin: 10px;float: right;">
         <el-input v-model="educationName" style="width: 180px;" placeholder="请输入名称"/>
         <el-button type="primary" @click="search">搜索</el-button>
+        <el-button type="danger" icon="el-icon-refresh" circle @click="refresh" />
       </div>
       <el-table
         v-loading="isLoading"
@@ -126,6 +136,7 @@ export default {
         :page-size="10"
         :total="totalPage"
         layout="total, prev, pager, next"
+        hide-on-single-page
         @current-change="handleCurrentChange"/>
     </div>
     <showFile ref="showFile"/>

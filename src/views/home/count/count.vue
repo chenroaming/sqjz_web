@@ -8,7 +8,7 @@ export default {
         return {
           totalNumber: 0,
           correctedNumber: 0,
-          out: 0
+          uncorrectedNumber: 0
         }
       }
     }
@@ -132,7 +132,7 @@ export default {
             <img src="../../../assets/icons/card1.png" style="margin-right:10px" >
             <span class="span1">
               当月解矫：
-              <b style="color:#fff">0</b>
+              <b style="color:#fff">{{ count.uncorrectedNumber }}</b>
             </span>
           </div>
         </div>
