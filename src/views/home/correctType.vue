@@ -3,6 +3,29 @@
     :visible.sync="drawer"
     :direction="direction"
     :title="title">
+    <el-row :gutter="20" style="width: 99%;margin: 0 auto;">
+      <el-col :span="8">
+        <el-select v-model="years" placeholder="请选择">
+          <el-option
+            v-for="item in yearsList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"/>
+        </el-select>
+      </el-col>
+      <el-col :span="8">
+        <el-select v-model="months" placeholder="请选择">
+          <el-option
+            v-for="item in monthsList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"/>
+        </el-select>
+      </el-col>
+      <el-col :span="8">
+        <el-button type="primary" @click="search">搜索</el-button>
+      </el-col>
+    </el-row>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -46,18 +69,33 @@
 
 <script>
 import countMixin from './countMixins'
+import dateMixins from '@/views/Communityuser/changeUser/record/dateMixins'
 export default {
-  name: 'UserTypeCount',
-  mixins: [countMixin], // 公用数据混入
+  name: 'CorrectType',
+  mixins: [countMixin, dateMixins],
   props: {
     formTitle: {
       type: String,
       default: ''
     }
+  }, // 公用数据混入
+  data() {
+    return {
+
+    }
   },
   computed: {
     title() {
       return `矫正人员-${this.formTitle}`
+    }
+  },
+  mounted() {
+    this.initDate()
+  },
+  methods: {
+    search() {
+      this.searchParams['date'] = `${this.years}-${this.months}`
+      this.getList()
     }
   }
 }

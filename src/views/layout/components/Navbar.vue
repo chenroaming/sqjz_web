@@ -44,7 +44,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
+import Breadcrumb from '@/components/Breadcrumb/breadCrumb'
 import Hamburger from '@/components/Hamburger'
 import { getChangeAreaList } from '@/api/area'
 

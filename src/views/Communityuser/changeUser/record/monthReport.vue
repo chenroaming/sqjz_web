@@ -1,4 +1,5 @@
 <script>
+import dateMixins from './dateMixins'
 import { findMonthlyReport } from '@/api/user'
 import histogram from '@/components/charts/histogram2'
 export default {
@@ -6,6 +7,7 @@ export default {
   components: {
     histogram
   },
+  mixins: [dateMixins],
   props: {
     userId: {
       type: String,
@@ -16,25 +18,8 @@ export default {
     return {
       drawer: false,
       clockCount: {},
-      warningTypeCount: [],
-      years: '',
-      months: '',
-      yearsList: [{ label: '2020年', value: 2020 }],
-      monthsList: []
+      warningTypeCount: []
     }
-  },
-  mounted() {
-    const myDate = new Date()
-    /* 小于等于当前月份列表 */
-    for (let i = 1; i <= (myDate.getMonth() + 1); i++) {
-      const monthItem = {
-        label: `${i}月`,
-        value: i < 10 ? `0${i}` : i // 小于10的月份前面加0，主要是为了后端能够识别
-      }
-      this.monthsList.push(monthItem)
-    }
-    this.years = myDate.getFullYear()
-    this.months = myDate.getMonth() + 1 < 10 ? `0${myDate.getMonth() + 1}` : myDate.getMonth() + 1
   },
   methods: {
     getList() {
@@ -43,8 +28,8 @@ export default {
         date: `${this.years}-${this.months}`
       }
       findMonthlyReport(data).then(({ data: { state, clockCount, warningTypeCount }}) => {
-        // eslint-disable-next-line eqeqeq,当state为100时顺序执行后续操作
-        state == 100 && (this.clockCount = clockCount) && (this.warningTypeCount = warningTypeCount) && (this.drawer = true)
+        // 当state为100时顺序执行后续操作
+        state === '100' && (this.clockCount = clockCount) && (this.warningTypeCount = warningTypeCount) && (this.drawer = true)
         this.$nextTick(() => {
           this.$emit('update:done', '')
           this.$refs.histogram.chartInit()

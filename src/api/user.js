@@ -205,6 +205,7 @@ export function findRecord(data) {
   return request({
     url: '/community_correction/webClass/clock/findRecord.jhtml',
     method: 'post',
+    noShowTips: true,
     data: Qs.stringify({ ...data })
   })
 }

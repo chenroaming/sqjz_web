@@ -65,10 +65,17 @@ const removeSuccess = {
   message: '解矫成功！',
   state: '100'
 }
+
+const delDetail = {
+  message: '删除成功！',
+  state: '100'
+}
+
 const visualApi = {
   login,
   find,
   loginOut,
-  removeSuccess
+  removeSuccess,
+  delDetail
 }
 export default visualApi

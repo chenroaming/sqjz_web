@@ -8,6 +8,10 @@ import visualApi from './visualApi'
 //   return visualApi.loginOut
 // })
 
-Mock.mock('/community_correction/webClass/user/remove.jhtml', 'post', (params) => {
-  return visualApi.removeSuccess
-})
+// Mock.mock('/community_correction/webClass/user/remove.jhtml', 'post', (params) => {
+//   return visualApi.removeSuccess
+// })
+
+// Mock.mock('/community_correction/webClass/interviewRecord/delete.jhtml', 'post', (params) => {
+//   return visualApi.delDetail
+// })

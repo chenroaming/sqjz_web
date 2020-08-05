@@ -2,12 +2,11 @@
 import relationShip2 from './relationShip2'
 import Search from '@/components/searcharea/searcharea'
 import { getUserList2 } from '@/api/user'
-import authmix from '@/utils/authmix'// 引入权限校验
 import tablemix from '@/utils/tablemix'
 export default {
   name: 'Relation',
   components: { relationShip2, Search },
-  mixins: [authmix, tablemix], // 混入文件
+  mixins: [tablemix], // 混入文件
   props: {
 
   },
@@ -111,7 +110,7 @@ export default {
           align="center">
           <template slot-scope="scope">
             <el-button
-              v-if="checkPermission(['user:operate'])"
+              v-permission="['user:operate']"
               type="primary"
               size="mini"
               @click="showRelation(scope.row)">关联人员</el-button>

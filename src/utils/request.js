@@ -13,10 +13,13 @@ const service = axios.create({
   withCredentials: true // 客户端允许携带证书
 })
 let showTips = false// 弹窗消息开关
+let noShowTips = false
 // request拦截器
 service.interceptors.request.use(
   config => {
     config.isShowTips && (showTips = true)// 当接口的弹窗消息指示为true时，开关打开
+    // console.log(config.noShowTips)
+    config.noShowTips && (noShowTips = true) // 消息不弹窗开关
     // config.headers['X-Token'] = getAccount() // 让每个请求携带自定义token 请根据实际情况自行修改
     return config// 当定义config时，需要返回config，否则会报错cancelToken未定义
   },
@@ -44,6 +47,7 @@ service.interceptors.response.use(
       showTips = false
     }
     if (res.state === '100') {
+      noShowTips = false
       return response
     } else if (res.state === '105') {
       // 105: 登录过期;
@@ -58,7 +62,7 @@ service.interceptors.response.use(
       })
       // return Promise.reject('error')
     } else {
-      Message({
+      !noShowTips && Message({
         message: res.message,
         type: 'warning',
         duration: 3 * 1000
@@ -67,8 +71,6 @@ service.interceptors.response.use(
     return response
   },
   error => {
-    // console.log('err' + error) // for debug
-    // console.log('111' + error)
     Message({
       message: '网络错误，请刷新重试',
       type: 'error',

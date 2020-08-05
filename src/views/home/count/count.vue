@@ -47,6 +47,15 @@ export default {
     },
     conver(s) {
       return s < 10 ? '0' + s : s
+    },
+    showCount(text, correct = '') {
+      const myDate = new Date()
+      const params = {
+        date: `${myDate.getFullYear()}-${myDate.getMonth() + 1 < 10 ? '0' + (myDate.getMonth() + 1) : myDate.getMonth() + 1}`,
+        correct,
+        text
+      }
+      this.$emit('getMonthCount', params)
     }
   }
 }
@@ -99,13 +108,13 @@ export default {
           class="num_box"
           style="background:linear-gradient(90deg,rgba(67,221,213,1)0%,rgba(14,153,207,1)100%);"
         >
-          <div class="c_c">
+          <router-link :to="{ path:'/Communityuser' }" class="c_c">
             <img src="../../../assets/icons/card3.png" style="margin-right:10px" >
             <span class="span1">
               在矫人数：
               <b style="color:#fff">{{ count.totalNumber }}</b>
             </span>
-          </div>
+          </router-link>
         </div>
       </el-col>
       <el-col :span="8">
@@ -113,6 +122,7 @@ export default {
           class="num_box"
           style="background:linear-gradient(90deg,rgba(120,82,251,1) 0%,rgba(165,200,253,1)
           100%);"
+          @click="showCount('当月入矫')"
         >
           <div class="c_c">
             <img src="../../../assets/icons/card1.png" style="margin-right:10px" >
@@ -127,6 +137,7 @@ export default {
         <div
           class="num_box"
           style="background:linear-gradient(90deg,rgba(247,210,152,1) 0%,rgba(242,93,108,1) 100%);"
+          @click="showCount('当月解矫',0)"
         >
           <div class="c_c">
             <img src="../../../assets/icons/card1.png" style="margin-right:10px" >

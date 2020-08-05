@@ -10,12 +10,12 @@ import store from './store'
 import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
+import { Vpermission } from '@/utils/permission' // 引入自定义按钮权限控制指令
+import 'default-passive-events' // 解决浏览器一直报警的问题
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.use(VCharts)
-// console.log(process.env)
-// require('./mock/index.js') // 虚拟请求，开发时可用，打包生产包前需注释再打包
-
+process.env.NODE_ENV === 'development' && require('./mock/index.js') // 虚拟接口请求，开发时可用
 Vue.mixin({// 全局混入表格表头样式
   methods: {
     rowClass() {

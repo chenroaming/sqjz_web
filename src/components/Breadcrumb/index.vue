@@ -19,7 +19,7 @@ export default {
     }
   },
   watch: {
-    $route() {
+    $route(e) {
       this.getBreadcrumb()
     }
   },
@@ -34,8 +34,8 @@ export default {
       if (first && first.name !== 'dashboard') {
         matched = [{ path: '/home/index', meta: { title: '首页' }}].concat(matched)
       }
-
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
+      console.log(matched, this.levelList)
     },
     pathCompile(path) {
       // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561

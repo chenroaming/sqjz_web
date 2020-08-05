@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import store from '@/store'
 
 /**
@@ -18,3 +19,15 @@ export default function checkPermission(value) {
     return false
   }
 }
+
+// 自定义按钮权限控制指令
+export const Vpermission = Vue.directive('permission', {
+  bind: (el, binding, vnode) => {
+    const { value } = binding // 获取值
+    const roles = store.getters && store.getters.roles // 获取权限数组
+    const hasPermission = roles.length > 0 ? roles.some(role => {
+      return value.includes(role)
+    }) : false
+    !hasPermission && el.parentNode && el.parentNode.removeChild(el) // 不包含此权限则移除该dom
+  }
+})

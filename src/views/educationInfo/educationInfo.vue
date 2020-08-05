@@ -1,6 +1,5 @@
 <script>
 import { find, deleteInfo } from '@/api/educationInfo.js'
-import authmix from '@/utils/authmix.js'
 import tablemix from '@/utils/tablemix.js'
 import showFile from '@/components/userFile/showFile.vue'
 import add from './add.vue'
@@ -8,7 +7,7 @@ export default {
   components: {
     showFile, add
   },
-  mixins: [authmix, tablemix],
+  mixins: [tablemix],
   data() {
     return {
       tableData: [],
@@ -89,7 +88,7 @@ export default {
 <template>
   <div>
     <el-scrollbar class="scrollbar">
-      <el-button v-if="checkPermission(['educationInfo:operate'])" type="primary" style="margin: 10px;" @click="add">
+      <el-button v-permission="['educationInfo:operate']" type="primary" style="margin: 10px;" @click="add">
         <i class="el-icon-circle-plus"/>
         新增教育资料
       </el-button>
@@ -124,7 +123,7 @@ export default {
               title="确认删除？"
               @onConfirm="del(scope.row)"
             >
-              <el-button v-if="checkPermission(['educationInfo:operate'])" slot="reference" type="warning" size="mini">删除</el-button>
+              <el-button v-permission="['educationInfo:operate']" slot="reference" type="warning" size="mini">删除</el-button>
             </el-popconfirm>
           </template>
         </el-table-column>

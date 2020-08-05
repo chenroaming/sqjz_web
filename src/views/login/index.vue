@@ -25,6 +25,8 @@
         class="login-form"
         auto-complete="on"
         label-position="left"
+        onsubmit="return false"
+        @keyup.enter.native="logintext2"
       >
         <p
           style="text-align: center;color: #00a1ea;font-weight: 800;letter-spacing: 10px;font-size: 20px;margin-top: 20px;"
@@ -81,16 +83,9 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import { isvalidUsername } from '@/utils/validate'
 import mixin from '@/utils/mixins'
-// import { validateCode } from '@/api/login'
-// import PuzzleVerification from 'vue-puzzle-verification'
 export default {
   name: 'Login',
-  /* components: {
-    PuzzleVerification
-  }, */
   mixins: [mixin],
   data() {
     const validateUsername = (rule, value, callback) => {
@@ -118,7 +113,8 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        pinCode: ''
+        pinCode: '',
+        type: 'web'
       },
       loginRules: {
         username: [
@@ -177,7 +173,7 @@ export default {
       })
     },
     getCode() {
-      this.codeSrc = `${this.codeSrc}?${Math.random()}`
+      this.codeSrc = `${this.codeSrc}?${Math.random()}` // 刷新验证码
     }
   }
 }

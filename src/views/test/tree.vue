@@ -200,7 +200,7 @@ export default {
     <!-- <transition :duration="{ enter: 1000, leave: 1000 }" name="animate__bounceIn">
       <router-view/>
     </transition> -->
-    <transition name="el-fade-in-linear" mode="out-in">
+    <transition name="fade-transform" mode="out-in">
       <router-view/>
     </transition>
   </div>

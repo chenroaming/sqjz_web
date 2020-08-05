@@ -1,9 +1,7 @@
 <script>
 import { resetPhoneInfo } from '@/api/user'
-import authmix from '@/utils/authmix'
 export default {
   name: 'ResetPhone',
-  mixins: [authmix],
   props: {
     userId: {
       type: String,
@@ -45,7 +43,7 @@ export default {
 </style>
 
 <template>
-  <el-col v-if="checkPermission(['user:operate'])" :span="8">
+  <el-col v-permission="['user:operate']" :span="8">
     <div class="c_cz" @click="resetPhone">
       <img
         :src="picSrc"

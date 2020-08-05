@@ -2,7 +2,7 @@
   <div>
     <el-scrollbar class="scrollbar">
       <div class="select-box">
-        <el-button v-if="checkPermission(['sociallyUsefulActivity:operate'])" type="primary" @click="add">
+        <el-button v-permission="['sociallyUsefulActivity:operate']" type="primary" @click="add">
           <i class="el-icon-circle-plus"/>
           发布活动
         </el-button>
@@ -36,7 +36,7 @@
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="show(scope.row)">查看</el-button>
             <el-popconfirm
-              v-if="checkPermission(['sociallyUsefulActivity:operate'])"
+              v-permission="['sociallyUsefulActivity:operate']"
               title="确认删除吗？"
               @onConfirm="del(scope.row)"
             >
@@ -63,14 +63,12 @@
 import { findActivityList, deletea } from '@/api/socially'
 import add from '@/components/socially/add.vue'
 import detail from '@/components/socially/detail.vue'
-import authmix from '@/utils/authmix'// 引入权限校验
 export default {
   name: 'SociallyIndex',
   components: {
     add,
     detail
   },
-  mixins: [authmix], // 混入文件
   data() {
     return {
       visible: false,

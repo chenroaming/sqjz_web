@@ -12,5 +12,6 @@ export default {
 <template>
   <div style="margin-left: 100px;">
     <span>{{ word }}</span>
+    <el-button v-permission="['admin:admin']" type="primary">测试权限按钮</el-button>
   </div>
 </template>

@@ -8,7 +8,7 @@
       >
         <div slot="extraArea">
           <el-button
-            v-if="checkPermission(['admin:operate'])"
+            v-permission="['admin:operate']"
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleUserCurd('ADD_USER')"
@@ -54,8 +54,8 @@
         <el-table-column align="center" label="操作" width="300">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="handleUserCurd('SHOW_FACEINFO', scope.row)">人脸识别记录</el-button>
-            <el-button v-if="checkPermission(['admin:operate'])" size="small" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
-            <el-button v-if="checkPermission(['admin:operate'])" size="small" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
+            <el-button v-permission="['admin:operate']" size="small" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>
+            <el-button v-permission="['admin:operate']" size="small" type="danger" @click="handleUserCurd('DELETE_USER', scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -143,8 +143,7 @@ export default {
       },
       roleObj: {
         adminId: ''
-      },
-      roleNameArr: ['', '系统管理员', '省级管理员', '市级管理员', '区级管理员', '司法所管理员', '司法人员', '协矫人员']
+      }
     }
   },
 

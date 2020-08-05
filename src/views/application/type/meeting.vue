@@ -29,7 +29,7 @@
     <el-table-column prop="phone" :width="columnWidth" label="手机号" align="center"></el-table-column> -->
     <el-table-column :width="columnWidth" label="操作" align="center">
       <template slot-scope="scope">
-        <el-button v-if="checkPermission['application:audit']" type="warning" size="mini" @click="showAudit(scope.row.applyId)">审核</el-button>
+        <el-button v-permission="['application:audit']" type="warning" size="mini" @click="showAudit(scope.row.applyId)">审核</el-button>
         <el-button type="info" size="mini" @click="showDetail(scope.row)">查看详情</el-button>
       </template>
     </el-table-column>
@@ -78,7 +78,7 @@ export default {
           startDate: item.startDate ? this.exChange(item.startDate.time) : '',
           endDate: item.endDate ? this.exChange(item.endDate.time) : '',
           auditText: this.auditState[item.auditState],
-          isShow: !!((item.auditState == 0 && this.checkPermission(['application:audit'])))
+          isShow: !!((item.auditState === 0 && this.checkPermission(['application:audit'])))
         }
       })
       return newTable

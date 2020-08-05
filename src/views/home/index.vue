@@ -5,7 +5,7 @@
         <shortcut/>
       </el-col>
       <el-col :span="12">
-        <count :count="chart1.userNumberCount"/>
+        <count :count="chart1.userNumberCount" @getMonthCount="getMonthCount"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-bottom: 10px;">
@@ -15,9 +15,9 @@
           :chart-title="item.chartTitle"
           @getUserList="getUserList">
           <!-- 此项目vue版本为2.5，无法使用2.6才有的v-slot -->
-          <template v-if="item.isOperating" slot="button">
+          <!-- <template v-if="item.isOperating" slot="button">
             <el-button style="float: right; padding: 3px 0" type="text" @click="showDetail">查看详情</el-button>
-          </template>
+          </template> -->
         </pieChart>
       </el-col>
       <el-col v-for="item in chartArr2" :span="item.span" :key="item.chartTitle">
@@ -26,7 +26,11 @@
     </el-row>
     <record ref="record"/>
     <userTypeCount
-      ref="userTypeCount"/>
+      ref="userTypeCount"
+      :form-title="title"/>
+    <correctType
+      ref="correctType"
+      :form-title="title"/>
   </div>
 </template>
 
@@ -38,6 +42,7 @@ import pieChart from '@/components/charts/pieChart'
 import histogram from '@/components/charts/histogram'
 import record from './record'
 import userTypeCount from './userTypeCount'
+import correctType from './correctType'
 export default {
   name: 'Dashboard',
   components: {
@@ -46,7 +51,8 @@ export default {
     pieChart,
     histogram,
     record,
-    userTypeCount
+    userTypeCount,
+    correctType
   },
   data() {
     return {
@@ -64,7 +70,8 @@ export default {
         warningTypeCount: []
       },
       chartArr: [],
-      chartArr2: []
+      chartArr2: [],
+      title: ''
     }
   },
   computed: {},
@@ -101,8 +108,20 @@ export default {
     showDetail() {
       this.$refs.record.show()
     },
-    getUserList({ data }) {
+    getUserList({ data, name }) { // 统计图表获取数据
+      // 当日报告图表单独处理
+      if (name.includes('已报告') || name.includes('未报告')) {
+        this.showDetail()
+        return true
+      }
+      // 其他类型的图表统一处理
+      const [title] = name.split('-')
+      this.title = title
       this.$refs.userTypeCount.show(data)
+    },
+    getMonthCount(params) { // 当月统计获取数据
+      this.title = params.text
+      this.$refs.correctType.show(params)
     }
   }
 }

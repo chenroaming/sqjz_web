@@ -39,6 +39,12 @@
         <el-table-column :label="nowIndex === 1 ? '查看照片集' : '查看视频'" prop="interviewPicPaths" align="center">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="showDetail(scope.row)">查看</el-button>
+            <el-popconfirm
+              title="确认删除该条记录吗？"
+              @onConfirm="delDetail(scope.row)"
+            >
+              <el-button slot="reference" type="warning" size="mini">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -59,7 +65,7 @@
 </template>
 
 <script>
-import { find } from '@/api/interviewRecord'
+import { find, deleteInfo } from '@/api/interviewRecord'
 import showDetail from '@/components/interviewRecord/showDetail.vue'
 import showFile from '@/components/userFile/showFile'
 export default {
@@ -108,6 +114,14 @@ export default {
         filePath && window.open(`${location.origin}${filePath}`, '_blank')
         !filePath && this.$message.warning('视频暂未生成！')
       }
+    },
+    delDetail({ interviewId }) {
+      const data = {
+        interviewId
+      }
+      deleteInfo(data).then(({ data: { state }}) => {
+        state === '100' && this.getList()
+      })
     },
     getList() {
       const data = {

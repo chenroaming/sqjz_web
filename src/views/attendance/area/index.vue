@@ -8,7 +8,7 @@
       >
         <div slot="extraArea">
           <el-button
-            v-if="checkPermission(['clock:operate'])"
+            v-permission="['clock:operate']"
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleCheckCurd('ADD_TASK')"
@@ -25,11 +25,11 @@
       >
         <el-table-column prop="taskName" label="规则名称" align="center">
           <template slot-scope="scope">
-            <span v-if="checkPermission(['clock:operate'])" style="cursor:pointer" @click="changeRules(scope.row)">
+            <span v-permission="['clock:operate']" style="cursor:pointer" @click="changeRules(scope.row)">
               {{ scope.row.ruleName }}
               <i class="el-icon-edit-outline" />
             </span>
-            <span v-else>
+            <span v-if="!checkPermission(['clock:operate'])">
               {{ scope.row.ruleName }}
             </span>
           </template>
@@ -65,7 +65,7 @@
               size="mini"
               @click="handleTaskCallBack('FACE_CURD', scope.row)"
             >关联人员</el-button>
-            <el-button v-if="checkPermission(['clock:operate'])" type="danger" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
+            <el-button v-permission="['clock:operate']" type="danger" size="mini" @click="handleCheckCurd('DELETE_TASK', scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

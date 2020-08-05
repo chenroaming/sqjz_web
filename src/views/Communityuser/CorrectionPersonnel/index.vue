@@ -159,10 +159,28 @@
 
         <el-table-column
           prop="registerTime"
-          label="登记时间"
+          label="入矫时间"
           align="center"
         />
-      </el-table>
+
+         <el-table-column
+          prop="outTime"
+          label="解矫时间"
+          align="center"
+        />
+
+        <el-table-column align="center" width="200" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handleUserCurd('CHANGE_USER_INFO', scope.row)"
+            >查看详情
+           </el-button>
+           </template>
+        </el-table-column>
+
+         </el-table>
     </el-scrollbar>
 
     <el-pagination
@@ -259,7 +277,8 @@ export default {
           this.tableData = list.map(item => {
             return {
               ...item,
-              registerTime: this.exChange(item.createDate.time)
+              registerTime: this.exChange(item.createDate.time),
+              outTime: this.exChange(item.removeDate.time)
             }
           })
           this.pageNumber = pageNumber
@@ -271,6 +290,40 @@ export default {
         })
         .finally(() => { this.isLoading = false })
     },
+      //查看详情
+        handleUserCurd(modalType, payload = {}) {
+      switch (modalType) {
+        // case 'ADD_USER':
+        //   this.$refs.adduserrefs.__init()
+        //   this.addUserVisible = true
+        //   break
+        // eslint-disable-next-line no-case-declarations
+        case 'CHANGE_USER_INFO':
+          const userInfo = { ...payload }
+          this.$router.push({ name: 'change-user', params: userInfo })
+          break
+        // case 'DELETE_USER':
+        //   this.$confirm('是否确认删除?', '提示', {
+        //     confirmButtonText: '确定',
+        //     cancelButtonText: '取消',
+        //     type: 'warning'
+        //   })
+        //     .then(() => {
+        //       delCorrectionalpersonnel(payload.userId)
+        //         .then(res => {
+        //           if (res.data.state === '100') {
+        //             this.__init()
+        //           }
+        //         })
+        //         .catch(() => {})
+        //     })
+        //     .catch(() => {})
+        //   break
+        default:
+          break
+      }
+    },
+
     // 分页切换
     sizeChange(nums) {
       this.$store.dispatch('SetNowPage', nums)

@@ -14,7 +14,7 @@
         </span>
         <span slot="eventArea">
           <el-button
-            v-if="checkPermission(['community:operate'])"
+            v-permission="['community:operate']"
             type="success"
             style="margin:0 20px 0 20px"
             @click="addcommuntiyCurd('ADD_community')"
@@ -26,11 +26,11 @@
         <!-- <el-table-column prop="communityName" label="司法所名称" align="center" /> -->
         <el-table-column prop="communityName" label="司法所名称" align="center">
           <template slot-scope="scope">
-            <span v-if="checkPermission(['community:operate'])" style="cursor:pointer" @click="addcommuntiyCurd('CHANGE', scope.row)">
+            <span v-permission="['community:operate']" style="cursor:pointer" @click="addcommuntiyCurd('CHANGE', scope.row)">
               {{ scope.row.communityName }}
               <i class="el-icon-edit-outline" />
             </span>
-            <span v-else>
+            <span v-if="!checkPermission(['community:operate'])">
               {{ scope.row.communityName }}
             </span>
           </template>
@@ -43,7 +43,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button v-if="checkPermission(['community:operate'])" type="danger" size="mini" @click="handleDelete(scope.row.communityId)">删除</el-button>
+            <el-button v-permission="['community:operate']" type="danger" size="mini" @click="handleDelete(scope.row.communityId)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

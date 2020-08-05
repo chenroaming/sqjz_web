@@ -2,7 +2,6 @@
 import Adduser from './adduser/adduser'
 import Searcharea from '@/components/searcharea/searcharea'
 import trackMap from '@/components/trackMap/trackMap.vue'
-import authmix from '@/utils/authmix'
 import sortmix from '@/utils/sortmix'
 import tablemix from '@/utils/tablemix'
 import {
@@ -20,7 +19,7 @@ export default {
     Adduser,
     trackMap
   },
-  mixins: [authmix, sortmix, tablemix],
+  mixins: [sortmix, tablemix],
   data() {
     return {
       options: [],
@@ -266,7 +265,7 @@ export default {
             style="width:150px"
           />
           <el-button
-            v-if="checkPermission(['user:operate'])"
+            v-permission="['user:operate']"
             icon="el-icon-plus"
             style="margin:0 10px 0 10px"
             @click="handleUserCurd('ADD_USER')"
@@ -368,7 +367,7 @@ export default {
 
         <el-table-column
           prop="registerTime"
-          label="登记时间"
+          label="入矫时间"
           align="center"
         />
 
@@ -381,7 +380,7 @@ export default {
             >查看详情</el-button
             >
             <!-- <el-button
-              v-if="checkPermission(['user:operate'])"
+              v-permission="['user:operate']"
               size="mini"
               type="warning"
               @click="handleUserCurd('DELETE_USER', scope.row)"
