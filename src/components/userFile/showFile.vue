@@ -3,11 +3,10 @@
     <el-dialog
       :visible.sync="centerDialogVisible"
       title="查看"
-      width="50%"
-      fullscreen
+      width="70%"
       center
       append-to-body>
-      <div v-if="showType == 1" style="height: 80vh;">
+      <div v-if="showType == 1" style="width: 500px;height: 500px;margin: 0 auto;">
         <el-image
           :src="picSrc"
           style="width: 100%;height: 100%;"
@@ -21,6 +20,11 @@
       </div>
       <div v-if="showType == 4" style="height: 80vh;">
         <video :src="picSrc" style="width: 100%;height: 100%;" controls/>
+      </div>
+      <div v-if="showType == 5" style="width: 300px;height: 60px;margin: 0 auto;">
+        <audio :src="picSrc" controls>
+          您的浏览器不支持 audio 标签。
+        </audio>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">关闭</el-button>
@@ -39,8 +43,10 @@ export default {
       showType: 0
     }
   },
-  mounted() {
-
+  watch: {
+    centerDialogVisible(cur, old) {
+      !cur && (this.picSrc = '')
+    }
   },
   methods: {
     showEvidence(file) {
@@ -57,7 +63,8 @@ export default {
         { fileArr: ['jpg', 'png', 'jpeg', 'bmp', 'gif'], showType: 1 },
         { fileArr: ['pdf'], showType: 2 },
         { fileArr: ['doc', 'docx'], showType: 3 },
-        { fileArr: ['mp4'], showType: 4 }
+        { fileArr: ['mp4'], showType: 4 },
+        { fileArr: ['mp3'], showType: 5 }
       ]
       const [{ showType }] = getFileType.filter(item => item.fileArr.includes(fileType))
       return showType
@@ -71,7 +78,8 @@ export default {
           : `https://view.officeapps.live.com/op/view.aspx?src=${location.origin}${path}`],
         [4, (path) => path.includes('http')
           ? path
-          : `${location.origin}${path}`]
+          : `${location.origin}${path}`],
+        [5, (path) => path]
       ])
       return action.get(type)(path)
     }

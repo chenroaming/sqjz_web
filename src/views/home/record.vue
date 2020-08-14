@@ -1,5 +1,5 @@
 <script>
-import { findRecord } from '@/api/user'
+import { findRecordWithoutNoTips } from '@/api/user'
 import detail from '@/views/Communityuser/changeUser/record/detail.vue'
 export default {
   name: 'Record',
@@ -35,7 +35,7 @@ export default {
     },
     getList() {
       this.isLoading = true
-      findRecord(this.params).then(({ data: { state, list, total }}) => {
+      findRecordWithoutNoTips(this.params).then(({ data: { state, list, total }}) => {
         this.isLoading = false
         this.getButtonArr(state === '100' ? total : 0)
         state !== '100' && (this.tableData = []) && (this.totalPage = 0)
@@ -49,7 +49,7 @@ export default {
         pageNumber: 1, // 页码
         pageSize: 5 // 每页数目
       }
-      findRecord(data).then(({ data: { state, total }}) => {
+      findRecordWithoutNoTips(data).then(({ data: { state, total }}) => {
         if (state === '100') {
           this.buttonGroup[0].total = this.params.abnormal === '0' ? total1 : total
           this.buttonGroup[1].total = this.params.abnormal === '1' ? total1 : total

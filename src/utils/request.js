@@ -18,7 +18,6 @@ let noShowTips = false
 service.interceptors.request.use(
   config => {
     config.isShowTips && (showTips = true)// 当接口的弹窗消息指示为true时，开关打开
-    // console.log(config.noShowTips)
     config.noShowTips && (noShowTips = true) // 消息不弹窗开关
     // config.headers['X-Token'] = getAccount() // 让每个请求携带自定义token 请根据实际情况自行修改
     return config// 当定义config时，需要返回config，否则会报错cancelToken未定义
@@ -37,6 +36,7 @@ service.interceptors.response.use(
     /**
      * code为非20000是抛错 可结合自己业务进行修改
      */
+    // console.log(noShowTips)
     const res = response.data
     if (showTips) { // 根据开关进行相应弹窗
       res.state === '100' && Message({

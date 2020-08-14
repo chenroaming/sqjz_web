@@ -72,13 +72,13 @@ import countMixin from './countMixins'
 import dateMixins from '@/views/Communityuser/changeUser/record/dateMixins'
 export default {
   name: 'CorrectType',
-  mixins: [countMixin, dateMixins],
+  mixins: [countMixin, dateMixins], // 公用数据混入
   props: {
     formTitle: {
       type: String,
       default: ''
     }
-  }, // 公用数据混入
+  },
   data() {
     return {
 

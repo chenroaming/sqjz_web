@@ -218,8 +218,7 @@ export default {
     },
     // 返回
     handleBack() {
-      // this.$router.push({ name: 'screen-manger' })
-      this.$router.go(-1);
+      this.$router.go(-1)
     },
 
     // 刷新

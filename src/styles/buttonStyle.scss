@@ -1,0 +1,26 @@
+$borderColor:#409EFF;
+.isSelect {
+  background: $borderColor;
+  border-color: $borderColor;
+  color: #FFF;
+}
+
+.button-box {
+  width: 50%;
+  margin: 20px 0px;
+  margin-left: 20px;
+  float: right;
+  text-align: right;
+}
+
+.select-box {
+  width: 40%;
+  margin: 20px 0px;
+  margin-left: 20px;
+  float: left;
+}
+
+.el-button-group {
+  float: left;
+  text-align: right;
+}

@@ -25,7 +25,7 @@
         class="login-form"
         auto-complete="on"
         label-position="left"
-        onsubmit="return false"
+        @submit.prevent="logintext2"
         @keyup.enter.native="logintext2"
       >
         <p
@@ -84,31 +84,11 @@
 
 <script>
 import mixin from '@/utils/mixins'
+import { validateUsername, validatePass, validateCode } from '@/utils/validate'
 export default {
   name: 'Login',
   mixins: [mixin],
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入正确的用户名'))
-      } else {
-        callback()
-      }
-    }
-    const validatePass = (rule, value, callback) => {
-      if (value.length < 5) {
-        callback(new Error('密码不能小于5位'))
-      } else {
-        callback()
-      }
-    }
-    const validateCode = (rule, value, callback) => {
-      if (value.length !== 4) {
-        callback(new Error('请输入正确的验证码'))
-      } else {
-        callback()
-      }
-    }
     return {
       loginForm: {
         username: '',
@@ -140,20 +120,8 @@ export default {
         ]
       },
       loading: false,
-      redirect: undefined,
       codeSrc: '/community_correction/webAdmin/admin/validateCode.jhtml'
     }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
-  mounted() {
-
   },
   methods: {
     // 登录事件

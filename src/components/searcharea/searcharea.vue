@@ -2,19 +2,21 @@
   <div class="main">
     <div class="searchArea">
       <slot name="extraArea"/>
-      <el-button
-        v-if="searBtnShow"
-        type="primary"
-        style="margin-left:20px;margin:20px;"
-        @click="$emit('handleSearch')"
-      >搜索</el-button
-      >
-      <el-button
-        type="danger"
-        icon="el-icon-refresh"
-        circle
-        @click="$emit('refreshData')"
-      />
+      <div>
+        <el-button
+          v-if="searBtnShow"
+          type="primary"
+          style="margin-left:20px;margin:20px;"
+          @click="$emit('handleSearch')"
+        >搜索</el-button
+        >
+        <el-button
+          type="danger"
+          icon="el-icon-refresh"
+          circle
+          @click="$emit('refreshData')"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -70,10 +72,15 @@ export default {
 .searchArea {
   width: 98%;
   height: 50px;
+  height: auto;
   margin: 5px auto;
   display: flex;
   box-sizing: border-box;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  /* div {
+    flex-grow: 1;
+  } */
 }
 </style>

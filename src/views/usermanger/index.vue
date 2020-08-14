@@ -3,9 +3,25 @@
     <el-scrollbar class="scrollbar">
       <Searcharea
         v-model="searchData"
-        @handleSearch="__init(searchData, 1)"
+        @handleSearch="handleSearch"
         @refreshData="handleRefresh"
       >
+        <div v-if="canChoice" slot="extraArea">
+          <span>请选择司法所：</span>
+          <el-select
+            v-model="searchData1.communityId"
+            clearable
+            placeholder="请选择司法所"
+            style="width:150px;margin-right:10px"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.communityId"
+              :label="item.communityName"
+              :value="item.communityId"
+            />
+          </el-select>
+        </div>
         <div slot="extraArea">
           <el-button
             v-permission="['admin:operate']"
@@ -103,7 +119,7 @@ import SortPage from '@/components/sortpage/sortpage'
 import authmix from '@/utils/authmix'
 import sortmix from '@/utils/sortmix'
 import faceInfo from '@/views/Communityuser/changeUser/record/faceInfo'
-import { getUserList2, deleteUser2 } from '@/api/user'
+import { getUserList2, deleteUser2, getUsercommunity } from '@/api/user'
 import { computedFormatTime } from '@/utils/tools'
 import { mapState } from 'vuex'
 
@@ -128,6 +144,7 @@ export default {
 
   data() {
     return {
+      options: [],
       sortpagesTotal: 0, // 数据总数量
       currentPages: 1, // 当前页数
       searchData: '', // 搜索框内容
@@ -143,11 +160,18 @@ export default {
       },
       roleObj: {
         adminId: ''
+      },
+      userName: '',
+      communityId: '',
+      searchData1: {
+        name: '',
+        communityId: ''
       }
     }
   },
 
   created() {
+    this.$store.getters.roleType < 5 && this.getUsercommunity()// 获取司法所列表,当用户rolyType小于5时才去获取
     // 获取用户列表
     this.__init()
   },
@@ -156,13 +180,32 @@ export default {
   computed: {
     ...mapState({
       roleType: state => state.user.roleType
-    })
+    }),
+    canChoice() {
+      return this.$store.getters.roleType < 5
+    }
   },
 
   methods: {
+    // 获取可查看司法所
+    getUsercommunity() {
+      getUsercommunity()
+        .then(res => {
+          this.options = res.data.list
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(err => {
+          this.options = []
+          this.searchData.communityId = ''
+        })
+    },
     // 获取用户列表
-    __init(username = '', pageNumber = this.pageNumber) {
-      getUserList2(username, pageNumber)
+    __init() {
+      const data = {
+        ...this.searchData1,
+        pageNumber: this.pageNumber
+      }
+      getUserList2(data)
         .then(({ data: { list, pageNumber, total }}) => {
           this.tableData = list.map(item => {
             return {
@@ -176,10 +219,15 @@ export default {
         })
         .catch(res => {
           this.tableData = []
+          this.sortpagesTotal = 0
           this.isLoading = false
         })
     },
-
+    handleSearch() {
+      this.pageNumber = 1
+      this.searchData1.name = this.searchData
+      this.__init()
+    },
     handleUserCurd(modalType, payload = {}) {
       switch (modalType) {
         case 'ADD_USER':
@@ -241,13 +289,18 @@ export default {
     // 分页切换
     sizeChange(nums) {
       this.pageNumber = nums
-      this.__init(this.searchData, nums)
+      this.__init()
     },
 
     // 刷新
     handleRefresh() {
+      this.searchData1 = {
+        name: '',
+        communityId: ''
+      }
       this.searchData = ''
-      this.__init('', 1)
+      this.pageNumber = 1
+      this.__init()
     }
   }
 }

@@ -21,7 +21,7 @@ export default {
     },
     userFiles: {
       type: Array,
-      default: () => []
+      default: () => ([])
     }
   },
   data() {

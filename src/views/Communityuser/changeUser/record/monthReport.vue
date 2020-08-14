@@ -1,59 +1,3 @@
-<script>
-import dateMixins from './dateMixins'
-import { findMonthlyReport } from '@/api/user'
-import histogram from '@/components/charts/histogram2'
-export default {
-  name: 'MouthReport',
-  components: {
-    histogram
-  },
-  mixins: [dateMixins],
-  props: {
-    userId: {
-      type: String,
-      default: ''
-    }
-  },
-  data() {
-    return {
-      drawer: false,
-      clockCount: {},
-      warningTypeCount: []
-    }
-  },
-  methods: {
-    getList() {
-      const data = {
-        userId: this.userId,
-        date: `${this.years}-${this.months}`
-      }
-      findMonthlyReport(data).then(({ data: { state, clockCount, warningTypeCount }}) => {
-        // 当state为100时顺序执行后续操作
-        state === '100' && (this.clockCount = clockCount) && (this.warningTypeCount = warningTypeCount) && (this.drawer = true)
-        this.$nextTick(() => {
-          this.$emit('update:done', '')
-          this.$refs.histogram.chartInit()
-        })
-      })
-    },
-    show() {
-      this.getList()
-    }
-  }
-}
-</script>
-
-<style lang="scss">
-  .box-card2 {
-    margin: 0 auto;
-    width: 95%;
-    margin-top: 10px;
-  }
-  .chartBox{
-    width: 100%;
-    height: 300px;
-  }
-</style>
 
 <template>
   <el-drawer
@@ -104,3 +48,63 @@ export default {
     </el-scrollbar>
   </el-drawer>
 </template>
+
+<script>
+import dateMixins from './dateMixins'
+import { findMonthlyReport } from '@/api/user'
+import histogram from '@/components/charts/histogram2'
+export default {
+  name: 'MouthReport',
+  components: {
+    histogram
+  },
+  mixins: [dateMixins],
+  props: {
+    userId: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      drawer: false,
+      clockCount: {},
+      warningTypeCount: []
+    }
+  },
+  mounted() {
+    this.initDate()
+  },
+  methods: {
+    getList() {
+      const data = {
+        userId: this.userId,
+        date: `${this.years}-${this.months}`
+      }
+      findMonthlyReport(data).then(({ data: { state, clockCount, warningTypeCount }}) => {
+        // 当state为100时顺序执行后续操作
+        state === '100' && (this.clockCount = clockCount) && (this.warningTypeCount = warningTypeCount) && (this.drawer = true)
+        this.$nextTick(() => {
+          this.$emit('update:done', '')
+          this.$refs.histogram.chartInit()
+        })
+      })
+    },
+    show() {
+      this.getList()
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+  .box-card2 {
+    margin: 0 auto;
+    width: 95%;
+    margin-top: 10px;
+  }
+  .chartBox{
+    width: 100%;
+    height: 300px;
+  }
+</style>

@@ -25,7 +25,7 @@
     </el-dropdown>
     <div class="avatar-container">
       <router-link :to="{ path:'/index' }" style="margin-right:15px;" target="_blank">
-        <el-button type="primary" size="mini">返回官网</el-button>
+        <el-button type="primary" size="mini">进入官网</el-button>
       </router-link>
       <span class="avatar-username">
         所属区域：

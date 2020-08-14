@@ -32,7 +32,11 @@ export default {
       this.getList(this.currentPage)
     },
     getList(pageNum = 1) {
-      getUserList2(this.userName, pageNum).then(({ data: { state, list, total }}) => {
+      const data = {
+        name: this.userName,
+        pageNumber: pageNum
+      }
+      getUserList2(data).then(({ data: { state, list, total }}) => {
         this.tableData = state === '100' ? list.map(item => {
           return {
             ...item,

@@ -50,7 +50,7 @@ export default {
         style="width:20px;height:20px;"
       >
       <span style="margin-left:5px">
-        <b>重置号码</b>
+        <b>重置手机</b>
       </span>
     </div>
   </el-col>

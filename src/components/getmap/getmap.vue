@@ -93,7 +93,10 @@ export default {
     BmLabel
   },
   props: {
-    value: Boolean,
+    value: {
+      type: Boolean,
+      default: false
+    },
     mapHeight: {
       type: Number,
       default: 500
@@ -115,11 +118,9 @@ export default {
     }
   },
   watch: {
-    value: function(currentValue) {
+    value(currentValue, oldValue) {
       this.showMapComponent = currentValue
-      if (currentValue) {
-        this.keyword = ''
-      }
+      currentValue && (this.keyword = '')
     }
   },
   methods: {
@@ -178,7 +179,7 @@ export default {
     /** *
      * 确认
      */
-    confirm: function() {
+    confirm() {
       this.showMapComponent = false
       const obj = {
         lng: this.center.lng,
@@ -190,7 +191,7 @@ export default {
     /** *
      * 取消
      */
-    cancel: function() {
+    cancel() {
       this.showMapComponent = false
       this.center = { lng: 118.184633, lat: 24.493337 }
       this.$emit('cancel', this.showMapComponent)
@@ -203,8 +204,6 @@ export default {
       if (val[1] != undefined && val[1] != '' && val[1] != null) {
         this.center.lat = val[1]
       }
-      console.log('当前中心')
-      console.log(this.center)
     }
   }
 }

@@ -25,10 +25,10 @@
       >
         <el-table-column prop="taskName" label="规则名称" align="center">
           <template slot-scope="scope">
-            <span v-permission="['clock:operate']" style="cursor:pointer" @click="changeRules(scope.row)">
+            <el-button v-permission="['clock:operate']" type="text" @click="changeRules(scope.row)">
               {{ scope.row.ruleName }}
               <i class="el-icon-edit-outline" />
-            </span>
+            </el-button>
             <span v-if="!checkPermission(['clock:operate'])">
               {{ scope.row.ruleName }}
             </span>
@@ -58,6 +58,7 @@
           </template>
         </el-table-column> -->
         <el-table-column prop="communityName" label="所属司法所" align="center"/>
+        <el-table-column prop="number" label="人数" align="center"/>
         <el-table-column label="任务操作" align="center" width="220px">
           <template slot-scope="scope">
             <el-button

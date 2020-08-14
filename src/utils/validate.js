@@ -45,7 +45,7 @@ export function validateIsNumber(num) {
 
 /* ip正则 */
 export function validateIpAddress(str) {
-  const reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+  const reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
   return reg.test(str)
 }
 
@@ -63,7 +63,7 @@ export function validateIdCard(str) {
 
 /* 校验密码 */
 export function validatePassword(str) {
-  const reg = /^[\w_-]{6,16}$/
+  const reg = /^[a-zA-Z\d]{6,16}$/
   return reg.test(str)
 }
 
@@ -104,7 +104,29 @@ export const checkPassword = (rule, value, callback) => {
   if (!value) {
     callback(new Error('请输入密码'))
   } else if (!validatePassword(value)) {
-    callback(new Error('密码需为6~16位'))
+    callback(new Error('密码需为6-16位'))
+  } else {
+    callback()
+  }
+}
+
+export const validateUsername = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入正确的用户名'))
+  } else {
+    callback()
+  }
+}
+export const validatePass = (rule, value, callback) => {
+  if (value.length < 5) {
+    callback(new Error('密码不能小于5位'))
+  } else {
+    callback()
+  }
+}
+export const validateCode = (rule, value, callback) => {
+  if (value.length !== 4) {
+    callback(new Error('请输入正确的验证码'))
   } else {
     callback()
   }

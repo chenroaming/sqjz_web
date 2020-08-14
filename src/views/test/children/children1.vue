@@ -143,10 +143,31 @@ export default {
 }
 </script>
 
+<style scoped lang="scss">
+  .flexBox {
+    display: flex;
+    width: 300px;
+    height: 300px;
+    border: 1px solid;
+    div{
+      width:100%;
+      border:1px solid;
+    }
+  }
+</style>
+
 <template>
   <div style="margin-left: 100px;">
     <span>{{ word }}</span>
     <el-button type="primary" @click="send">测试传输</el-button>
+    <div class="flexBox">
+      <div>1</div>
+      <div>2</div>
+      <div>33333</div>
+      <!-- <div>1</div>
+      <div>2</div>
+      <div>3</div> -->
+    </div>
     <!-- <el-table
       ref="multipleTable"
       :data="tableData"

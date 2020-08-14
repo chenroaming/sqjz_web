@@ -10,6 +10,7 @@
         <div class="input-box">
           <el-input v-model="currentName" style="width: 200px;" placeholder="请输入名称"/>
           <el-button type="primary" @click="search">搜索</el-button>
+          <el-button :loading="isLoading" type="warning" @click="exportList">导出</el-button>
           <el-button type="danger" icon="el-icon-refresh" circle @click="refresh" />
         </div>
       </div>
@@ -94,6 +95,7 @@ export default {
   },
   methods: {
     changeSelect(index) {
+      if (this.nowIndex === index) return false
       this.nowIndex = index
       this.currentPage = 1
       this.getList()
@@ -158,6 +160,13 @@ export default {
       this.currentName = ''
       this.searchName = ''
       this.getList()
+    },
+    exportList() {
+      const link = document.createElement('a') // 生成一个a标签。
+      link.href = `/community_correction/webClass/interviewRecord/export.jhtml?interviewType=${this.nowIndex}` // href属性指定下载链接
+      link.download = '' // dowload属性指定文件名
+      link.click() // click()事件触发下载
+      console.log(link.click())
     }
   }
 }
@@ -170,7 +179,7 @@ export default {
     float: left;
   }
   .input-box {
-    width: 30%;
+    width: 40%;
     margin: 20px 0px;
     float: right;
     text-align: right;

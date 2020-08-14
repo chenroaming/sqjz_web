@@ -5,15 +5,12 @@ import Qs from 'qs'
  * @description 获取用户列表(社区矫正使用)
  * @return [List]
  */
-export function getUserList2(username = '', pageNumber = 1, adminId) {
+export function getUserList2(data) {
   return request({
     url: '/community_correction/webClass/admin/find.jhtml',
     method: 'post',
     data: Qs.stringify({
-      username,
-      pageSize: 10,
-      pageNumber,
-      adminId
+      ...data
     })
   })
 }
@@ -201,11 +198,23 @@ export function addFile(data) {
  * @description 查看矫正对象报告记录(社区矫正使用)
  * @return [list]
  */
-export function findRecord(data) {
+export function findRecordWithoutNoTips(data) {
   return request({
     url: '/community_correction/webClass/clock/findRecord.jhtml',
     method: 'post',
     noShowTips: true,
+    data: Qs.stringify({ ...data })
+  })
+}
+
+/**
+ * @description 查看矫正对象报告记录(社区矫正使用)
+ * @return [list]
+ */
+export function findRecord(data) {
+  return request({
+    url: '/community_correction/webClass/clock/findRecord.jhtml',
+    method: 'post',
     data: Qs.stringify({ ...data })
   })
 }

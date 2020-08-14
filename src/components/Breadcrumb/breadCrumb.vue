@@ -1,6 +1,5 @@
 <template>
   <el-breadcrumb separator="/" class="app-breadcrumb">
-    <!-- <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item> -->
     <transition-group name="breadcrumb">
       <el-breadcrumb-item
         v-for="item in list"

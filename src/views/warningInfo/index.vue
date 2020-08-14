@@ -72,7 +72,7 @@ export default {
       isLoading: false,
       tableData: [],
       warningType: ['失联', '越界', '未归', '聚集', '未报告', '未移动', '入侵预警'],
-      buttonGroup: [{ index: '', label: '全部' }, { index: 1, label: '失联' }, { index: 2, label: '越界' }, { index: 3, label: '未归' }, { index: 4, label: '聚集' }, { index: 5, label: '未报告' }, { index: 6, label: '未移动' }, { index: 7, label: '入侵预警' }],
+      buttonGroup: [{ index: '', label: '全部' }, { index: 1, label: '失联' }, { index: 2, label: '越界' }, { index: 4, label: '聚集' }, { index: 5, label: '未报告' }, { index: 7, label: '入侵预警' }],
       warningId: '',
       detail: {}
     }
@@ -88,10 +88,10 @@ export default {
       const actions = new Map([
         ['失联', 'warning'],
         ['越界', 'warning'],
-        ['未归', 'info'],
+        // ['未归', 'info'],
         ['聚集', 'danger'],
         ['未报告', 'info'],
-        ['未移动', 'success'],
+        // ['未移动', 'success'],
         ['入侵预警', 'danger']
       ])
       return actions.get(type)
@@ -102,7 +102,7 @@ export default {
     },
     getList(warningId = '', warningType = '', userId = '', pageNumber = 1) {
       find(warningId, warningType, userId, pageNumber).then(res => {
-        if (res.data.state == 100) {
+        if (res.data.state === '100') {
           const newArr = res.data.list.map(item => {
             return {// 该方法不会改变原数组
               ...item,
@@ -153,16 +153,6 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  $borderColor:#409EFF;
-  .select-box {
-    width: 50%;
-    margin: 20px 0px;
-    margin-left: 20px;
-    float: left;
-  }
-  .isSelect {
-    background: $borderColor;
-    border-color: $borderColor;
-    color: #FFF;
-  }
+  @import '@/styles/buttonStyle.scss';
+
 </style>

@@ -45,28 +45,6 @@ export const constantRouterMap = [
     hidden: true
   },
   {
-    path: '/test',
-    component: () => import('@/views/test/tree'),
-    hidden: true,
-    children: [
-      {
-        path: '/test/children1',
-        name: 'children1',
-        component: () => import('@/views/test/children/children1')
-      },
-      {
-        path: '/test/children2',
-        name: 'children2',
-        component: () => import('@/views/test/children/children2')
-      }
-    ]
-  },
-  {
-    path: '/test2',
-    component: () => import('@/views/test/test'),
-    hidden: true
-  },
-  {
     path: '/',
     component: Layout,
     redirect: '/home/index',
@@ -100,7 +78,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/home/index'), // Parent router-view
-        name: 'screen-manger',
+        name: 'screen-home',
         meta: {
           title: '首页'
           // roles: ['Communityuser:admin']
@@ -121,7 +99,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/Communityuser/index'), // Parent router-view
-        name: 'screen-manger',
+        name: 'screen-user',
         meta: {
           title: '在矫人员',
           roles: ['user:admin']
@@ -199,6 +177,27 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/reportTask',
+    component: Layout,
+    redirect: '/reportTask/index',
+    meta: {
+      title: '抽查任务管理',
+      icon: 'face'
+      // roles: ['application:admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/reportTask/index'), // Parent router-view
+        name: 'reportTaskIndex',
+        meta: {
+          title: '抽查任务管理'
+          // roles: ['application:admin']
+        }
+      }
+    ]
+  },
+  {
     path: '/warningInfo',
     component: Layout,
     redirect: '/warningInfo/index',
@@ -262,6 +261,27 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/application',
+    component: Layout,
+    redirect: '/application/index',
+    meta: {
+      title: '事项申请管理',
+      icon: 'device',
+      roles: ['application:admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/application/index'), // Parent router-view
+        name: 'applicationIndex',
+        meta: {
+          title: '事项申请管理',
+          roles: ['application:admin']
+        }
+      }
+    ]
+  },
+  {
     path: '/productInfo',
     component: Layout,
     redirect: '/productInfo/index',
@@ -299,27 +319,6 @@ export const asyncRouterMap = [
         meta: {
           title: '教育管理',
           roles: ['educationInfo:admin']
-        }
-      }
-    ]
-  },
-  {
-    path: '/application',
-    component: Layout,
-    redirect: '/application/index',
-    meta: {
-      title: '事项申请管理',
-      icon: 'device',
-      roles: ['application:admin']
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/application/index'), // Parent router-view
-        name: 'applicationIndex',
-        meta: {
-          title: '事项申请管理',
-          roles: ['application:admin']
         }
       }
     ]
@@ -450,12 +449,38 @@ export const asyncRouterMap = [
   }
 ]
 
+const testPage = [
+  {
+    path: '/test',
+    component: () => import('@/views/test/tree'),
+    hidden: true,
+    children: [
+      {
+        path: '/test/children1',
+        name: 'children1',
+        component: () => import('@/views/test/children/children1')
+      },
+      {
+        path: '/test/children2',
+        name: 'children2',
+        component: () => import('@/views/test/children/children2')
+      }
+    ]
+  },
+  {
+    path: '/test2',
+    component: () => import('@/views/test/test'),
+    hidden: true
+  }
+]
+
 const router = new VueRouter({
   // mode: 'history', //后端支持可开
   scrollBehavior: () => ({
     y: 0
   }),
-  routes: constantRouterMap
+  routes: process.env.NODE_ENV === 'development'
+    ? constantRouterMap.concat(testPage) : constantRouterMap // 开发模式下才加载开发测试页面
 })
 /* 以下方法存在一个问题，当登录一个权限较少的用户时，再注销然后登录一个权限较多的用户时，
 权限较多的用户会无法访问权限许可访问的页面，而先登录权限较多的用户，再注销然后登录权限较少的用户时，

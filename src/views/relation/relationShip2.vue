@@ -82,7 +82,11 @@ export default {
       return item.name.includes(query) // 搜索列表查询方法
     },
     getAssociatedList(adminId) { // 获取已关联列表
-      return getUserList2('', 1, adminId)
+      const data = {
+        adminId,
+        pageNumber: 1
+      }
+      return getUserList2(data)
         .then(({ data: { state, list: [{ userInfos }] }}) => {
           return state === '100' ? userInfos : []
         })
@@ -150,6 +154,8 @@ export default {
   /* 更改穿梭框按钮样式 */
   .transferBox {
     .el-transfer__buttons {
+      width: 190px;
+      text-align: center;
       .el-button--primary:nth-child(1){
         background-color: #85ce61;
         border-color: #85ce61;
@@ -157,6 +163,8 @@ export default {
       .el-button--primary:nth-child(2){
         background-color: #e6a23c;
         border-color: #e6a23c;
+        margin-left: 0;
+        width: 117px;
       }
     }
   }

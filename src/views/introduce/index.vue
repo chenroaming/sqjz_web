@@ -7,38 +7,39 @@
           <p class="sj_title">福建智慧矫正可视化监管平台</p>
         </el-col>
         <el-col :span="10" style="margin-top: 15px;">
-          <!-- <el-button type="primary" round size="mini" @click="gotoLogin">登&nbsp;&nbsp;录</el-button> -->
-
-          <el-popover placement="bottom" width="500" trigger="click">
+          <el-popover placement="bottom" width="700" trigger="click">
             <el-row>
               <el-col :span="24" style="text-align: center;color:red;">
                 <p>扫描下方二维码即可下载</p>
               </el-col>
             </el-row>
-            <el-row v-for="(item, index) in appQrArr" :key="index">
+            <el-row>
               <el-col
-                v-for="(item2, index2) in item"
-                :key="index2"
-                :span="12"
-                style="padding:20px"
+                v-for="(item, index) in appQrArr"
+                :key="index"
+                :span="8"
+                style="padding:20px;border-right: 1px solid #F1F4F7;"
               >
-                <div style="width:100%;">
+                <div
+                  v-for="item2 in item"
+                  :key="item2.appName"
+                  style="width:100%;">
+                  <h3 style="text-align: center;">{{ item2.appName }}</h3>
                   <el-image
                     :src="item2.qrCodePath"
                     :fit="contain"
                     :preview-src-list="item2.qrCodePath2"
                     style="width: 150px; height: 150px;margin:0 auto;display: block;"
                   />
-                </div>
-                <div style="text-align: center;color:#666;">
-                  <h5>版本：{{ item2.version }}</h5>
-                  <h3>{{ item2.appName }}</h3>
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="copyText(item2)"
-                  >复制下载链接</el-button
-                  >
+                  <div style="text-align: center;color:#666;">
+                    <h5>版本：{{ item2.version }}</h5>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="copyText(item2)"
+                    >复制下载链接</el-button
+                    >
+                  </div>
                 </div>
               </el-col>
             </el-row>
@@ -73,15 +74,12 @@
 
         <el-footer>
           <el-row style="padding:30px 30px 0 0;text-align: center;">
-            <el-col :span="24" style="">
+            <el-col :span="24">
               <!-- <p class="sj_f1">
                 Copyright © 2020 智慧司法-矫正一体化平台 版权所有
               </p> -->
               <p class="sj_f1">Copyright © 2020 厦门纵横集团 版权所有</p>
             </el-col>
-            <!-- <el-col :span="6">
-
-            </el-col> -->
           </el-row>
         </el-footer>
       </el-container>
@@ -90,8 +88,6 @@
 </template>
 
 <script>
-// import item1 from '~/item1.png'
-// console.log(item1)
 import { find } from '@/api/versionFile.js'
 export default {
   data() {
@@ -101,8 +97,8 @@ export default {
         { url: '../../../static/index_images/ban2.png' },
         { url: '../../../static/index_images/ban3.png' }
       ],
-      versionType: ['（安卓版）', '（IOS版）'],
-      appType: ['福建在矫通', '福建矫务通'],
+      versionType: { 1: '（安卓版）', 2: '（IOS版）' },
+      appType: { 1: '福建在矫通', 2: '福建矫务通', 3: '福建协矫通' },
       appQrArr: [],
       zjtPic: {},
       jwtPic: {},
@@ -113,21 +109,20 @@ export default {
   },
   mounted() {
     find().then(res => {
-      if (res.data.state == 100) {
+      if (res.data.state === '100') {
         const newArr = res.data.list.map(item => {
           return {
             ...item,
             qrCodePath2: [`${location.origin}${item.qrCodePath}`],
-            appName: `${this.appType[item.appType - 1]}${
-              this.versionType[item.versionType - 1]
+            appName: `${this.appType[item.appType]}${
+              this.versionType[item.versionType]
             }`
           }
         })
-        const [androidZjt, androidJwt, IOSZjt, IOSJwt] = newArr
-        this.appQrArr = [
-          [{ ...androidZjt }, { ...androidJwt }],
-          [{ ...IOSZjt }, { ...IOSJwt }]
-        ]
+        const n = 2
+        for (let i = 0; i < Math.ceil(newArr.length / n); i++) {
+          this.appQrArr.push(newArr.slice(n * i, n * i + n))
+        }
       }
     })
   },

@@ -223,7 +223,7 @@ export default {
             v-model="searchData.communityId"
             clearable
             placeholder="请选择司法所"
-            style="width:150px;margin-right:10px"
+            style="margin-right:10px"
           >
             <el-option
               v-for="item in options"
@@ -239,7 +239,7 @@ export default {
           <el-select
             v-model="searchData.userType"
             placeholder="请选择监管类别"
-            style="width:150px; margin-right:20px;">
+            style="margin-right:20px;">
             <el-option
               v-for="item in correctType"
               :key="item.value"
@@ -253,7 +253,7 @@ export default {
           <el-input
             v-model="searchData.name"
             placeholder="请输入矫正对象姓名"
-            style="width:150px; margin-right:20px;"
+            style="width:150px;margin-right:20px;"
           />
         </div>
 
@@ -262,7 +262,7 @@ export default {
           <el-input
             v-model="searchData.identityCard"
             placeholder="请输入身份证号码"
-            style="width:150px"
+            style="width: 180px;"
           />
           <el-button
             v-permission="['user:operate']"

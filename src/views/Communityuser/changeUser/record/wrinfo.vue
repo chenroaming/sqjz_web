@@ -45,7 +45,7 @@ export default {
       }
       writtenReportInfo(data).then(({ data: { state, list, total }}) => {
         this.$emit('update:done', '')
-        if (state == 100) {
+        if (state === '100') {
           this.activities = list.map(item => {
             return {
               ...item,
