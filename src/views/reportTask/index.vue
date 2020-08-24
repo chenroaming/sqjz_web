@@ -19,15 +19,15 @@ export default {
       currentPage: 1,
       totalPage: 1,
       reportTaskId: '',
-      reportTypeArr: { 1: '位置抽查', 2: '语音抽查' },
+      reportTypeArr: { 1: '位置抽查', 2: '视频抽查' },
       statusArr: { 0: '未开始', 1: '进行中', 2: '已结束' },
       buttonGroup: [
         { label: '全部', value: '' },
         { label: '位置汇报', value: 1 },
-        { label: '语音汇报', value: 2 }
+        { label: '视频汇报', value: 2 }
       ],
       reportType: '',
-      getType: { '系统抽查': 'primary', '位置抽查': 'success', '语音抽查': 'warning' }
+      getType: { '系统抽查': 'primary', '位置抽查': 'success', '视频抽查': 'warning' }
     }
   },
   mounted() {
@@ -73,6 +73,7 @@ export default {
     },
     changeType(type) {
       if (this.reportType === type) return false
+      this.currentPage = 1
       this.reportType = type
       this.getList()
     }

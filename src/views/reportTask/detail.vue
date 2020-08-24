@@ -89,8 +89,8 @@ export default {
       direction: 'rtl',
       currentPage: 1,
       buttonGroup: [
-        { index: '0', label: `未汇报`, total: 0 },
-        { index: '1', label: `已汇报`, total: 0 }
+        { index: '1', label: `已汇报`, total: 0 },
+        { index: '0', label: `未汇报`, total: 0 }
       ],
       tableData: [],
       totalPage: 0,
@@ -98,7 +98,7 @@ export default {
         reportTaskId: this.reportTaskId,
         pageSize: 10,
         pageNumber: this.currentPage,
-        reported: '0'
+        reported: '1'
       }
     }
   },
@@ -109,7 +109,7 @@ export default {
     drawer(cur, old) {
       !cur &&
       (this.currentPage = 1) &&
-      (this.params.reported = '0') &&
+      (this.params.reported = '1') &&
       (this.params.pageNumber = 1)
     }
   },
@@ -162,10 +162,5 @@ export default {
 </script>
 
 <style scoped lang = "scss">
-  $borderColor:#409EFF;
-  .isSelect {
-    background: $borderColor;
-    border-color: $borderColor;
-    color: #FFF;
-  }
+  @import '@/styles/buttonStyle.scss';
 </style>

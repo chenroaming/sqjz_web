@@ -85,7 +85,7 @@ export default {
     return {
       imageUrl: '',
       isLoding: false,
-      roleArr: [{ value: 6, label: '司法人员' }, { value: 7, label: '协矫人员' }],
+      roleArr: [{ value: 6, label: '助理员' }, { value: 7, label: '协理员' }],
       pwdType: 'password',
       userInfo: {
         username: '',

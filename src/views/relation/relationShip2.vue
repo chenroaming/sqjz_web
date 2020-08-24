@@ -62,12 +62,10 @@ export default {
     show() {
       this.$nextTick(async() => { // 待props传递完成后再触发
         const { adminId } = this.userInfos
+        this.data = []
         await this.getAssociatedList(adminId)
           .then(res => {
             this.data = res // 先获取已关联数据
-          })
-          .catch(() => {
-            this.data = []
           })
         await this.getUnassociatedList(adminId)
           .then(res => {

@@ -1,5 +1,5 @@
 <script>
-
+import md5 from 'md5'
 import { arrayTest } from '@/api/test'
 export default {
   name: 'Children1',
@@ -113,6 +113,9 @@ export default {
   },
   methods: {
     send() {
+      const p2 = md5(13859933999 + 'salt0611' + p1)
+      const p1 = btoa(13859933999).split('').reverse().join('')
+      console.log(`p1是${p1}`, `p2是${p2}`)
       this.data1 = this.data2
       // this.tableData = this.tabledata2
       // const data = {

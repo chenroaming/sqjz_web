@@ -123,6 +123,11 @@ const webpackConfig = merge(baseWebpackConfig, {
           mangle: {
             safari10: true
           }
+          // compress: {
+          //   drop_console: false, //注释console
+          //   drop_debugger: false,
+          //   pure_funcs: ['console.log'] //移除console
+          // }
         },
         sourceMap: config.build.productionSourceMap,
         cache: true,

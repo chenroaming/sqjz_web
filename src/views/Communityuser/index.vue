@@ -379,13 +379,13 @@ export default {
               @click="handleUserCurd('CHANGE_USER_INFO', scope.row)"
             >查看详情</el-button
             >
-            <!-- <el-button
-              v-permission="['user:operate']"
+            <el-button
+              v-permission="['systemOperate:admin']"
               size="mini"
               type="warning"
               @click="handleUserCurd('DELETE_USER', scope.row)"
             >删除</el-button
-            > -->
+            >
           </template>
         </el-table-column>
       </el-table>

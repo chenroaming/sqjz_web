@@ -12,6 +12,7 @@ export function add(data) {
   return request({
     url: '/community_correction/webClass/reportTask/add.jhtml',
     method: 'post',
+    isShowTips: true,
     data: Qs.stringify({
       ...data
     })

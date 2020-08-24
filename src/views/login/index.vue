@@ -65,7 +65,7 @@
             placeholder="请输入验证码"/>
           <el-image
             :src="codeSrc"
-            style="position: absolute;top: 5px;right: 15px;cursor: pointer;"
+            style="width: 100px;height: 30px;position: absolute;top: 5px;right: 15px;cursor: pointer;"
             @click="getCode"/>
         </el-form-item>
 

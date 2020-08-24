@@ -1,6 +1,8 @@
 <template>
   <el-dialog
     :visible.sync="centerDialogVisible"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     title="创建抽查任务"
     width="30%"
     append-to-body
@@ -15,28 +17,14 @@
             :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="矫正人员" prop="userList">
-        <el-dropdown :hide-on-click="false" trigger="click">
-          <span class="el-dropdown-link">
-            {{ userList }}<i class="el-icon-arrow-down el-icon--right"/>
-          </span>
-          <!-- <el-input v-model="userList" suffix-icon="el-icon-arrow-down" placeholder="请选择矫正人员"/> -->
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <el-checkbox
-                :indeterminate="isIndeterminate"
-                v-model="checkAll"
-                @change="handleCheckAllChange">全选</el-checkbox>
-            </el-dropdown-item>
-            <el-dropdown-item
-              v-for="(item,index) in users"
-              :key="item.userId">
-              <el-checkbox
-                v-model="item.checked"
-                @click.native.prevent="handleClick(index,item.name)">{{ item.name }}</el-checkbox>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+      <el-form-item label="矫正人员" prop="userIds" required>
+        <selectDropdown
+          ref="selectDropdown"
+          v-model="ruleForm.userIds"
+          :users.sync="users"
+          key-word="name"
+          key-id="userId"
+          place-holder="请选择矫正人员"/>
       </el-form-item>
       <el-form-item label="汇报时限" prop="timeLimit">
         <el-input-number v-model="ruleForm.timeLimit" :min="1" label="请输入汇报时限"/>
@@ -52,9 +40,18 @@
 <script>
 import { getCommunityUserList } from '@/api/user'
 import { add } from '@/api/reportTask'
+import selectDropdown from '@/components/inputOrSpan/select-dropdown'
 export default {
   name: 'Add',
+  components: { selectDropdown },
   data() {
+    const validUserList = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请选择矫正人员'))
+      } else {
+        callback()
+      }
+    }
     return {
       centerDialogVisible: false,
       isLoading: false,
@@ -65,17 +62,14 @@ export default {
       },
       option: [
         { label: '位置汇报', value: 1 },
-        { label: '语音汇报', value: 2 }
+        { label: '视频汇报', value: 2 }
       ],
       users: [],
       rules: {
         reportType: { required: true, message: '请选择汇报类型', trigger: ['blur', 'change'] },
-        // userList: { required: true, message: '请选择矫正人员', trigger: ['blur', 'change'] },
+        userIds: { validator: validUserList, trigger: ['blur', 'change'] },
         timeLimit: { required: true, message: '请填写汇报时限', trigger: ['blur', 'change'] }
       },
-      isIndeterminate: false,
-      checkAll: false,
-      userList: '请选择矫正人员',
       userIdsArr: []
     }
   },
@@ -86,20 +80,11 @@ export default {
     centerDialogVisible(cur, old) { // 关闭弹窗时重置数据
       if (!cur) {
         this.$refs['ruleForm'].resetFields()
-        this.userIdsArr = []
-        this.userList = '请选择矫正人员'
-        this.checkAll = false
-        this.isIndeterminate = false
-        this.users = this.users.map(item => {
-          return {
-            ...item,
-            checked: false
-          }
-        })
+        this.$refs.selectDropdown.reset()
       }
     }
   },
-  mounted() {
+  created() {
     const data = {
       pageSize: 1000 // 一次性获取所有人员名单
     }
@@ -116,9 +101,7 @@ export default {
     submit() { // 提交
       this.$refs['ruleForm'].validate((valid) => {
         if (!valid) return false
-        if (!this.userIdsArr.length > 0) return this.$message.warning('请选择矫正人员！')
         this.isLoading = true
-        this.ruleForm.userIds = this.userIdsArr.map(item => item.userId).join(',')
         add(this.ruleForm).then(({ data: { state }}) => {
           state === '100' && this.$emit('done') && (this.centerDialogVisible = false)
         })
@@ -129,27 +112,6 @@ export default {
     },
     show() {
       this.centerDialogVisible = true
-    },
-    handleCheckAllChange() {
-      this.isIndeterminate = false
-      this.users = this.users.map(item => {
-        return {
-          ...item,
-          checked: this.checkAll // 每个选项根据是否全选状态进行勾选
-        }
-      })
-      this.userIdsArr = this.checkAll ? [...this.users] : [] // 全选或者全不选
-      this.userList = this.checkAll ? this.users.map(item => item.name).join('，') : '请选择矫正人员'
-    },
-    handleClick(index, userName) {
-      this.users[index].checked = !this.users[index].checked
-      this.users[index].checked
-        ? this.userIdsArr.push(this.users[index]) // 勾选的选项加入数组
-        : this.userIdsArr.splice(
-          this.userIdsArr.findIndex(item => item.name === userName), 1) // 去勾选的选项从数组中删除
-      this.userList = this.userIdsArr.length > 0 ? this.userIdsArr.map(item => item.name).join('，') : '请选择矫正人员'
-      this.checkAll = this.users.every(item => item.checked) // 都选中了则全选勾上
-      this.isIndeterminate = this.users.some(item => item.checked) && !this.checkAll // 只要有一个勾选并且没有全部勾选则处于半选中状态
     }
   }
 }

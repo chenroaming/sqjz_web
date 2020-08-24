@@ -67,7 +67,7 @@
             <el-tag>是</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="300">
+        <el-table-column align="center" label="操作" width="350">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="handleUserCurd('SHOW_FACEINFO', scope.row)">人脸识别记录</el-button>
             <el-button v-permission="['admin:operate']" size="small" type="warning" @click="handleUserCurd('CHANGE_AUTH', scope.row)">权限配置</el-button>

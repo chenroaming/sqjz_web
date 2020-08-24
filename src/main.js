@@ -23,7 +23,7 @@ Vue.mixin({// 全局混入表格表头样式
     }
   }
 })
-
+console.log('written by roaming')
 new Vue({
   el: '#app',
   router,

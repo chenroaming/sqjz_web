@@ -67,21 +67,21 @@ export default {
 
 <template>
   <div class="dashboard-container">
-    <Search
-      v-model="userName"
-      @handleSearch="getList(1)"
-      @refreshData="refreshData"
-    >
-      <div slot="extraArea">
-        <span>请输入姓名：</span>
-        <el-input
-          v-model="userName"
-          placeholder="请输入姓名"
-          style="width:150px; margin-right:20px;"
-        />
-      </div>
-    </Search>
     <el-scrollbar class="scrollbar">
+      <Search
+        v-model="userName"
+        @handleSearch="getList(1)"
+        @refreshData="refreshData"
+      >
+        <div slot="extraArea">
+          <span>请输入姓名：</span>
+          <el-input
+            v-model="userName"
+            placeholder="请输入姓名"
+            style="width:150px; margin-right:20px;"
+          />
+        </div>
+      </Search>
       <el-table
         v-loading="isLoading"
         :data="tableData"
