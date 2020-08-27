@@ -67,12 +67,13 @@
 
 <script>
 import { find, deleteInfo } from '@/api/interviewRecord'
-import showDetail from '@/components/interviewRecord/showDetail.vue'
+// import showDetail from '@/components/interviewRecord/showDetail.vue'
 import showFile from '@/components/userFile/showFile'
 export default {
   name: 'InterviewRecord',
   components: {
-    showDetail, showFile
+    showDetail: () => import('@/components/interviewRecord/showDetail.vue'),
+    showFile
   },
   data() {
     return {
@@ -166,7 +167,6 @@ export default {
       link.href = `/community_correction/webClass/interviewRecord/export.jhtml?interviewType=${this.nowIndex}` // href属性指定下载链接
       link.download = '' // dowload属性指定文件名
       link.click() // click()事件触发下载
-      console.log(link.click())
     }
   }
 }

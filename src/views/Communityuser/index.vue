@@ -47,7 +47,13 @@ export default {
         adminId: 0,
         username: '',
         name: ''
-      }
+      },
+      buttonGroup: [
+        { label: '全部', value: '' },
+        { label: '三类', value: 1 },
+        { label: '二类', value: 2 },
+        { label: '一类', value: 3 }
+      ]
     }
   },
   computed: {
@@ -186,17 +192,28 @@ export default {
     },
     srcList(url) { // 图片放大功能
       return [url]
+    },
+    changeType(type) {
+      if (this.searchData.userType === type) return false
+      this.currentPage = 1
+      this.currentSearchData.userType = type
+      this.__init()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+  @import '@/styles/buttonStyle.scss';
 .el-table::before {
   left: 0;
   bottom: 0;
   width: 100%;
   height: 0px;
+}
+.tag-box {
+  width: 40%;
+  margin: 10px 10px 0px 20px;
 }
 </style>
 
@@ -212,12 +229,29 @@ export default {
 <template>
   <div>
     <el-scrollbar class="scrollbar">
+      <div class="tag-box">
+        <el-tag type="info">总人数：111</el-tag>
+        <el-tag type="success">解矫人数：111</el-tag>
+        <el-tag type="warning">在矫人数：111</el-tag>
+      </div>
+      <div class="select-box">
+        <el-button-group>
+          <el-button
+            v-for="item in buttonGroup"
+            :key="item.value"
+            :autofocus="true"
+            :class="currentSearchData.userType === item.value ? 'isSelect' : ''"
+            type="primary"
+            plain
+            @click="changeType(item.value)">{{ item.label }}</el-button>
+        </el-button-group>
+      </div>
       <Searcharea
         v-model="searchData"
         @handleSearch="handleSearch"
         @refreshData="handleRefresh"
       >
-        <div v-if="canChoice" slot="extraArea">
+        <!-- <div v-if="canChoice" slot="extraArea">
           <span>请选择司法所：</span>
           <el-select
             v-model="searchData.communityId"
@@ -232,9 +266,9 @@ export default {
               :value="item.communityId"
             />
           </el-select>
-        </div>
+        </div> -->
 
-        <div slot="extraArea">
+        <!-- <div slot="extraArea">
           <span>监管类别：</span>
           <el-select
             v-model="searchData.userType"
@@ -246,7 +280,7 @@ export default {
               :label="item.label"
               :value="item.value"/>
           </el-select>
-        </div>
+        </div> -->
 
         <div slot="extraArea">
           <span>人员姓名：</span>
@@ -258,12 +292,12 @@ export default {
         </div>
 
         <div slot="extraArea">
-          <span>人员身份证：</span>
+          <!-- <span>人员身份证：</span>
           <el-input
             v-model="searchData.identityCard"
             placeholder="请输入身份证号码"
             style="width: 180px;"
-          />
+          /> -->
           <el-button
             v-permission="['user:operate']"
             icon="el-icon-plus"

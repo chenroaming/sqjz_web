@@ -24,6 +24,7 @@
       </el-dropdown-menu>
     </el-dropdown>
     <div class="avatar-container">
+      <areaCascader/>
       <router-link :to="{ path:'/index' }" style="margin-right:15px;" target="_blank">
         <el-button type="primary" size="mini">进入官网</el-button>
       </router-link>
@@ -47,11 +48,13 @@ import { mapGetters, mapState } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb/breadCrumb'
 import Hamburger from '@/components/Hamburger'
 import { getChangeAreaList } from '@/api/area'
+import areaCascader from './cascader/areaCascader'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    areaCascader
   },
   data() {
     return {

@@ -780,7 +780,7 @@ export default {
     initpage() {
       GetPelpleLoacion()
         .then(res => {
-          if (res.data.state == 100) {
+          if (res.data.state === '100') {
             var arr = []
             // console.log(res.data.list);
             res.data.list.map(item => {

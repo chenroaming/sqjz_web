@@ -141,6 +141,9 @@ export default {
     },
     handleChange(e) {
       console.log(e)
+    },
+    getLi() {
+      console.log(this.$refs.li)
     }
   }
 }
@@ -152,9 +155,20 @@ export default {
     width: 300px;
     height: 300px;
     border: 1px solid;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
     div{
-      width:100%;
+      width: 20%;
+      height: 20%;
       border:1px solid;
+    }
+  }
+  .cuizhi {
+    width: 100px;
+    height: 100px;
+    span {
+      display: inline-block;
     }
   }
 </style>
@@ -171,6 +185,17 @@ export default {
       <div>2</div>
       <div>3</div> -->
     </div>
+    <div class="cuizhi">
+      <span>111</span>
+    </div>
+    <ul>
+      <li
+        v-for="item in data2"
+        ref="li"
+        :key="item.address"
+        :aaa="item.value"
+        @click="getLi">{{ item.name }}</li>
+    </ul>
     <!-- <el-table
       ref="multipleTable"
       :data="tableData"

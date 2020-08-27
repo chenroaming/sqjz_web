@@ -1,9 +1,9 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
+      <router-view/>
       <!-- or name="fade" -->
       <!-- <router-view :key="key"></router-view> -->
-      <router-view/>
     </transition>
   </section>
 </template>

@@ -1,5 +1,5 @@
 <script>
-import { findRecordWithoutNoTips } from '@/api/user'
+import { findRecordWithoutNoTips, getUsercommunity } from '@/api/user'
 import detail from '@/views/Communityuser/changeUser/record/detail.vue'
 export default {
   name: 'Record',
@@ -23,8 +23,20 @@ export default {
         abnormal: '0', // 报告类型
         pageNumber: 1, // 页码
         pageSize: 5 // 每页数目
-      }
+      },
+      communityList: [],
+      communityId: ''
     }
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.getters.roleType < 5
+    }
+  },
+  mounted() {
+    getUsercommunity().then(({ data: { list }}) => {
+      this.communityList = list
+    })
   },
   methods: {
     show() {
@@ -72,6 +84,15 @@ export default {
     },
     showDetail(userInfo) {
       this.$refs.detail.show(userInfo)
+    },
+    exportList() {
+      if (!this.communityId && this.isAdmin) return this.$message.warning('请选择司法所！')
+      const link = document.createElement('a') // 生成一个a标签。
+      link.href = this.isAdmin
+        ? `/community_correction/webClass/clock/export.jhtml?date=${this.params.date}&communityId=${this.communityId}`
+        : `/community_correction/webClass/clock/export.jhtml?date=${this.params.date}` // href属性指定下载链接
+      link.download = '' // dowload属性指定文件名
+      link.click() // click()事件触发下载
     }
   }
 }
@@ -98,6 +119,17 @@ export default {
         type="date"
         placeholder="选择日期"/>
       <el-button :disabled="isLoading" type="primary" @click="getList">搜索</el-button>
+      <el-button v-if="!isAdmin" :disabled="isLoading" type="warning" @click="exportList">导出</el-button>
+    </div>
+    <div v-if="isAdmin" style="width: 95%;margin:0 auto;margin-top: 5px;">
+      <el-select v-model="communityId" style="width:220px" filterable placeholder="请选择司法所">
+        <el-option
+          v-for="item in communityList"
+          :key="item.communityId"
+          :label="item.communityName"
+          :value="item.communityId"/>
+      </el-select>
+      <el-button :disabled="isLoading" type="warning" @click="exportList">导出</el-button>
     </div>
     <el-button-group style="margin:3%;">
       <el-button

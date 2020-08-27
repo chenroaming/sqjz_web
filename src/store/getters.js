@@ -10,6 +10,7 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   roleType: state => state.user.roleType,
   nowPage: state => state.app.nowPage,
-  searchData: state => state.app.currentSeachData
+  searchData: state => state.app.currentSeachData,
+  communityId: state => state.user.communityId
 }
 export default getters

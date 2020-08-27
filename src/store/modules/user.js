@@ -9,7 +9,8 @@ const user = {
     roleType: 0,
     // 管理员类型0为其它，1为超级管理员,2为社区管理员
     areaName: '',
-    adminName: ''
+    adminName: '',
+    communityId: '' // 司法所id
   },
 
   mutations: {
@@ -36,6 +37,9 @@ const user = {
     },
     CHANGE_AREANAME: (state, name) => {
       state.areaName = name
+    },
+    SET_COMMUNITYID: (state, id) => {
+      state.communityId = id
     }
   },
 
@@ -52,6 +56,7 @@ const user = {
           commit('SET_ROLE_TYPE', response.data.roleType)
           commit('SET_AREA', response.data.communityName)
           commit('SET_ADMINNAME', response.data.name)
+          commit('SET_COMMUNITYID', response.data.communityId)
           resolve(response)
           setLogin()
         }).catch(error => {

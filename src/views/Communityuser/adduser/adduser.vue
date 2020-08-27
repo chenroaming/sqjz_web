@@ -155,11 +155,11 @@ export default {
         // 身份证号
         phone: '',
         // 手机号
-        userType: '',
+        userType: 1,
         // 人员类型
-        activityRange: '',
+        activityRange: 2,
         // 活动范围
-        correctType: '',
+        correctType: 1,
         // 矫正类型
         dw: '',
         cause: '',
@@ -267,9 +267,12 @@ export default {
         cause: '',
         longitude: '',
         latitude: '',
-        correct: true
-        // url: "",
-        // templateName: ""
+        correct: true,
+        userType: 1,
+        // 人员类型
+        activityRange: 2,
+        // 活动范围
+        correctType: 1
       }
     },
 

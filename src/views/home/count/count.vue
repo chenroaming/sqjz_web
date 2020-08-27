@@ -3,12 +3,14 @@ export default {
   name: 'Count',
   props: {
     count: {
-      trpe: Object,
+      type: Object,
       default: () => {
         return {
           totalNumber: 0,
           correctedNumber: 0,
-          uncorrectedNumber: 0
+          uncorrectedNumber: 0,
+          correctedNumberCompare: '',
+          uncorrectedNumberCompare: ''
         }
       }
     }
@@ -93,6 +95,11 @@ export default {
 
 .span1 {
   font-size: 14px;
+  p{
+    color:#fff;
+    margin: 0;
+    text-align: left;
+  }
 }
 </style>
 
@@ -129,6 +136,7 @@ export default {
             <span class="span1">
               当月入矫：
               <b style="color:#fff">{{ count.correctedNumber }}</b>
+              <p>同比{{ count.correctedNumberCompare }}</p>
             </span>
           </div>
         </div>
@@ -144,6 +152,7 @@ export default {
             <span class="span1">
               当月解矫：
               <b style="color:#fff">{{ count.uncorrectedNumber }}</b>
+              <p>同比{{ count.uncorrectedNumberCompare }}</p>
             </span>
           </div>
         </div>
