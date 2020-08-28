@@ -99,6 +99,7 @@ export default {
       const pieData = { ...data }
       pieData.todayCount = [{ type: `已报告-${complete}`, number: complete }, { type: `未报告-${uncompleted}`, number: uncompleted }]
       data.state === '100' && (this.chart1 = pieData)
+      this.$store.commit('SET_USERCOUNT', this.chart1.userNumberCount)
     })
     userActivityInfoCount().then(({ data }) => {
       data.state === '100' && (this.chart2 = data)

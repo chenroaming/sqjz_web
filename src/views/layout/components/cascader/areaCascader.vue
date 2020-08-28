@@ -47,7 +47,7 @@ export default {
       return newArr
     },
     handleChange() {
-      console.log([...this.value].pop())
+      this.$store.dispatch('setAppCommuityId', [...this.value].pop())
     }
   }
 }

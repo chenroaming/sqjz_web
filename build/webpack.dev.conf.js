@@ -9,7 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
-function resolve(dir) {
+function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -54,7 +54,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         // target: 'http://139.9.45.194:8091',
         changeOrigin: true,
       },
-      '/community_test':{
+      '/community_test': {
         target: 'http://139.9.45.194:8091/community_test',
         changeOrigin: true,
       },

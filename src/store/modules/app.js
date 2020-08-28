@@ -13,7 +13,9 @@ const app = {
       identityCard: '',
       communityId: '',
       userType: ''
-    }
+    },
+    appcommuityId: '',
+    userCount: {}
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
@@ -38,6 +40,12 @@ const app = {
     },
     SET_SEARCHDATA: (state, searchData) => {
       state.currentSeachData = { ...searchData }
+    },
+    SET_APPCOMMUITYID: (state, commuityId) => {
+      state.appcommuityId = commuityId
+    },
+    SET_USERCOUNT: (state, data) => {
+      state.userCount = data
     }
   },
   actions: {
@@ -55,6 +63,9 @@ const app = {
     },
     SetSearchData({ commit }, searchData) {
       commit('SET_SEARCHDATA', searchData)
+    },
+    setAppCommuityId({ commit }, commuityId) {
+      commit('SET_APPCOMMUITYID', commuityId)
     }
   }
 }

@@ -77,8 +77,22 @@ export function verifyBlockValidateCode(pinCode) {
  */
 export function validateCode() {
   return request({
+    noShowTips: true,
     url: '/community_correction/webAdmin/admin/validateCode.jhtml',
-    method: 'get'
+    method: 'post'
   })
 }
 
+/**
+ * @description 判断滑块验证码
+ * @return [List]
+ */
+export function verifyValidateCode(pinCode) {
+  return request({
+    url: '/community_correction/webAdmin/admin/verifyValidateCode.jhtml',
+    method: 'post',
+    data: Qs.stringify({
+      pinCode
+    })
+  })
+}

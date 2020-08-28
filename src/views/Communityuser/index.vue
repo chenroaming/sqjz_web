@@ -11,7 +11,7 @@ import {
 } from '@/api/user'
 // eslint-disable-next-line no-unused-vars
 import { updateInterface } from '@/api/face'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -58,8 +58,10 @@ export default {
   },
   computed: {
     ...mapState({
-      roleType: state => state.user.roleType
+      roleType: state => state.user.roleType,
+      appcommuityId: state => state.app.appcommuityId
     }),
+    ...mapGetters(['getUserCount']),
     canChoice() {
       return this.$store.getters.roleType < 5
     }
@@ -67,6 +69,10 @@ export default {
   watch: {
     currentPage(cur, old) {
       this.$store.dispatch('SetNowPage', cur)
+    },
+    appcommuityId(cur, old) {
+      this.currentSearchData.communityId = cur
+      this.__init()
     }
   },
   created() {
@@ -108,7 +114,7 @@ export default {
               }
             })
             this.pageNumber = pageNumber
-            this.sortpagesTotal = total
+            this.sortpagesTotal = total;
             this.handleResetSort()
             return
           }
@@ -230,9 +236,9 @@ export default {
   <div>
     <el-scrollbar class="scrollbar">
       <div class="tag-box">
-        <el-tag type="info">总人数：111</el-tag>
-        <el-tag type="success">解矫人数：111</el-tag>
-        <el-tag type="warning">在矫人数：111</el-tag>
+        <el-tag type="info">总人数：{{ getUserCount.totalNumber }}</el-tag>
+        <el-tag type="success">解矫人数：{{ getUserCount.correctedNumber }}</el-tag>
+        <el-tag type="warning">在矫人数：{{ getUserCount.uncorrectedNumber }}</el-tag>
       </div>
       <div class="select-box">
         <el-button-group>
