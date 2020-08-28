@@ -114,7 +114,7 @@ export default {
               }
             })
             this.pageNumber = pageNumber
-            this.sortpagesTotal = total;
+            this.sortpagesTotal = total
             this.handleResetSort()
             return
           }
